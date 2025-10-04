@@ -108,7 +108,7 @@ const Login = () => {
           <div className="flex items-center gap-[14px]">
             <ButtonRegister>
               <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-[383px] h-[64px] text-[#4F5665] font-medium text-lg  rounded-2xl">
-                <Facebook />
+                <Facebook className="fill-black text-black" />
                 Facebook
               </div>
             </ButtonRegister>
