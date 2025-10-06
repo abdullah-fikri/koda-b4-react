@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import Input from "../components/Input";
 import { ButtonRegister } from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../utils/util";
 import { saveUser } from "../utils/storage";
-
-// icons
 import { User, Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,11 +28,37 @@ const Register = () => {
       email: data.email,
       password: data.password,
     });
-    alert("Register Success! Please login.");
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    navigate("/login");
   };
 
   return (
     <div className="flex">
+      {showAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          {" "}
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+            {" "}
+            <h2 className="text-lg font-semibold text-[#8E6447]">
+              Register Success!{" "}
+            </h2>{" "}
+            <p className="text-gray-600 mt-2">
+              Your account has been created. Please login to continue.{" "}
+            </p>{" "}
+            <button
+              onClick={handleCloseAlert}
+              className="mt-4 px-6 py-2 bg-[#FF8906] text-white rounded-md hover:bg-[#e07a05] transition"
+            >
+              OK{" "}
+            </button>{" "}
+          </div>{" "}
+        </div>
+      )}
+
       <img src=".././public/img/Rectangle 289.svg" alt="coffe logo" />
       <div className="ml-[70px] max-w-[780px] w-full h-[821px] gap-[51px] mt-[61px]">
         <img src=".././public/img/Frame 12.png" alt="coffe-shop" />
@@ -112,14 +138,13 @@ const Register = () => {
             </p>
 
             <ButtonRegister
-              className={
-                "max-w-[780px] w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
-              }
+              className="max-w-[780px] w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
               type="submit"
             >
               Register
             </ButtonRegister>
           </form>
+
           <div className="flex items-center justify-center font-normal font-jakarta text-base">
             <span className="text-[#4F5665]">Have An Account?</span>
             <Link to="/login" className="text-[#FF8906] cursor-pointer ml-1">

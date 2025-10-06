@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "title": "Hazelnut Latte",
+    "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
+    "img": "/img/image 27.png",
+    "price": "20.000"
+  },
+  {
+    "id": "2",
+    "title": "Hazelnut Latte",
+    "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
+    "img": "/img/image 22.png",
+    "price": "20.000"
+  },
+  {
+    "id": "3",
+    "title": "Hazelnut Latte",
+    "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
+    "img": "/img/image 30.png",
+    "price": "20.000"
+  },
+  {
+    "id": "4",
+    "title": "Hazelnut Latte",
+    "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
+    "img": "/img/image 31.png",
+    "price": "20.000"
+  }
+]

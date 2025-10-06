@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import Input from "../components/Input";
 import { ButtonRegister } from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/util";
 import { findUser, setCurrentUser } from "../utils/storage";
-
 import { Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -24,14 +26,39 @@ const Login = () => {
     const user = findUser(data.email, data.password);
     if (user) {
       setCurrentUser(user);
-      alert("Login Success!");
+      setAlertMessage("Login Success!");
+      setShowAlert(true);
     } else {
-      alert("Invalid email or password");
+      setAlertMessage("Invalid email or password");
+      setShowAlert(true);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    if (alertMessage === "Login Success!") {
+      navigate("/Home");
     }
   };
 
   return (
     <div className="flex">
+      {showAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+            <h2 className="text-lg font-semibold text-[#8E6447]">
+              {alertMessage}
+            </h2>
+            <button
+              onClick={handleCloseAlert}
+              className="mt-4 px-6 py-2 bg-[#FF8906] text-white rounded-md hover:bg-[#e07a05] transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <img src=".././public/img/Rectangle 289 (1).svg" alt="coffe logo" />
       <div className="ml-[70px] max-w-[780px] w-full h-[821px] gap-[51px] mt-[61px]">
         <img src=".././public/img/Frame 12.png" alt="coffe-shop" />
@@ -85,9 +112,7 @@ const Login = () => {
             </div>
 
             <ButtonRegister
-              className={
-                "max-w-[780px] w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
-              }
+              className="max-w-[780px] w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
               type="submit"
             >
               Login
@@ -108,8 +133,7 @@ const Login = () => {
           <div className="flex items-center gap-[14px]">
             <ButtonRegister>
               <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-[383px] h-[64px] text-[#4F5665] font-medium text-lg  rounded-2xl">
-                <Facebook className="fill-black text-black" />
-                Facebook
+                <Facebook className="fill-black text-black" /> Facebook
               </div>
             </ButtonRegister>
             <ButtonRegister>
@@ -117,7 +141,7 @@ const Login = () => {
                 <img
                   src=".././public/img/flat-color-icons_google.svg"
                   alt="google"
-                />
+                />{" "}
                 Google
               </div>
             </ButtonRegister>
