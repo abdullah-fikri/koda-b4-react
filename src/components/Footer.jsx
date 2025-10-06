@@ -4,7 +4,6 @@ export const Footer = () => {
   return (
     <footer className="bg-[#F8F8F8] px-10 md:px-20 py-10 mt-[70px]">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-        {/* Brand */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <img src=".././public/img/Frame 12.png" alt="coffe-shop" />
@@ -16,7 +15,6 @@ export const Footer = () => {
           <span className="text-[#AFB5C0] text-sm">©2020CoffeeStore</span>
         </div>
 
-        {/* Product */}
         <div className="flex flex-col gap-2">
           <h3 className="font-medium text-lg text-[#0B132A]">Product</h3>
           <a href="#" className="text-[#4F5665] hover:text-black text-sm">
@@ -36,7 +34,6 @@ export const Footer = () => {
           </a>
         </div>
 
-        {/* Engage */}
         <div className="flex flex-col gap-2">
           <h3 className="font-medium text-lg text-[#0B132A]">Engage</h3>
           <a href="#" className="text-gray-600 hover:text-black text-sm">
@@ -56,7 +53,6 @@ export const Footer = () => {
           </a>
         </div>
 
-        {/* Social Media */}
         <div>
           <h3 className="font-medium text-lg text-[#0B132A] mb-4">
             Social Media

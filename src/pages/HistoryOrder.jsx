@@ -25,13 +25,12 @@ export const HistoryOrder = () => {
   const filteredOrders = orders.filter((order) => order.status === activeTab);
 
   const handleViewDetail = (orderNumber) => {
-    navigate(`/DetailOrder/${orderNumber}`); // sudah tanpa #
+    navigate(`/DetailOrder/${orderNumber}`);
   };
 
   return (
     <div className="min-h-screen bg-white pt-[76px]">
       <div className="px-[130px] py-[50px]">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-[40px]">
           <h1 className="text-[32px] font-medium text-[#0B132A]">
             History Order
@@ -42,9 +41,7 @@ export const HistoryOrder = () => {
         </div>
 
         <div className="flex gap-[60px]">
-          {/* Left Section */}
           <div className="flex-1">
-            {/* Tabs + Month Filter */}
             <div className=" rounded-t-md px-6">
               <div className="flex items-center justify-between">
                 <div className="flex bg-[#E8E8E899] rounded-md p-1">
@@ -63,7 +60,6 @@ export const HistoryOrder = () => {
                   ))}
                 </div>
 
-                {/* Month Filter */}
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-[#4F5665]" />
                   <select
@@ -89,7 +85,6 @@ export const HistoryOrder = () => {
               </div>
             </div>
 
-            {/* Order List */}
             <div className="space-y-5 mt-[24px]">
               {filteredOrders.length === 0 ? (
                 <div className="bg-white rounded-xl border border-[#E8E8E8] p-8 text-center">
@@ -101,7 +96,6 @@ export const HistoryOrder = () => {
                     key={index}
                     className="bg-white rounded-xl border border-[#E8E8E8] p-5 flex gap-6 items-center"
                   >
-                    {/* Thumbnail */}
                     <div className="w-[100px] h-[100px] rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={order.img || "/img/image 22.png"}
@@ -110,12 +104,11 @@ export const HistoryOrder = () => {
                       />
                     </div>
 
-                    {/* Order Details */}
                     <div className="flex-1 grid grid-cols-4 gap-4">
                       <div>
                         <p className="text-sm text-[#4F5665] mb-1">No. Order</p>
                         <p className="font-medium text-[#0B132A] text-sm">
-                          #{order.orderNumber} {/* tampil pakai # */}
+                          #{order.orderNumber}
                         </p>
                         <button
                           onClick={() => handleViewDetail(order.orderNumber)}
@@ -151,7 +144,6 @@ export const HistoryOrder = () => {
               )}
             </div>
 
-            {/* Pagination */}
             {filteredOrders.length > 0 && (
               <div className="flex justify-center gap-2 mt-[40px]">
                 {[1, 2, 3, 4].map((i) =>
@@ -170,7 +162,6 @@ export const HistoryOrder = () => {
             )}
           </div>
 
-          {/* Right Section - Message Box */}
           <div className="w-[380px] flex-shrink-0">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#F0F0F0] sticky top-[100px]">
               <div className="flex justify-start mb-4">

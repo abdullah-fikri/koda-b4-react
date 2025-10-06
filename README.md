@@ -1,16 +1,17 @@
-# React + Vite
+# Coffe Shop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Project ini adalah aplikasi web e-commerce modern yang dibangun menggunakan React. Aplikasi ini memungkinkan pengguna untuk melihat produk, melihat detail produk, dan melakukan checkout.
 
-Currently, two official plugins are available:
+## Teknologi yang Digunakan
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Frontend: React, React Router, Tailwind CSS
+Icons: Lucide React
+Form Validation: React Hook Form, Yup
+State Management: React Hooks (useState, useEffect)
 
-## React Compiler
+# 📷 Result
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+[!home](/public/results/Screenshot%202025-10-06%20at%2010.07.37.png)
+[!product](/public/results/Screenshot%202025-10-06%20at%2010.08.38.png)
+[!product](/public/results/Screenshot%202025-10-06%20at%2010.11.44.png)
+[!payment](/public/results/Screenshot%202025-10-06%20at%2010.10.17.png)
