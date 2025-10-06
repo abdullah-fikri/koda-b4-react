@@ -27,6 +27,12 @@ const Register = () => {
       fullName: data.fullName,
       email: data.email,
       password: data.password,
+      role: "user",
+      since: new Date().toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
     });
     setShowAlert(true);
   };

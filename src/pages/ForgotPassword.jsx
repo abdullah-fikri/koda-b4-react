@@ -65,9 +65,7 @@ const ForgotPassword = () => {
               </ButtonRegister>
             </form>
           </div>
-          <span>
-            <Link to="/Home">tes</Link>
-          </span>
+          <span></span>
         </div>
       </div>
     </>

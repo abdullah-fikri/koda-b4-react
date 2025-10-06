@@ -1,9 +1,12 @@
 import React from "react";
 
-const Input = ({ label, leftIcon: LeftIcon, children, ...rest }) => {
+const Input = ({ label, span, leftIcon: LeftIcon, children, ...rest }) => {
   return (
     <div className="w-full">
-      <label className="flex flex-col gap-[13px]">{label}</label>
+      <div className="flex justify-between items-center">
+        <label className="flex flex-col gap-[13px]">{label}</label>
+        <span className="text-base font-normal text-[#FF8906]">{span}</span>
+      </div>
       <div className="flex items-center border rounded-[8px] h-[52px] px-[13px] py-[14px] gap-[10px] bg-[#FCFDFE] border-[#DEDEDE] w-full">
         {LeftIcon && <LeftIcon className="w-5 h-5 text-gray-500" />}
         <input

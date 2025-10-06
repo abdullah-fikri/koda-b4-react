@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   ArrowLeft,
   MapPin,
@@ -78,7 +78,9 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex justify-between items-start">
-                    <p className="text-[#4F5665]">Full Name</p>
+                    <Link to="/Profile">
+                      <p className="text-[#4F5665]">Full Name</p>
+                    </Link>
                     <p className="font-medium text-[#0B132A] text-right">
                       {order.customerInfo.fullName}
                     </p>

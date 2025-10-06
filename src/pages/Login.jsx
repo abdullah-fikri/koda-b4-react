@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/util";
-import { findUser, setCurrentUser } from "../utils/storage";
+import { findUser, saveUser, setCurrentUser } from "../utils/storage";
 import { Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
 
 const Login = () => {
@@ -13,6 +13,13 @@ const Login = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+
+  saveUser({
+    fullName: "admin",
+    email: "admin123@gmail.com",
+    password: "admin123",
+    role: "admin",
+  });
 
   const {
     register,
@@ -24,9 +31,16 @@ const Login = () => {
 
   const onSubmit = (data) => {
     const user = findUser(data.email, data.password);
+
     if (user) {
       setCurrentUser(user);
-      setAlertMessage("Login Success!");
+
+      if (user.role === "admin") {
+        setAlertMessage("Login Admin Success!");
+      } else {
+        setAlertMessage("Login Success!");
+      }
+
       setShowAlert(true);
     } else {
       setAlertMessage("Invalid email or password");
@@ -36,8 +50,11 @@ const Login = () => {
 
   const handleCloseAlert = () => {
     setShowAlert(false);
+
     if (alertMessage === "Login Success!") {
-      navigate("/Home");
+      navigate("/Home"); // user biasa
+    } else if (alertMessage === "Login Admin Success!") {
+      navigate("/Dashboard"); // admin
     }
   };
 

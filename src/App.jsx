@@ -15,6 +15,8 @@ import DetailProduct from "./pages/DetailProduct";
 import CheckoutProduct from "./pages/CheckoutProduct";
 import { HistoryOrder } from "./pages/HistoryOrder";
 import { DetailOrder } from "./pages/DetailOrder";
+import { Profile } from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
         element: <HistoryOrder />,
       },
       { path: "/DetailOrder/:orderNumber", element: <DetailOrder /> },
+      {
+        path: "/Profile",
+        element: <Profile />,
+      },
+      {
+        path: "/Dashboard",
+        element: <Dashboard />,
+      },
     ],
   },
 ]);
