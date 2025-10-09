@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import { Plus, X, MapPin, Mail, User } from "lucide-react";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { checkoutSchema } from "../utils/util";
+import { CartContext } from "../context/Context";
+import { History } from "../context/Context";
 
 const CheckoutProduct = () => {
-  const [cart, setCart] = useState([]);
+  const { cart, setCart } = useContext(CartContext);
+  const { history, setHistory } = useContext(History);
+  //
   const [deliveryMethod, setDeliveryMethod] = useState("Dine in");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const temp = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(temp);
-  }, []);
-
   const handleRemoveItem = (index) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    setCart(cart.filter((_, i) => i !== index));
   };
 
   const calculateSubtotal = () => {
@@ -68,13 +65,12 @@ const CheckoutProduct = () => {
       product: cart.map((item) => item.product).join(", "),
     };
 
-    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
-
+    const existingOrders = [];
     existingOrders.push(order);
 
-    localStorage.setItem("orders", JSON.stringify(existingOrders));
+    setHistory([...history, existingOrders]);
 
-    localStorage.removeItem("cart");
+    setCart([]);
 
     navigate("/HistoryOrder");
   };

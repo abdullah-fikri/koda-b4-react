@@ -5,14 +5,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../utils/util";
-import { saveUser } from "../utils/storage";
 import { User, Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addAccount } from "../redux/reducers/account";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -23,7 +25,7 @@ const Register = () => {
   });
 
   const onSubmit = (data) => {
-    saveUser({
+    const newUser = {
       fullName: data.fullName,
       email: data.email,
       password: data.password,
@@ -33,7 +35,8 @@ const Register = () => {
         month: "long",
         year: "numeric",
       }),
-    });
+    };
+    dispatch(addAccount(newUser));
     setShowAlert(true);
   };
 

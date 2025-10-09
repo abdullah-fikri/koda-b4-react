@@ -17,6 +17,11 @@ import { HistoryOrder } from "./pages/HistoryOrder";
 import { DetailOrder } from "./pages/DetailOrder";
 import { Profile } from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
+import { persistor, store } from "./redux/store";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { CartContextLayout } from "./context/cartContextLayout";
+import { HistoryContextLayout } from "./context/HistoryContextLayout";
 
 const router = createBrowserRouter([
   {
@@ -70,7 +75,16 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <CartContextLayout>
+          <HistoryContextLayout>
+            <RouterProvider router={router} />
+          </HistoryContextLayout>
+        </CartContextLayout>
+      </PersistGate>
+    </Provider>
+  );
 }

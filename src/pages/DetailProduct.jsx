@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { ShoppingCart, ThumbsUp, Minus, Plus, ArrowLeft } from "lucide-react";
 import { RoundButton } from "../components/RoundButton";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../context/Context";
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
@@ -9,6 +10,7 @@ const DetailProduct = () => {
   const [selectedTemp, setSelectedTemp] = useState("Ice");
   const [selectedImage, setSelectedImage] = useState(0);
   const navigate = useNavigate();
+  const { cart, setCart } = useContext(CartContext);
 
   const product = {
     title: "Hazelnut Latte",
@@ -35,6 +37,21 @@ const DetailProduct = () => {
     }
   };
 
+  const handleAddToCart = () => {
+    const order = {
+      product: product.title,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      quantity: quantity,
+      size: selectedSize,
+      temp: selectedTemp,
+      flashSale: product.flashSale,
+      img: product.images[0],
+    };
+
+    setCart([...cart, order]);
+  };
+
   const handleBuy = () => {
     const order = {
       product: product.title,
@@ -47,9 +64,7 @@ const DetailProduct = () => {
       img: product.images[0],
     };
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const newCart = [...cart, order];
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    setCart([...cart, order]);
     navigate("/checkoutProduct");
   };
 
@@ -201,7 +216,10 @@ const DetailProduct = () => {
                 Buy
               </button>
 
-              <button className="flex items-center justify-center gap-3 bg-[#FF8906] hover:bg-[#e97e05] text-white font-semibold text-[16px] py-[14px] px-[24px] rounded-[8px] transition-colors cursor-pointer">
+              <button
+                className="flex items-center justify-center gap-3 bg-[#FF8906] hover:bg-[#e97e05] text-white font-semibold text-[16px] py-[14px] px-[24px] rounded-[8px] transition-colors cursor-pointer"
+                onClick={handleAddToCart}
+              >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>

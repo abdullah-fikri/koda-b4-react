@@ -15,16 +15,16 @@ export const Profile = () => {
   });
 
   useEffect(() => {
-    const users = JSON.parse(localStorage.getItem("users"));
+    const users = JSON.parse(localStorage.getItem("currentUser"));
     const orders = JSON.parse(localStorage.getItem("orders"));
-    if (users?.[0]) {
+    if (users) {
       setData({
-        fullName: users[0].fullName,
-        email: users[0].email,
+        fullName: users.fullName,
+        email: users.email,
         phone: "+6289501931221",
-        password: users[0].password,
+        password: users.password,
         address: orders?.[0]?.customerInfo?.address || "",
-        since: users[0].since,
+        since: users.since,
       });
     }
   }, []);
@@ -32,14 +32,13 @@ export const Profile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    if (users.length > 0) {
-      users[0] = { ...users[0], ...data };
-    }
+    let users = JSON.parse(localStorage.getItem("currentUser")) || [];
 
-    localStorage.setItem("users", JSON.stringify(users));
+    const updateUsers = { ...users, ...data };
+
+    localStorage.setItem("currentUser", JSON.stringify(updateUsers));
     alert("sukses");
-    setData(users[0]);
+    setData(updateUsers);
   };
 
   return (

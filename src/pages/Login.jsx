@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
 import { ButtonRegister } from "../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/util";
-import { findUser, saveUser, setCurrentUser } from "../utils/storage";
+import { findUser, saveUser } from "../utils/storage";
 import { Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/reducers/account";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,12 +16,18 @@ const Login = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
 
-  saveUser({
-    fullName: "admin",
-    email: "admin123@gmail.com",
-    password: "admin123",
-    role: "admin",
-  });
+  useEffect(() => {
+    const checkAdmin = findUser("admin123@gmail.com", "admin123");
+
+    if (!checkAdmin) {
+      saveUser({
+        fullName: "admin",
+        email: "admin123@gmail.com",
+        password: "admin123",
+        role: "admin",
+      });
+    }
+  }, []);
 
   const {
     register,
@@ -29,8 +37,9 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
+  const dispatch = useDispatch();
   const onSubmit = (data) => {
-    const user = findUser(data.email, data.password);
+    const user = dispatch(setCurrentUser(data));
 
     if (user) {
       setCurrentUser(user);
