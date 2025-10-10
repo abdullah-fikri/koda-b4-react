@@ -65,10 +65,7 @@ const CheckoutProduct = () => {
       product: cart.map((item) => item.product).join(", "),
     };
 
-    const existingOrders = [];
-    existingOrders.push(order);
-
-    setHistory([...history, existingOrders]);
+    setHistory([...history, order]);
 
     setCart([]);
 

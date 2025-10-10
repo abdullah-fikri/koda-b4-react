@@ -1,28 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Calendar, MessageCircle, ArrowLeft } from "lucide-react";
 import { RoundButton } from "../components/RoundButton";
 import { useNavigate } from "react-router-dom";
+import { History } from "../context/Context";
 
 export const HistoryOrder = () => {
-  const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("On Progress");
   const [selectedMonth, setSelectedMonth] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    setOrders(storedOrders);
-
-    const now = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      month: "long",
-      year: "numeric",
-    });
-    setSelectedMonth(formatter.format(now));
-  }, []);
+  const { history } = useContext(History);
 
   const tabs = ["On Progress", "Sending Goods", "Finish Order"];
-  const filteredOrders = orders.filter((order) => order.status === activeTab);
+  const filteredOrders = history.filter((order) => order.status === activeTab);
 
   const handleViewDetail = (orderNumber) => {
     navigate(`/DetailOrder/${orderNumber}`);

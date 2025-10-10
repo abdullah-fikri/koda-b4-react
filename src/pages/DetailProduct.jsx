@@ -232,7 +232,10 @@ const DetailProduct = () => {
             Recommendation <span className="text-[#8E6447]">For You</span>
           </h2>
 
-          <div className="grid grid-cols-3 gap-[24px]">
+          <div
+            className="grid grid-cols-3 gap-[24px]"
+            onClick={() => navigate("/")}
+          >
             {[1, 2, 3].map((item) => (
               <div key={item} className="relative">
                 <div className="absolute top-4 left-4 bg-red-600 text-white text-sm font-bold p-4 rounded-3xl z-10">

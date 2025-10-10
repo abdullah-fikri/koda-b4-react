@@ -4,9 +4,11 @@ import { CardProduct } from "../components/CardProduct";
 import { Star, ArrowLeft } from "lucide-react";
 import Chat from "../components/Chat";
 import { RoundButton } from "../components/RoundButton";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const arr = [1, 2, 3, 4, 5];
+  const navigate = useNavigate();
   return (
     <>
       <div className="flex">
@@ -107,7 +109,7 @@ const Home = () => {
           Let's choose and have a bit taste of poeple's favorite. It might be
           yours too!
         </span>
-        <CardProduct />
+        <CardProduct onClick={() => navigate("/DetailProduct")} />
       </div>
       {/* 3 */}
       <div className="flex flex-col justify-center items-center mt-[81px] px-[130px]">

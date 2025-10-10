@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 
-export const CardProduct = () => {
+export const CardProduct = ({ onClick }) => {
   const [product, setProduct] = useState([]);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export const CardProduct = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-2  gap-6 p-6">
+    <div className="grid grid-cols-2  gap-6 p-6" onClick={onClick}>
       {product.map((item) => (
         <div key={item.id} className="relative">
           <div className="w-full h-72 overflow-hidden rounded-2xl">
