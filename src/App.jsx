@@ -20,7 +20,7 @@ import Dashboard from "./pages/Dashboard";
 import { persistor, store } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { CartContextLayout } from "./context/cartContextLayout";
+import { CartContextLayout } from "./context/CartContextLayout";
 import { HistoryContextLayout } from "./context/HistoryContextLayout";
 
 const router = createBrowserRouter([
