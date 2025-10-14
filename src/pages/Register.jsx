@@ -67,14 +67,14 @@ const Register = () => {
       )}
 
       <img
-        src=".././public/img/Rectangle 289.svg"
+        src="/Rectangle 289.svg"
         alt="coffe logo"
         className="hidden lg:block"
       />
 
       <div className="w-full lg:ml-[70px] lg:max-w-[780px] px-6 lg:px-0 py-8 lg:py-0 lg:h-[821px] lg:mt-[61px] flex flex-col">
         <img
-          src=".././public/img/Frame 12.png"
+          src="/Frame 12.png"
           alt="coffe-shop"
           className="w-32 lg:w-[132px] mx-auto lg:mx-0 mb-8 lg:mb-0 "
         />
@@ -192,7 +192,7 @@ const Register = () => {
             <ButtonRegister>
               <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-16 lg:w-[383px] h-[64px] text-[#4F5665] font-medium text-lg rounded-2xl">
                 <img
-                  src=".././public/img/flat-color-icons_google.svg"
+                  src="/flat-color-icons_google.svg"
                   alt="google"
                   className="w-6 h-6"
                 />

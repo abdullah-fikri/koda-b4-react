@@ -32,12 +32,12 @@ export const Navbar = () => {
             <button onClick={() => navigate("/Home")}>
               <img
                 className="hidden lg:block w-auto h-8"
-                src="/img/Frame 12.png"
+                src="/Frame 12.png"
                 alt="coffeShop"
               />
               <img
                 className="block lg:hidden w-auto h-8"
-                src="/img/Frame 13.svg"
+                src="/Frame 13.svg"
                 alt="coffeShop"
               />
             </button>
@@ -80,14 +80,22 @@ export const Navbar = () => {
                     <div className="flex justify-between items-center mb-6">
                       <div className="flex items-center gap-2">
                         <img
-                          src="/img/Frame 12.png"
+                          src="/Frame 12.png"
                           alt="coffe shop"
                           className="w-auto h-8"
                         />
                       </div>
                       <button onClick={() => setMenu(false)}>
-                        <X color="red" size={24} />
+                        <X color="#C47F3E" size={24} />
                       </button>
+                    </div>
+
+                    {/* user */}
+                    <div className="flex items-center gap-3 mb-9 border-b border-[#C47F3E] py-3 text-black/60">
+                      <div className="bg-gray-300 rounded-full w-8 h-8"></div>
+                      <p className="text-xl font-bold">
+                        {currentUser.fullName}
+                      </p>
                     </div>
 
                     {/* Search */}
@@ -140,7 +148,15 @@ export const Navbar = () => {
                   {/* Footer buttons */}
                   <div className="flex flex-col gap-3">
                     <button
-                      className="w-full border border-black text-black py-3 rounded-md"
+                      className="w-full border border-[#C47F3E] py-3 rounded-md"
+                      onClick={(e) => {
+                        navigate("/HistoryOrder"), e.stopPropagation();
+                      }}
+                    >
+                      History
+                    </button>
+                    <button
+                      className="w-full border border-[#C47F3E] py-3 rounded-md"
                       onClick={handleLogout}
                     >
                       Log out
@@ -174,11 +190,7 @@ export const Navbar = () => {
       ) : (
         <nav className="flex justify-between fixed top-0 bg-[#0B0909]/80 w-full h-[76px] px-4 sm:px-8 md:px-16 lg:px-[130px] z-40">
           <div className="flex items-center gap-4 sm:gap-8 lg:gap-[68px] text-white">
-            <img
-              src="/img/Frame 13.svg"
-              alt="coffeShop"
-              className="w-auto h-8"
-            />
+            <img src="/Frame 13.svg" alt="coffeShop" className="w-auto h-8" />
             <NavLink
               to="/Home"
               className={({ isActive }) =>
@@ -243,7 +255,7 @@ export const Navbar = () => {
                     <div className="flex justify-between items-center mb-6">
                       <div className="flex items-center gap-2">
                         <img
-                          src="/img/Frame 12.png"
+                          src="/Frame 12.png"
                           alt="coffe shop"
                           className="w-auto h-8"
                         />

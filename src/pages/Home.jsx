@@ -4,6 +4,7 @@ import { CardProduct } from "../components/CardProduct";
 import { Star, ArrowLeft } from "lucide-react";
 import Chat from "../components/Chat";
 import { RoundButton } from "../components/RoundButton";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [testimoniData, setTestimoniData] = useState([]);
@@ -52,9 +53,11 @@ const Home = () => {
               We provide high quality beans, good taste, and healthy meals made
               by love just for you. Start your day with us for a bigger smile!
             </span>
-            <ButtonRegister className="bg-[#FF8906] p-2.5 rounded-md font-normal text-sm cursor-pointer w-fit">
-              Get Started
-            </ButtonRegister>
+            <Link to="/Product">
+              <ButtonRegister className="bg-[#FF8906] p-2.5 rounded-md font-normal text-sm cursor-pointer w-fit">
+                Get Started
+              </ButtonRegister>
+            </Link>
             <div className="flex flex-row gap-[20px] lg:gap-[40px]">
               <div className="flex flex-col w-full lg:max-w-[146px] border-r border-r-[white] gap-[12px]">
                 <h1 className="text-[#FF8906] font-medium text-2xl sm:text-3xl lg:text-5xl">
@@ -87,7 +90,7 @@ const Home = () => {
         <div className="relative w-full lg:max-w-[712px]">
           <img
             className="w-full h-[300px] sm:h-[400px] lg:h-[1024px] object-cover"
-            src="/img/Rectangle 287.svg"
+            src="/Rectangle 287.svg"
             alt="Coffe"
           />
           <Chat />
@@ -112,23 +115,23 @@ const Home = () => {
           </span>
           <ul className="flex flex-col gap-[25px]">
             <li className="flex gap-[10px] items-start">
-              <img src="/img/Vector.svg" alt="Checklist" className="mt-1" />
+              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
               <span className="text-sm lg:text-base">High quality beans</span>
             </li>
             <li className="flex gap-[10px] items-start">
-              <img src="/img/Vector.svg" alt="Checklist" className="mt-1" />
+              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
               <span className="text-sm lg:text-base">
                 Healthy meals, you can request the ingredients
               </span>
             </li>
             <li className="flex gap-[10px] items-start">
-              <img src="/img/Vector.svg" alt="Checklist" className="mt-1" />
+              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
               <span className="text-sm lg:text-base">
                 Chat with our staff to get better experience for ordering
               </span>
             </li>
             <li className="flex gap-[10px] items-start">
-              <img src="/img/Vector.svg" alt="Checklist" className="mt-1" />
+              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
               <span className="text-sm lg:text-base">
                 Free member card with a minimum purchase of IDR 200.000.
               </span>
@@ -137,7 +140,7 @@ const Home = () => {
         </div>
         <div className="w-full lg:w-auto px-6 lg:px-0 mt-6 lg:mt-0">
           <img
-            src="/img/Rectangle 291.png"
+            src="/Rectangle 291.png"
             alt="barista"
             className="w-full h-auto"
           />
@@ -170,7 +173,7 @@ const Home = () => {
         </span>
         <img
           className="mt-[60px] w-full h-auto"
-          src="/img/Frame 399.png"
+          src="/Frame 399.png"
           alt="map-store"
         />
       </div>

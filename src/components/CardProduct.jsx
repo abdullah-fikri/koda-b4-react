@@ -46,7 +46,7 @@ export const CardProduct = () => {
             />
           </div>
 
-          <div className="relative -mt-16 sm:-mt-20 mx-4 bg-white rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className="relative lg:-mt-16 sm:-mt-20 mx-4 bg-white rounded-2xl p-1 lg:p-4 sm:p-5 lg:shadow-lg">
             <h3 className="text-lg sm:text-xl font-medium text-[#0B132A] mb-2">
               {item.title}
             </h3>
@@ -69,7 +69,7 @@ export const CardProduct = () => {
 
             <div className="flex flex-col lg:flex-row items-center gap-2">
               <button
-                className="flex-1 bg-[#FF8906] text-[#0B132A] font-medium text-sm sm:text-base px-15 py-3 sm:p-2.5 rounded-lg hover:bg-orange-600 transition-colors duration-200"
+                className="flex-1 bg-[#FF8906] text-[#0B132A] font-medium text-sm sm:text-base px-20 py-3 sm:p-2.5 rounded-lg hover:bg-orange-600 transition-colors duration-200"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleClick(item.id);
@@ -78,7 +78,7 @@ export const CardProduct = () => {
                 Buy
               </button>
               <button
-                className="border border-orange-500 px-15 py-3 sm:p-2.5 rounded-lg hover:bg-orange-50 transition-colors duration-200"
+                className="border border-orange-500 px-20 py-3 sm:p-2.5 rounded-lg hover:bg-orange-50 transition-colors duration-200"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />

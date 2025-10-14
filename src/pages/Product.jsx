@@ -103,7 +103,7 @@ const Product = () => {
       <div
         className="w-full h-[300px] sm:h-[376px] flex items-center py-[60px] sm:py-[96px] px-6 sm:px-[130px] mt-[76px]"
         style={{
-          backgroundImage: "url('/img/Rectangle 299.png')",
+          backgroundImage: "url('/Rectangle 299.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -137,7 +137,7 @@ const Product = () => {
             <PromoCard
               key={item}
               bgColor="#88B788"
-              image="/img/image 46.png"
+              image="/image 46.png"
               title="HAPPY MOTHER'S DAY!"
               description="Get one of our favorite menu for free!"
               cta="Klaim Kupon"
@@ -146,7 +146,7 @@ const Product = () => {
             <PromoCard
               key={item}
               bgColor="#FFBA33"
-              image="/img/image 43.png"
+              image="/image 43.png"
               title="Get a cup of coffee for free"
               description="Only at 7 to 9 AM"
             />
@@ -177,9 +177,13 @@ const Product = () => {
       {/* popup */}
       {showFilter && (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-end lg:hidden">
-          <div className="w-full sm:w-1/2 h-full shadow-lg  overflow-y-auto">
+          <div className="relative w-full sm:w-1/2 h-full shadow-lg  overflow-y-auto">
             <button onClick={() => setShowFilter(false)}>
-              <X color="red" />
+              <X
+                size={30}
+                color="#FF8906"
+                className="absolute -mt2 right-10 top-3"
+              />
             </button>
             <FilterSidebar onFilterChange={handleFilterChange} />
           </div>

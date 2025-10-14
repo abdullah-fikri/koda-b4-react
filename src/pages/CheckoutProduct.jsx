@@ -75,7 +75,7 @@ const CheckoutProduct = () => {
         address: data.address,
       },
       deliveryMethod,
-      img: cart[0]?.img || "/img/image 22.png",
+      img: cart[0]?.img || "/image 22.png",
       product: cart.map((item) => item.product).join(", "),
     };
 
@@ -135,7 +135,7 @@ const CheckoutProduct = () => {
                           </div>
                         )}
                         <img
-                          src={item.img || "/img/image 22.png"}
+                          src={item.img || "/image 22.png"}
                           alt={item.product}
                           className="w-full h-full object-cover"
                         />

@@ -253,7 +253,7 @@ export const DetailOrder = () => {
                           </div>
                         )}
                         <img
-                          src={item.img || "/img/image 22.png"}
+                          src={item.img || "/image 22.png"}
                           alt={item.product}
                           className="w-full h-full object-cover"
                         />

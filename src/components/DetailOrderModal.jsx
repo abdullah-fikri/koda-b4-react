@@ -131,7 +131,7 @@ export const DetailOrderModal = ({ isOpen, onClose, product }) => {
                   variant: "2 pcs | Regular | Ice | Dine In",
                   oldPrice: "IDR 40.000",
                   price: "IDR 20.000",
-                  img: "/img/image 27.png",
+                  img: "/image 27.png",
                 },
                 {
                   id: 2,
@@ -140,7 +140,7 @@ export const DetailOrderModal = ({ isOpen, onClose, product }) => {
                   variant: "2 pcs | Regular | Ice | Dine In",
                   oldPrice: "IDR 40.000",
                   price: "IDR 20.000",
-                  img: "/img/image 27.png",
+                  img: "/image 27.png",
                 },
               ].map((item) => (
                 <div

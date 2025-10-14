@@ -7,6 +7,8 @@ import { useLocation } from "react-router-dom";
 
 export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   // redux
   const { currentUser } = useSelector((state) => state.account);
@@ -41,7 +43,8 @@ export const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Profile updated successfully!");
+    setAlertMessage("Profile updated successfully!");
+    setShowAlert(!showAlert);
   };
 
   if (!currentUser) {
@@ -52,8 +55,28 @@ export const Profile = () => {
     );
   }
 
+  const handleAlert = () => {
+    setShowAlert(false);
+  };
+
   return (
     <div className="pt-[100px] px-4 sm:px-8 md:px-16 lg:px-[130px]">
+      {showAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-[90%] text-center">
+            <h2 className="text-lg font-semibold text-[#8E6447]">
+              {alertMessage}
+            </h2>
+            <button
+              onClick={handleAlert}
+              className="mt-4 px-6 py-2 bg-[#FF8906] text-white rounded-md hover:bg-[#e07a05] transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <h1 className="text-[#0B0909] text-3xl sm:text-4xl lg:text-5xl font-normal">
         Profile
       </h1>

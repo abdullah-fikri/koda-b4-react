@@ -89,7 +89,7 @@ export const HistoryOrder = () => {
                   >
                     <div className="w-full sm:w-[80px] md:w-[100px] h-[200px] sm:h-[80px] md:h-[100px] rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={order.img || "/img/image 22.png"}
+                        src={order.img || "/image 22.png"}
                         alt={order.product}
                         className="w-full h-full object-cover"
                       />
