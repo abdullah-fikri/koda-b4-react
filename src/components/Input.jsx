@@ -8,6 +8,7 @@
  * @param {React.ReactNode} [props.children] - Optional child elements (e.g., icon buttons) displayed on the right side of the input.
  * @param {Object} rest - Additional props passed to the `<input>` element (e.g., `type`, `placeholder`, `value`, `onChange`).
  * @returns {JSX.Element} The styled input component.
+ *
  */
 
 import React from "react";
