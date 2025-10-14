@@ -5,29 +5,39 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/util";
-import { findUser, saveUser } from "../utils/storage";
 import { Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/reducers/account";
+import { useDispatch, useSelector } from "react-redux";
+import { addAccount, setCurrentUser } from "../redux/reducers/account";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { account } = useSelector((state) => state.account);
 
   useEffect(() => {
-    const checkAdmin = findUser("admin123@gmail.com", "admin123");
-
-    if (!checkAdmin) {
-      saveUser({
-        fullName: "admin",
-        email: "admin123@gmail.com",
-        password: "admin123",
-        role: "admin",
-      });
+    const adminExists = account.some(
+      (user) => user.email === "admin123@gmail.com"
+    );
+    if (!adminExists) {
+      dispatch(
+        addAccount({
+          fullName: "Admin",
+          email: "admin123@gmail.com",
+          password: "admin123",
+          role: "admin",
+          since: new Date().toLocaleString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }),
+        })
+      );
     }
-  }, []);
+  }, [account, dispatch]);
 
   const {
     register,
@@ -37,41 +47,41 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const dispatch = useDispatch();
   const onSubmit = (data) => {
-    const user = dispatch(setCurrentUser(data));
+    const foundUser = account.find(
+      (acc) => acc.email === data.email && acc.password === data.password
+    );
 
-    if (user) {
-      setCurrentUser(user);
+    if (foundUser) {
+      dispatch(setCurrentUser(foundUser));
 
-      if (user.role === "admin") {
+      if (foundUser.role === "admin") {
         setAlertMessage("Login Admin Success!");
       } else {
         setAlertMessage("Login Success!");
       }
-
-      setShowAlert(true);
     } else {
       setAlertMessage("Invalid email or password");
-      setShowAlert(true);
     }
+
+    setShowAlert(true);
   };
 
   const handleCloseAlert = () => {
     setShowAlert(false);
 
     if (alertMessage === "Login Success!") {
-      navigate("/Home"); // user biasa
+      navigate("/Home");
     } else if (alertMessage === "Login Admin Success!") {
-      navigate("/Dashboard"); // admin
+      navigate("/Dashboard");
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       {showAlert && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-[90%] text-center">
             <h2 className="text-lg font-semibold text-[#8E6447]">
               {alertMessage}
             </h2>
@@ -85,11 +95,20 @@ const Login = () => {
         </div>
       )}
 
-      <img src=".././public/img/Rectangle 289 (1).svg" alt="coffe logo" />
-      <div className="ml-[70px] max-w-[780px] w-full h-[821px] gap-[51px] mt-[61px]">
-        <img src=".././public/img/Frame 12.png" alt="coffe-shop" />
+      <img
+        src=".././public/img/Rectangle 289 (1).svg"
+        alt="coffe logo"
+        className="hidden lg:block lg:max-w-[600px] lg:h-auto object-contain"
+      />
 
-        <div className="mt-[51px] flex flex-col gap-[25px]">
+      <div className="w-full lg:ml-[70px] lg:max-w-[780px] px-6 lg:px-0 py-8 lg:py-0 lg:h-[821px] lg:mt-[61px] flex flex-col">
+        <img
+          src=".././public/img/Frame 12.png"
+          alt="coffe-shop"
+          className="w-32 lg:w-[132px] mx-auto lg:mx-0 mb-8 lg:mb-0"
+        />
+
+        <div className="lg:mt-[51px] flex flex-col gap-[25px]">
           <h1 className="font-jakarta font-semibold text-2xl text-[#8E6447]">
             Login
           </h1>
@@ -101,35 +120,43 @@ const Login = () => {
             className="flex flex-col gap-[25px]"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
-              leftIcon={Mail}
-              label="Email"
-              type="email"
-              placeholder="Enter Your Email"
-              {...register("email")}
-            />
-            <p className="text-red-500 text-sm">{errors.email?.message}</p>
+            <div>
+              <Input
+                leftIcon={Mail}
+                label="Email"
+                type="email"
+                placeholder="Enter Your Email"
+                {...register("email")}
+              />
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email?.message}
+              </p>
+            </div>
 
-            <Input
-              leftIcon={Lock}
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Your Password"
-              {...register("password")}
-            >
-              {showPassword ? (
-                <EyeOff
-                  className="w-5 h-5 text-gray-500 cursor-pointer"
-                  onClick={() => setShowPassword(false)}
-                />
-              ) : (
-                <Eye
-                  className="w-5 h-5 text-gray-500 cursor-pointer"
-                  onClick={() => setShowPassword(true)}
-                />
-              )}
-            </Input>
-            <p className="text-red-500 text-sm">{errors.password?.message}</p>
+            <div>
+              <Input
+                leftIcon={Lock}
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Your Password"
+                {...register("password")}
+              >
+                {showPassword ? (
+                  <EyeOff
+                    className="w-5 h-5 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <Eye
+                    className="w-5 h-5 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
+              </Input>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password?.message}
+              </p>
+            </div>
 
             <div>
               <span className="flex justify-end text-[#FF8906] font-normal text-base">
@@ -138,7 +165,7 @@ const Login = () => {
             </div>
 
             <ButtonRegister
-              className="max-w-[780px] w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
+              className="w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
               type="submit"
             >
               Login
@@ -151,24 +178,28 @@ const Login = () => {
               Register
             </Link>
           </div>
+
           <div className="flex justify-between items-center">
             <div className="w-[35%] h-[1px] bg-[#DEDEDE]"></div>
-            <div className="text-[#AAAAAA]">or</div>
+            <div className="text-[#AAAAAA]">Or</div>
             <div className="w-[35%] h-[1px] bg-[#DEDEDE]"></div>
           </div>
-          <div className="flex items-center gap-[14px]">
+
+          <div className="flex justify-center items-center gap-[14px]">
             <ButtonRegister>
-              <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-[383px] h-[64px] text-[#4F5665] font-medium text-lg  rounded-2xl">
-                <Facebook className="fill-black text-black" /> Facebook
-              </div>
-            </ButtonRegister>
-            <ButtonRegister>
-              <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-[383px] h-[64px] text-[#4F5665] font-medium text-lg  rounded-2xl">
+              <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-16 lg:w-[383px] h-[64px] text-[#4F5665] font-medium text-lg rounded-2xl">
                 <img
                   src=".././public/img/flat-color-icons_google.svg"
                   alt="google"
-                />{" "}
-                Google
+                  className="w-6 h-6"
+                />
+                <span className="lg:inline hidden">Google</span>
+              </div>
+            </ButtonRegister>
+            <ButtonRegister>
+              <div className="flex items-center justify-center gap-[22px] shadow-[0_4px_10px_rgba(0,0,0,0.25)] w-16 lg:w-[383px] h-[64px] text-[#4F5665] font-medium text-lg rounded-2xl">
+                <Facebook className="fill-blue-600 text-blue-600 w-6 h-6" />
+                <span className="lg:inline hidden">Facebook</span>
               </div>
             </ButtonRegister>
           </div>
