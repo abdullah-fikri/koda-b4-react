@@ -22,6 +22,9 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { CartContextLayout } from "./context/CartContextLayout";
 import { HistoryContextLayout } from "./context/HistoryContextLayout";
+import ProductDashboard from "./pages/ProductDashboard";
+import OrderDashboard from "./pages/OrderDashboard";
+import UsersDashboard from "./pages/UsersDashboard";
 
 const router = createBrowserRouter([
   {
@@ -52,7 +55,7 @@ const router = createBrowserRouter([
         element: <Product />,
       },
       {
-        path: "/detailproduct",
+        path: "/detailproduct/:id",
         element: <DetailProduct />,
       },
       {
@@ -63,7 +66,7 @@ const router = createBrowserRouter([
         path: "/HistoryOrder",
         element: <HistoryOrder />,
       },
-      { path: "/DetailOrder/:orderNumber", element: <DetailOrder /> },
+      { path: "/detailorder/:orderNumber", element: <DetailOrder /> },
       {
         path: "/Profile",
         element: <Profile />,
@@ -71,6 +74,18 @@ const router = createBrowserRouter([
       {
         path: "/Dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/ProductDashboard",
+        element: <ProductDashboard />,
+      },
+      {
+        path: "/OrderDashboard",
+        element: <OrderDashboard />,
+      },
+      {
+        path: "/UsersDashboard",
+        element: <UsersDashboard />,
       },
     ],
   },
