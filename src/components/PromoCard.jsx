@@ -1,3 +1,15 @@
+/**
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {string} props.bgColor - Background color of the card.
+ * @param {string} props.image - Image source URL for the promo card.
+ * @param {string} props.title - Title text of the promotion.
+ * @param {string} props.description - Description text of the promotion.
+ * @param {string} [props.cta] - Optional call-to-action text (e.g., "Shop Now").
+ * @returns {JSX.Element} A styled promo card component displaying promotional content.
+ */
+
 import React from "react";
 
 export const PromoCard = ({ bgColor, image, title, description, cta }) => {
