@@ -1,3 +1,9 @@
+/**
+ *
+ * @component
+ * @returns {JSX.Element} A chat button that opens a small support chat window
+ */
+
 import React, { useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 
@@ -8,13 +14,9 @@ const Chat = () => {
     <>
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-80 bg-white rounded-lg shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          {" "}
           <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white">
-            {" "}
             <div className="flex justify-between items-start">
-              {" "}
               <div>
-                {" "}
                 <h3 className="font-semibold text-lg">Maria Angela</h3>{" "}
                 <p className="text-sm text-orange-100">Admin Support</p>{" "}
               </div>

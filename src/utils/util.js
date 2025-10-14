@@ -36,3 +36,7 @@ export const checkoutSchema = Yup.object().shape({
     .required("Address is required")
     .min(10, "Address must be at least 10 characters"),
 });
+
+export const forgotSchema = Yup.object().shape({
+  email: Yup.string().email("Email tidak valid").required("Email wajib diisi"),
+});

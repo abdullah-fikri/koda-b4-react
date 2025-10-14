@@ -1,3 +1,16 @@
+/**
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {string} props.label - Label text displayed above the input.
+ * @param {string} [props.span] - Optional text displayed to the right of the label (e.g., “Forgot password?”).
+ * @param {React.ElementType} [props.leftIcon] - Optional icon component displayed on the left side of the input.
+ * @param {React.ReactNode} [props.children] - Optional child elements (e.g., icon buttons) displayed on the right side of the input.
+ * @param {Object} rest - Additional props passed to the `<input>` element (e.g., `type`, `placeholder`, `value`, `onChange`).
+ * @returns {JSX.Element} The styled input component.
+ *
+ */
+
 import React from "react";
 
 const Input = ({ label, span, leftIcon: LeftIcon, children, ...rest }) => {
