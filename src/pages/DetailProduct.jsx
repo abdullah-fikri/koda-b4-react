@@ -238,7 +238,7 @@ const DetailProduct = () => {
               </button>
 
               <button
-                className="flex items-center justify-center gap-3 bg-[#FF8906] hover:bg-[#e97e05] text-white font-semibold text-sm md:text-[16px] py-3 md:py-[14px] px-5 md:px-[24px] rounded-[8px] transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-3 bg-white border border-[#FF8906] hover:bg-[#e97e05] text-[#FF8906] font-semibold text-sm md:text-[16px] py-3 md:py-[14px] px-5 md:px-[24px] rounded-[8px] transition-colors cursor-pointer"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5" />

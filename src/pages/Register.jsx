@@ -76,7 +76,7 @@ const Register = () => {
         <img
           src=".././public/img/Frame 12.png"
           alt="coffe-shop"
-          className="w-32 lg:w-[132px] mx-auto lg:mx-0 mb-8 lg:mb-0"
+          className="w-32 lg:w-[132px] mx-auto lg:mx-0 mb-8 lg:mb-0 "
         />
 
         <div className="lg:mt-[51px] flex flex-col gap-[25px]">

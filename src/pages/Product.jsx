@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PromoCard } from "../components/PromoCard";
 import { RoundButton } from "../components/RoundButton";
-import { ArrowLeft, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal, X } from "lucide-react";
 import { FilterSidebar } from "../components/Filter";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -114,22 +114,24 @@ const Product = () => {
         </span>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 sm:px-[130px] my-[48px] text-center sm:text-left">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 sm:px-[130px] my-[48px] text-left">
         <span className="text-4xl sm:text-5xl font-medium text-[#0B0909] font-jakarta">
           Today<span className="text-[#8E6447]"> Promo</span>
         </span>
 
-        <div className="flex gap-[9px]">
-          <RoundButton bgColor="#E8E8E8">
-            <ArrowLeft className="w-4 h-4" />
-          </RoundButton>
-          <RoundButton bgColor="#FF8906">
-            <ArrowLeft className="w-4 h-4 rotate-180" />
-          </RoundButton>
+        <div className="hidden lg:block">
+          <div className="flex gap-[9px] ">
+            <RoundButton bgColor="#E8E8E8">
+              <ArrowLeft className="w-4 h-4" />
+            </RoundButton>
+            <RoundButton bgColor="#FF8906">
+              <ArrowLeft className="w-4 h-4 rotate-180" />
+            </RoundButton>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 px-4">
+      <div className="flex overflow-x-auto  justify-center gap-4 px-4">
         {arr.map((item) =>
           item <= 3 ? (
             <PromoCard
@@ -175,12 +177,9 @@ const Product = () => {
       {/* popup */}
       {showFilter && (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-end lg:hidden">
-          <div className="bg-white w-3/4 sm:w-1/2 h-full shadow-lg p-4 overflow-y-auto">
-            <button
-              onClick={() => setShowFilter(false)}
-              className="text-gray-600 mb-4 font-medium"
-            >
-              Close ✕
+          <div className="w-full sm:w-1/2 h-full shadow-lg  overflow-y-auto">
+            <button onClick={() => setShowFilter(false)}>
+              <X color="red" />
             </button>
             <FilterSidebar onFilterChange={handleFilterChange} />
           </div>
@@ -200,7 +199,7 @@ const Product = () => {
           {/* product  */}
           <div className="flex-1">
             {currentProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-2 sm:p-6">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 p-3 sm:p-6 md:gap-8">
                 {currentProducts.map((item) => (
                   <div
                     key={item.id}
@@ -208,55 +207,60 @@ const Product = () => {
                     className="relative cursor-pointer"
                   >
                     {item.isFlashSale && (
-                      <div className="absolute top-4 left-4 bg-red-600 text-white font-bold text-xs p-2.5 rounded-3xl w-fit z-10">
+                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-red-600 text-white font-bold text-[10px] sm:text-xs px-2 py-1.5 sm:p-2.5 rounded-3xl w-fit z-10">
                         FLASH SALE!
                       </div>
                     )}
-                    <div className="w-full h-64 sm:h-72 overflow-hidden rounded-2xl">
+
+                    <div className="w-full h-44 sm:h-60 md:h-72 overflow-hidden rounded-2xl mb-2 sm:mb-0">
                       <img
                         src={item.img}
                         alt={item.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
-                    <div className="relative -mt-16 mx-4 bg-white rounded-2xl p-5 shadow-lg">
-                      <h3 className="text-lg sm:text-xl font-medium text-[#0B132A] mb-2">
+
+                    <div className="relative mt-3 sm:-mt-16 mx-2 sm:mx-4 bg-white rounded-2xl  lg:p-3 sm:p-5 lg:shadow-md lg:hover:shadow-lg transition-shadow duration-200">
+                      <h3 className="text-lg sm:text-base md:text-lg font-medium text-[#0B132A] mb-1 sm:mb-2 line-clamp-1">
                         {item.title}
                       </h3>
-                      <p className="text-[#4F5665] text-sm leading-relaxed mb-3">
+                      <p className="text-[#4F5665] text-[11px] sm:text-sm leading-snug mb-2 sm:mb-3 line-clamp-2">
                         {item.description}
                       </p>
+
                       {item.rating && (
-                        <div className="flex items-center gap-1 mb-3">
+                        <div className="flex items-center lg:gap-1 mb-2 sm:mb-3">
                           {[...Array(5)].map((_, index) => (
                             <span
                               key={index}
-                              className="text-orange-500 text-sm"
+                              className="text-orange-500 text-xs sm:text-sm"
                             >
                               ★
                             </span>
                           ))}
-                          <span className="text-xs text-gray-600 ml-1">
+                          <span className="text-[10px] sm:text-xs text-gray-600 ml-1 hidden lg:block">
                             {item.rating}
                           </span>
                         </div>
                       )}
-                      <div className="mb-4">
+
+                      <div className="mb-3 sm:mb-4">
                         {item.originalPrice && (
-                          <span className="text-[#D00000] line-through text-sm mr-2">
+                          <span className="text-[#D00000] line-through text-xs sm:text-sm mr-1 sm:mr-2 hidden lg:block">
                             IDR {item.originalPrice}
                           </span>
                         )}
-                        <span className="text-xl font-medium text-[#FF8906]">
+                        <span className="text-sm sm:text-xl font-medium text-[#FF8906]">
                           IDR {item.price}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button className="flex-1 bg-[#FF8906] text-white font-medium py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200">
+
+                      <div className="flex flex-col lg:flex-row items-center gap-1.5 sm:gap-2">
+                        <button className="flex-1 bg-[#FF8906] text-white text-xs sm:text-sm font-medium px-10 py-1.5 sm:py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200">
                           Buy
                         </button>
-                        <button className="border border-orange-500 p-2 rounded-lg hover:bg-orange-50 transition-colors duration-200">
-                          <ShoppingCart className="w-5 h-5 text-orange-500" />
+                        <button className="border border-orange-500 px-10 py-1.5 sm:p-2 rounded-lg hover:bg-orange-50 transition-colors duration-200">
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
                         </button>
                       </div>
                     </div>

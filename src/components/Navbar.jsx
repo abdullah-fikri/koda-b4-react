@@ -139,16 +139,12 @@ export const Navbar = () => {
 
                   {/* Footer buttons */}
                   <div className="flex flex-col gap-3">
-                    <Link to="/login" onClick={() => setMenu(false)}>
-                      <button className="w-full border border-black text-black py-3 rounded-md">
-                        SignIn
-                      </button>
-                    </Link>
-                    <Link to="/register" onClick={() => setMenu(false)}>
-                      <button className="w-full bg-[#FF8906] text-white py-3 rounded-md">
-                        Sign Up
-                      </button>
-                    </Link>
+                    <button
+                      className="w-full border border-black text-black py-3 rounded-md"
+                      onClick={handleLogout}
+                    >
+                      Log out
+                    </button>
                   </div>
                 </div>
               </div>
@@ -231,8 +227,95 @@ export const Navbar = () => {
               </button>
             </Link>
             <button className="block md:hidden" onClick={() => setMenu(!menu)}>
-              <Menu strokeWidth={2} color="white" className="w-6 h-6" />
+              <Menu strokeWidth={1} color="white" className="w-6 h-6" />
             </button>
+            {menu && (
+              <div
+                className="fixed inset-0 bg-black/40 z-[999]"
+                onClick={() => setMenu(false)}
+              >
+                <div
+                  className="absolute left-0 top-0 w-[80%] sm:w-[350px] h-full bg-white shadow-xl p-6 flex flex-col justify-between "
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div>
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src="/img/Frame 12.png"
+                          alt="coffe shop"
+                          className="w-auto h-8"
+                        />
+                      </div>
+                      <button onClick={() => setMenu(false)}>
+                        <X color="red" size={24} />
+                      </button>
+                    </div>
+
+                    {/* Search */}
+                    <div className="mb-6">
+                      <p className="text-black font-semibold mb-2">
+                        Search Product
+                      </p>
+                      <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+                        <Search className="text-gray-500" size={18} />
+                        <input
+                          type="text"
+                          placeholder="Find Product"
+                          className="flex-1 ml-2 outline-none border-none text-sm text-gray-600 placeholder-gray-400"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Navigation links */}
+                    <div className="flex flex-col gap-3">
+                      <NavLink
+                        to="/Home"
+                        onClick={() => setMenu(false)}
+                        className={({ isActive }) =>
+                          `pb-2 border-b ${
+                            isActive
+                              ? "border-[#C47F3E] text-[#C47F3E]"
+                              : "border-gray-200 text-black"
+                          }`
+                        }
+                      >
+                        Home
+                      </NavLink>
+
+                      <NavLink
+                        to="/Product"
+                        onClick={() => setMenu(false)}
+                        className={({ isActive }) =>
+                          `pb-2 border-b ${
+                            isActive
+                              ? "border-[#C47F3E] text-[#C47F3E]"
+                              : "border-gray-200 text-black"
+                          }`
+                        }
+                      >
+                        Product
+                      </NavLink>
+                    </div>
+                  </div>
+
+                  {/* Footer buttons */}
+                  <div className="flex flex-col gap-3">
+                    <Link to="/login" onClick={() => setMenu(false)}>
+                      <button className="w-full border border-black text-black py-3 rounded-md">
+                        SignIn
+                      </button>
+                    </Link>
+                    <Link to="/register" onClick={() => setMenu(false)}>
+                      <button className="w-full bg-[#FF8906] text-white py-3 rounded-md">
+                        Sign Up
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </nav>
       )}
