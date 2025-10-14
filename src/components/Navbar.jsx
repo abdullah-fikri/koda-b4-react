@@ -142,6 +142,20 @@ export const Navbar = () => {
                       >
                         Product
                       </NavLink>
+
+                      <NavLink
+                        to="/HistoryOrder"
+                        onClick={() => setMenu(false)}
+                        className={({ isActive }) =>
+                          `pb-2 border-b ${
+                            isActive
+                              ? "border-[#C47F3E] text-[#C47F3E]"
+                              : "border-gray-200 text-black"
+                          }`
+                        }
+                      >
+                        History
+                      </NavLink>
                     </div>
                   </div>
 
@@ -149,11 +163,12 @@ export const Navbar = () => {
                   <div className="flex flex-col gap-3">
                     <button
                       className="w-full border border-[#C47F3E] py-3 rounded-md"
-                      onClick={(e) => {
-                        navigate("/HistoryOrder"), e.stopPropagation();
+                      onClick={() => {
+                        setMenu(false);
+                        navigate("/Profile");
                       }}
                     >
-                      History
+                      Profile
                     </button>
                     <button
                       className="w-full border border-[#C47F3E] py-3 rounded-md"
