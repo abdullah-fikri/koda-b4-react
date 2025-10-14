@@ -14,12 +14,7 @@ export const HistoryOrder = () => {
   const filteredOrders = history.filter((order) => order.status === activeTab);
 
   const handleViewDetail = (orderNumber) => {
-<<<<<<< HEAD
-    console.log("Navigating to:", orderNumber);
-    navigate(`/DetailOrder/${orderNumber}`);
-=======
     navigate(`/detailorder/${orderNumber}`);
->>>>>>> new
   };
 
   return (
