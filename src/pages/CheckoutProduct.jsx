@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Plus, X, MapPin, Mail, User } from "lucide-react";
+import { Plus, X, MapPin, Mail, User, ChevronLeft } from "lucide-react";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { checkoutSchema } from "../utils/util";
 import { CartContext } from "../context/Context";
 import { History } from "../context/Context";
+import { useSelector } from "react-redux";
 
 const parsePrice = (value) => {
   if (!value) return 0;
@@ -30,6 +31,7 @@ const CheckoutProduct = () => {
   const { history, setHistory } = useContext(History);
   const [deliveryMethod, setDeliveryMethod] = useState("Dine in");
   const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.account);
 
   const handleRemoveItem = (index) => {
     setCart(cart.filter((_, i) => i !== index));
@@ -86,6 +88,12 @@ const CheckoutProduct = () => {
 
   return (
     <div className="pt-[76px] px-4 sm:px-6 md:px-10 lg:px-20 xl:px-[130px] py-8 md:py-[50px] mt-[76px] min-h-screen">
+      <button
+        className="border border-gray-400 hover:bg-[#FF8906] rounded-full w-9 h-9 flex items-center justify-center mb-3"
+        onClick={() => navigate("/Product")}
+      >
+        <ChevronLeft color="gray" />
+      </button>
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#0B0909] mb-8 md:mb-[50px]">
         Payment Details
       </h1>
@@ -190,6 +198,7 @@ const CheckoutProduct = () => {
                     Email
                   </label>
                   <Input
+                    value={currentUser.email}
                     leftIcon={Mail}
                     type="email"
                     name="email"
@@ -209,6 +218,7 @@ const CheckoutProduct = () => {
                     Full Name
                   </label>
                   <Input
+                    value={currentUser.fullName}
                     leftIcon={User}
                     type="text"
                     name="fullName"
