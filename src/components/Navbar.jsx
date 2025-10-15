@@ -22,6 +22,7 @@ export const Navbar = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/Register");
+    setDropdown(false);
   };
 
   return (
@@ -58,13 +59,47 @@ export const Navbar = () => {
 
             <button
               className="cursor-pointer hidden lg:block"
-              onClick={() => setDropdown(!dropdown)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdown(!dropdown);
+              }}
             >
               <ChevronDown strokeWidth={2} />
             </button>
             <button className="block lg:hidden" onClick={() => setMenu(!menu)}>
               <Menu strokeWidth={2} color="white" className="w-6 h-6" />
             </button>
+
+            {dropdown && (
+              <div
+                className="fixed inset-0 z-[998]"
+                onClick={() => setDropdown(false)}
+              >
+                <div
+                  className="absolute right-[50px] top-16 lg:top-20 bg-white px-6 lg:px-8 py-5 rounded-2xl z-[999] shadow-lg"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    className="flex gap-2 mb-3"
+                    onClick={() => {
+                      navigate("/Profile");
+                      setDropdown(false);
+                    }}
+                  >
+                    <User strokeWidth={1} />
+                    <p className="text-black font-medium cursor-pointer">
+                      Profile halo
+                    </p>
+                  </button>
+                  <button className="flex gap-2" onClick={handleLogout}>
+                    <LogOut strokeWidth={1} />
+                    <p className="text-black font-medium cursor-pointer">
+                      log out
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {menu && (
               <div
@@ -178,26 +213,6 @@ export const Navbar = () => {
                     </button>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {dropdown && (
-              <div className="absolute right-0 lg:right-[-50px] top-16 lg:top-20 bg-white px-6 lg:px-8 py-5 rounded-2xl z-60 shadow-lg">
-                <button
-                  className="flex gap-2 mb-3"
-                  onClick={() => navigate("/Profile")}
-                >
-                  <User strokeWidth={1} />
-                  <p className="text-black font-medium cursor-pointer">
-                    Profile
-                  </p>
-                </button>
-                <button className="flex gap-2" onClick={handleLogout}>
-                  <LogOut strokeWidth={1} />
-                  <p className="text-black font-medium cursor-pointer">
-                    log out
-                  </p>
-                </button>
               </div>
             )}
           </div>
