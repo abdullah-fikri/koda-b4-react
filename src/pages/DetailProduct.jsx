@@ -10,6 +10,7 @@ const DetailProduct = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
   const [product, setProduct] = useState(null);
+  const [alert, setAlert] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { cart, setCart } = useContext(CartContext);
@@ -54,6 +55,10 @@ const DetailProduct = () => {
       img: product.img,
     };
     setCart([...cart, order]);
+    setAlert(true);
+    setTimeout(() => {
+      setAlert(false);
+    }, 500);
   };
 
   const handleBuy = () => {
@@ -87,7 +92,7 @@ const DetailProduct = () => {
           <div className="flex-shrink-0 w-full lg:w-auto">
             <div className="relative w-full lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-[20px] overflow-hidden mb-[20px]">
               <img
-                src={product.img}
+                src={product.images?.[selectedImage] || product.img}
                 alt={product.title}
                 className="w-full h-full object-cover"
               />
@@ -245,6 +250,14 @@ const DetailProduct = () => {
                 Add to Cart
               </button>
             </div>
+            {alert && (
+              <div
+                className="w-full bg-green-500 text-white text-sm font-bold px-4 py-3 mt-3 rounded-lg"
+                role="alert"
+              >
+                Added to cart
+              </div>
+            )}
           </div>
         </div>
 
