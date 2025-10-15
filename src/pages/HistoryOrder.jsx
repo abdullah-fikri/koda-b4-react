@@ -9,12 +9,28 @@ export const HistoryOrder = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const navigate = useNavigate();
   const { history } = useContext(History);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productPerPages = 6;
 
   const tabs = ["On Progress", "Sending Goods", "Finish Order"];
   const filteredOrders = history.filter((order) => order.status === activeTab);
 
   const handleViewDetail = (orderNumber) => {
     navigate(`/detailorder/${orderNumber}`);
+  };
+
+  const totalPages = Math.ceil(filteredOrders.length / productPerPages);
+
+  const indexOfLastProduct = currentPage * productPerPages;
+  const indexOfFirstProduct = indexOfLastProduct - productPerPages;
+  const currentOrders = filteredOrders.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -75,14 +91,14 @@ export const HistoryOrder = () => {
             </div>
 
             <div className="space-y-4 md:space-y-5 mt-4 md:mt-[24px]">
-              {filteredOrders.length === 0 ? (
+              {currentOrders.length === 0 ? (
                 <div className="bg-white rounded-xl border border-[#E8E8E8] p-6 md:p-8 text-center">
                   <p className="text-[#4F5665] text-sm md:text-base">
                     No orders found
                   </p>
                 </div>
               ) : (
-                filteredOrders.map((order, index) => (
+                currentOrders.map((order, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-xl border border-[#E8E8E8] p-4 md:p-5 flex flex-col sm:flex-row gap-4 md:gap-6 items-start sm:items-center"
@@ -143,20 +159,46 @@ export const HistoryOrder = () => {
               )}
             </div>
 
-            {filteredOrders.length > 0 && (
+            {filteredOrders.length > 0 && totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-6 md:mt-[40px] flex-wrap">
-                {[1, 2, 3, 4].map((i) =>
-                  i === 1 ? (
-                    <RoundButton key={i} bgColor="#FF8906">
-                      {i}
-                    </RoundButton>
-                  ) : (
-                    <RoundButton key={i}>{i}</RoundButton>
-                  )
+                {currentPage > 1 && (
+                  <RoundButton
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    bgColor="#E8E8E8"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </RoundButton>
                 )}
-                <RoundButton bgColor="#FF8906">
-                  <ArrowLeft className="text-white rotate-180" />
-                </RoundButton>
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNumber = i + 1;
+                  return (
+                    <RoundButton
+                      key={pageNumber}
+                      bgColor={
+                        currentPage === pageNumber ? "#FF8906" : "#E8E8E8"
+                      }
+                      onClick={() => handlePageChange(pageNumber)}
+                    >
+                      <span
+                        className={
+                          currentPage === pageNumber
+                            ? "text-white"
+                            : "text-black"
+                        }
+                      >
+                        {pageNumber}
+                      </span>
+                    </RoundButton>
+                  );
+                })}
+                {currentPage < totalPages && (
+                  <RoundButton
+                    bgColor="#FF8906"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                  >
+                    <ArrowLeft className="text-white rotate-180" />
+                  </RoundButton>
+                )}
               </div>
             )}
           </div>
