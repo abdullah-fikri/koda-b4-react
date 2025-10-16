@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ShoppingCart, ThumbsUp, Minus, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CartContext } from "../context/Context";
+import { useSelector } from "react-redux";
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
@@ -11,9 +12,11 @@ const DetailProduct = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [product, setProduct] = useState(null);
   const [alert, setAlert] = useState(false);
+  const [alertLog, setAlertLog] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { cart, setCart } = useContext(CartContext);
+  const { currentUser } = useSelector((state) => state.account);
 
   useEffect(() => {
     Promise.all([
@@ -43,38 +46,52 @@ const DetailProduct = () => {
   };
 
   const handleAddToCart = () => {
-    if (!product) return;
-    const order = {
-      product: product.title,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      quantity,
-      size: selectedSize,
-      temp: selectedTemp,
-      flashSale: product.flashSale,
-      img: product.img,
-    };
-    setCart([...cart, order]);
-    setAlert(true);
-    setTimeout(() => {
-      setAlert(false);
-    }, 500);
+    if (currentUser) {
+      if (!product) return;
+      const order = {
+        product: product.title,
+        price: product.price,
+        originalPrice: product.originalPrice,
+        quantity,
+        size: selectedSize,
+        temp: selectedTemp,
+        flashSale: product.flashSale,
+        img: product.img,
+      };
+      setCart([...cart, order]);
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 500);
+    } else {
+      setAlertLog(true);
+      setTimeout(() => {
+        setAlertLog(false);
+      }, 3000);
+    }
   };
 
   const handleBuy = () => {
-    if (!product) return;
-    const order = {
-      product: product.title,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      quantity,
-      size: selectedSize,
-      temp: selectedTemp,
-      flashSale: product.flashSale,
-      img: product.img,
-    };
-    setCart([...cart, order]);
-    navigate("/checkoutProduct");
+    if (currentUser) {
+      if (!product) return;
+      const order = {
+        product: product.title,
+        price: product.price,
+        originalPrice: product.originalPrice,
+        quantity,
+        size: selectedSize,
+        temp: selectedTemp,
+        flashSale: product.flashSale,
+        img: product.img,
+      };
+      setCart([...cart, order]);
+      navigate("/checkoutProduct");
+    } else {
+      setAlertLog(true);
+      setTimeout(() => {
+        setAlertLog(false);
+      }, 3000);
+    }
   };
 
   if (!product) {
@@ -260,6 +277,18 @@ const DetailProduct = () => {
             )}
           </div>
         </div>
+        {alertLog && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2"
+            role="alert"
+          >
+            <strong className="font-bold">Upss!</strong>
+            <span className="block sm:inline">
+              You must be logged in to continue.
+            </span>
+            <span className="absolute top-0 bottom-0 right-0 px-4 py-3"></span>
+          </div>
+        )}
 
         {/* rekomendasi */}
         <div className="mt-12 md:mt-20 lg:mt-[100px]">
