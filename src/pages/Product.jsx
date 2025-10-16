@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PromoCard } from "../components/PromoCard";
 import { RoundButton } from "../components/RoundButton";
 import { ArrowLeft, Search, SlidersHorizontal, X } from "lucide-react";
@@ -13,6 +13,7 @@ const Product = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 6;
 
   useEffect(() => {
@@ -25,61 +26,68 @@ const Product = () => {
       .catch((err) => console.error("Fetch gagal:", err));
   }, []);
 
-  const handleFilterChange = (filters) => {
-    let filtered = [...allProducts];
+  const handleFilterChange = useCallback(
+    (filters) => {
+      let filtered = [...allProducts];
 
-    if (filters.search) {
-      filtered = filtered.filter((product) =>
-        product.title.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
+      if (filters.search) {
+        filtered = filtered.filter((product) =>
+          product.title.toLowerCase().includes(filters.search.toLowerCase())
+        );
+      }
 
-    if (filters.category && filters.category.length > 0) {
-      filtered = filtered.filter((product) => {
-        const productCategories = product.category || [];
-        return filters.category.some((selectedCat) => {
-          const normalizedSelectedCat = selectedCat
-            .replace(/\s+/g, "")
-            .toLowerCase();
-          return productCategories.some(
-            (cat) =>
-              cat.replace(/\s+/g, "").toLowerCase() === normalizedSelectedCat
+      if (filters.category && filters.category.length > 0) {
+        filtered = filtered.filter((product) => {
+          const productCategories = product.category || [];
+          return filters.category.some((selectedCat) => {
+            const normalizedSelectedCat = selectedCat
+              .replace(/\s+/g, "")
+              .toLowerCase();
+            return productCategories.some(
+              (cat) =>
+                cat.replace(/\s+/g, "").toLowerCase() === normalizedSelectedCat
+            );
+          });
+        });
+        setShowFilter(false);
+      }
+
+      if (filters.sort && filters.sort.length > 0) {
+        filtered = filtered.filter((product) => {
+          const productSortBy = product.sortBy || [];
+          return filters.sort.some((selectedSort) => {
+            if (
+              selectedSort.toLowerCase() === "flash sale" &&
+              product.isFlashSale
+            ) {
+              return true;
+            }
+            const normalizedSelectedSort = selectedSort
+              .replace(/\s+/g, "")
+              .toLowerCase();
+            return productSortBy.some(
+              (sort) =>
+                sort.replace(/\s+/g, "").toLowerCase() ===
+                normalizedSelectedSort
+            );
+          });
+        });
+      }
+
+      if (filters.priceRange) {
+        filtered = filtered.filter((product) => {
+          const price = parseInt(product.price.replace(/[^0-9]/g, "")) / 1000;
+          return (
+            price >= filters.priceRange[0] && price <= filters.priceRange[1]
           );
         });
-      });
-    }
+      }
 
-    if (filters.sort && filters.sort.length > 0) {
-      filtered = filtered.filter((product) => {
-        const productSortBy = product.sortBy || [];
-        return filters.sort.some((selectedSort) => {
-          if (
-            selectedSort.toLowerCase() === "flash sale" &&
-            product.isFlashSale
-          ) {
-            return true;
-          }
-          const normalizedSelectedSort = selectedSort
-            .replace(/\s+/g, "")
-            .toLowerCase();
-          return productSortBy.some(
-            (sort) =>
-              sort.replace(/\s+/g, "").toLowerCase() === normalizedSelectedSort
-          );
-        });
-      });
-    }
-
-    if (filters.priceRange) {
-      filtered = filtered.filter((product) => {
-        const price = parseInt(product.price.replace(/[^0-9]/g, "")) / 1000;
-        return price >= filters.priceRange[0] && price <= filters.priceRange[1];
-      });
-    }
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  };
+      setFilteredProducts(filtered);
+      setCurrentPage(1);
+    },
+    [allProducts]
+  );
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -97,6 +105,19 @@ const Product = () => {
   const handleProductClick = (id) => {
     navigate(`/detailproduct/${id}`);
   };
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      handleFilterChange({
+        search: searchTerm,
+        category: [],
+        sort: [],
+        priceRange: [0, 1000],
+      });
+    }, 300);
+
+    return () => clearTimeout(delay);
+  }, [searchTerm, allProducts, handleFilterChange]);
 
   return (
     <>
@@ -163,6 +184,7 @@ const Product = () => {
               type="text"
               placeholder="Find Product"
               className="border-none outline-none w-full text-sm"
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
@@ -182,7 +204,7 @@ const Product = () => {
               <X
                 size={30}
                 color="#FF8906"
-                className="absolute -mt2 right-10 top-3"
+                className="absolute -mt2 right-11 top-5"
               />
             </button>
             <FilterSidebar onFilterChange={handleFilterChange} />
