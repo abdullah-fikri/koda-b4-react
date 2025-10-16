@@ -28,27 +28,66 @@ export const Navbar = () => {
   return (
     <>
       {currentUser ? (
-        <nav className="flex justify-between fixed top-0 bg-[#0B0909] lg:bg-white w-full h-[76px] px-4 sm:px-8 md:px-16 lg:px-[130px] z-40 border-b border-[#E8E8E8]">
+        <nav
+          className={`flex justify-between fixed top-0 bg-[#0B0909]/80 w-full h-[76px] px-4 sm:px-8 md:px-16 lg:px-[130px] z-40 border-b border-[#E8E8E8] 
+        ${
+          currentUser.fullName === "admin"
+            ? "bg-white"
+            : "bg-[#0B0909] text-white"
+        }`}
+        >
           <div className="flex items-center gap-4 sm:gap-8 lg:gap-[68px] text-white">
             <button onClick={() => navigate("/Home")}>
               <img
-                className="hidden lg:block w-auto h-8"
-                src="/Frame 12.png"
-                alt="coffeShop"
-              />
-              <img
-                className="block lg:hidden w-auto h-8"
+                className=" w-auto h-8"
                 src="/Frame 13.svg"
                 alt="coffeShop"
               />
             </button>
+            <NavLink
+              to="/Home"
+              className={({ isActive }) =>
+                `cursor-pointer relative px-1 pb-2 hidden md:block ${
+                  isActive
+                    ? "after:content-[''] after:block after:h-[3px] after:bg-[#FF8906] after:absolute after:bottom-0 after:left-0 after:right-0"
+                    : ""
+                }`
+              }
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/product"
+              className={({ isActive }) =>
+                `cursor-pointer relative px-1 pb-2 hidden md:block ${
+                  isActive
+                    ? "after:content-[''] after:block after:h-[3px] after:bg-[#FF8906] after:absolute after:bottom-0 after:left-0 after:right-0"
+                    : ""
+                }`
+              }
+            >
+              Product
+            </NavLink>
+            <NavLink
+              to="/HistoryOrder"
+              className={({ isActive }) =>
+                `cursor-pointer relative px-1 pb-2 hidden md:block ${
+                  isActive
+                    ? "after:content-[''] after:block after:h-[3px] after:bg-[#FF8906] after:absolute after:bottom-0 after:left-0 after:right-0"
+                    : ""
+                }`
+              }
+            >
+              History
+            </NavLink>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 lg:gap-[22px] relative">
             <Search className="hidden lg:block" strokeWidth={1} />
             <Link to="/CheckoutProduct">
               <ShoppingCart
                 strokeWidth={1}
-                className="text-white lg:text-black w-5 h-5 sm:w-6 sm:h-6"
+                className="text-white  w-5 h-5 sm:w-6 sm:h-6"
               />
             </Link>
             <Link to="/Profile">
@@ -88,7 +127,7 @@ export const Navbar = () => {
                   >
                     <User strokeWidth={1} />
                     <p className="text-black font-medium cursor-pointer">
-                      Profile halo
+                      Profile
                     </p>
                   </button>
                   <button className="flex gap-2" onClick={handleLogout}>
@@ -197,7 +236,7 @@ export const Navbar = () => {
                   {/* Footer buttons */}
                   <div className="flex flex-col gap-3">
                     <button
-                      className="w-full border border-[#C47F3E] py-3 rounded-md"
+                      className="w-full border border-black py-3 rounded-md text-black"
                       onClick={() => {
                         setMenu(false);
                         navigate("/Profile");
@@ -206,7 +245,7 @@ export const Navbar = () => {
                       Profile
                     </button>
                     <button
-                      className="w-full border border-[#C47F3E] py-3 rounded-md"
+                      className="w-full border border-[#C47F3E] py-3 rounded-md text-[#C47F3E]"
                       onClick={handleLogout}
                     >
                       Log out
