@@ -9,6 +9,7 @@ export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [image, setImage] = useState(null);
 
   // redux
   const { currentUser } = useSelector((state) => state.account);
@@ -59,6 +60,12 @@ export const Profile = () => {
     setShowAlert(false);
   };
 
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    const imageUrl = URL.createObjectURL(file);
+    setImage(imageUrl);
+  };
+
   return (
     <div className="pt-[100px] px-4 sm:px-8 md:px-16 lg:px-[130px]">
       {showAlert && (
@@ -88,10 +95,25 @@ export const Profile = () => {
           <span className="text-base font-normal text-[#4F5665] text-center break-words">
             {data.email}
           </span>
-          <div className="w-[113px] h-[113px] rounded-full border"></div>
+          <div className="w-[113px] h-[113px] rounded-full overflow-hidden">
+            {image ? (
+              <img
+                src={image}
+                alt="png"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              ""
+            )}
+          </div>
           <label className="bg-[#FF8906] py-3 px-6 cursor-pointer rounded text-white text-center">
             Upload New Photo
-            <input type="file" accept="image/*" className="hidden" />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImage}
+            />
           </label>
 
           <span className="text-[#4F5665] text-base font-normal flex gap-1.5">
