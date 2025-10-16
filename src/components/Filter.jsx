@@ -14,7 +14,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState(["Coffee"]);
   const [selectedSort, setSelectedSort] = useState(["Flash sale"]);
-  const [priceRange, setPriceRange] = useState([374, 500]);
+  const [priceRange, setPriceRange] = useState([10, 20]);
 
   const toggleCategory = (value) => {
     setSelectedCategories((prev) =>
