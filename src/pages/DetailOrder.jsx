@@ -112,7 +112,8 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-2">
-                    <Link to={"/Profile"}>
+                    <Link to={"/Profile"} state={{ order }}>
+                      {console.log(order.customerInfo.address)}
                       <p className="text-[#4F5665] text-sm md:text-base">
                         Address
                       </p>
