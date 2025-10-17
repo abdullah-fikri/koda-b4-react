@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { Plus, X, MapPin, Mail, User, ChevronLeft } from "lucide-react";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ const CheckoutProduct = () => {
   const { cart, setCart } = useContext(CartContext);
   const { history, setHistory } = useContext(History);
   const [deliveryMethod, setDeliveryMethod] = useState("Dine in");
+  const [selectedPayment, setSelectedPayment] = useState("");
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.account);
 
@@ -77,6 +78,7 @@ const CheckoutProduct = () => {
         address: data.address,
       },
       deliveryMethod,
+      paymentMethod: selectedPayment,
       img: cart[0]?.img || "/image 22.png",
       product: cart.map((item) => item.product).join(", "),
     };
@@ -84,6 +86,14 @@ const CheckoutProduct = () => {
     setHistory([...history, order]);
     setCart([]);
     navigate("/HistoryOrder");
+  };
+  const ref = useRef([]);
+  const handlePaymentMethod = (i) => {
+    const choisePayment = ref.current[i];
+    if (choisePayment) {
+      const text = choisePayment.innerText.trim();
+      setSelectedPayment(text);
+    }
   };
 
   return (
@@ -324,15 +334,28 @@ const CheckoutProduct = () => {
                 </p>
                 <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-1 md:gap-2 mb-2 md:mb-3">
                   {["BRI", "DANA", "BCA", "GoPay", "OVO", "PayPal"].map(
-                    (bank) => (
-                      <div
+                    (bank, i) => (
+                      <button
+                        type="button"
+                        ref={(el) => (ref.current[i] = el)}
                         key={bank}
-                        className="bg-white border border-gray-200 rounded px-2 md:px-3 py-1.5 md:py-2 text-center"
+                        onClick={() => handlePaymentMethod(i)}
+                        className={`bg-white border rounded px-2 md:px-3 py-1.5 md:py-2 text-center transition-colors ${
+                          selectedPayment === bank
+                            ? "border-[#FF8906] bg-[#FF8906]"
+                            : "border-gray-200"
+                        }`}
                       >
-                        <span className="text-[10px] md:text-xs font-semibold text-[#0B132A]">
+                        <span
+                          className={`text-[10px] md:text-xs font-semibold ${
+                            selectedPayment === bank
+                              ? "text-[#FF8906]"
+                              : "text-[#0B132A]"
+                          }`}
+                        >
                           {bank}
                         </span>
-                      </div>
+                      </button>
                     )
                   )}
                 </div>
