@@ -18,12 +18,19 @@ export const Navbar = () => {
   const { currentUser } = useSelector((state) => state.account);
   const [dropdown, setDropdown] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [alertLog, setAlertLog] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/Register");
     setDropdown(false);
   };
+
+  if (alertLog === true) {
+    setTimeout(() => {
+      setAlertLog(false);
+    }, 2000);
+  }
 
   return (
     <>
@@ -291,12 +298,25 @@ export const Navbar = () => {
               className="hidden md:block text-white w-5 h-5"
               strokeWidth={1}
             />
-            <Link to="/CheckoutProduct">
+            <button onClick={() => setAlertLog(!alertLog)}>
               <ShoppingCart
                 className="text-white w-5 h-5 sm:w-6 sm:h-6"
                 strokeWidth={1}
               />
-            </Link>
+            </button>
+            {alertLog && (
+              <div
+                className="fixed top-[80px] left-1/2 -translate-x-1/2 z-[1000] 
+               bg-red-100 border border-red-400 text-red-700 
+               px-4 py-3 rounded-lg shadow-md w-[90%] sm:w-auto 
+               text-center transition-all duration-300"
+                role="alert"
+              >
+                <strong className="font-semibold">Upss!</strong>{" "}
+                <span>You must be logged in to continue.</span>
+              </div>
+            )}
+
             <Link to="/login" className="hidden md:block">
               <button className="px-3 sm:px-[18px] py-2 sm:py-[12px] border border-[#FFFFFF] text-white text-xs sm:text-sm font-normal cursor-pointer hover:bg-white/10 transition-colors">
                 Sign In
