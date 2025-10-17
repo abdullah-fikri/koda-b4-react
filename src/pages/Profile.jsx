@@ -36,7 +36,7 @@ export const Profile = () => {
         email: currentUser.email || "",
         phone: currentUser.phone || "+62",
         password: currentUser.password || "",
-        address: orderAddress ?? currentUser.address ?? "",
+        address: orderAddress || currentUser.address || "",
         since: currentUser.since || "",
       });
     }

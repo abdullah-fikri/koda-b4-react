@@ -1,30 +1,50 @@
 [
   {
     "id": "1",
-    "title": "Hazelnut Latte",
+    "title": "chocolate",
     "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
-    "img": "/image 27.png",
+    "img": "https://www.ambitiouskitchen.com/wp-content/uploads/2022/05/Tahini-Chocolate-Coffee-Date-Shake-4.jpg",
+    "images": [
+      "https://www.seriouseats.com/thmb/nXNRk-XzGCfGrffLICBjT9i-6_0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__images__2017__02__20170210-barbajada-milanese-coffee-cocoa-vicky-wasik-6-cddd037c955c4b0bb2f72bad5bca0c50.jpg",
+      "https://fancifuleats.com/wp-content/uploads/2022/09/dark-chocolate-mocha-3-1.jpg",
+      "https://noahhelps.org/wp-content/uploads/2020/12/Dark-Chocolate-Cinnamon-Coffee_Dec2020-1.jpg"
+    ],
     "price": "20,000"
   },
   {
     "id": "2",
-    "title": "Hazelnut Latte",
+    "title": "Americano",
     "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
-    "img": "/image 22.png",
+    "img": "https://majestycoffee.com/cdn/shop/articles/americano_b74a8154-454b-4f74-9a6c-95fbc4152ed3.jpg?v=1684048195",
+    "images": [
+      "https://dropinblog.net/34243353/files/featured/image1-ouxf5.png",
+      "https://www.shutterstock.com/image-photo/cup-coffee-americano-on-white-600nw-2603213769.jpg",
+      "https://www.breville.com/content/breville/us/en/blog/coffee-and-espresso/americano-vs-drip-coffee/_jcr_content/root/container_741553154/container/image.coreimg.85.1024.jpeg/1718696975912/americano-vs-drip-coffee.jpeg"
+    ],
     "price": "20,000"
   },
   {
     "id": "3",
-    "title": "Hazelnut Latte",
+    "title": "Matcha",
     "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
-    "img": "/image 30.png",
+    "img": "https://www.healthtoday.id/media/thumbnails/category/2022/11/8/u2tpmewlhuq8z6vvmci5it_recipe_qdio52h.jpg",
+    "images": [
+      "https://klasika.kompas.id/wp-content/uploads/2024/09/Shutterstock_Matcha-Latte-675x675.jpg",
+      "https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/7cfb79f22186cc268533023e8dd80b76/Derivates/332ef194335299044ce59aeff0d600482d22b916.jpg",
+      "https://assets.digination.id/crop/0x0:0x0/x/photo/2025/04/07/1133306612.jpg"
+    ],
     "price": "20,000"
   },
   {
     "id": "4",
-    "title": "Hazelnut Latte",
+    "title": "Kopi Gula Aren",
     "description": "You can explore the menu that we provide with fun and have their own taste and make your day better.",
-    "img": "/image 31.png",
+    "img": "https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,f_auto,q_auto:best,w_640/v1601625644/vwiywmop66z2ffcze2uo.jpg",
+    "images": [
+      "https://i.pinimg.com/236x/bb/97/7c/bb977c5934092bb86c22d8dc3d0af08c.jpg",
+      "https://valentinascorner.com/wp-content/uploads/2022/04/Delicious-Iced-Coffee-Recipe-760x1140.jpg",
+      "https://arengaindonesia.com/wp-content/uploads/2023/05/Iced-Latte-sentuhan-gula-aren-cair.jpg"
+    ],
     "price": "20,000"
   }
 ]

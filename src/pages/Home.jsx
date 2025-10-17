@@ -43,7 +43,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row mt-[76px]">
+      <div className="flex flex-col-reverse lg:flex-row mt-[76px]">
         <div className="bg-gradient-to-r from-[#0B0909] to-[#777C82] w-full lg:max-w-[715px] h-auto lg:h-[1024px] py-12 sm:py-16 lg:py-[283px] px-6 sm:px-10 lg:pl-32">
           <div className="flex flex-col w-full lg:max-w-[518px] h-auto lg:h-[457px] gap-[25px]">
             <h1 className="text-white font-medium text-2xl sm:text-3xl lg:text-5xl">
@@ -97,7 +97,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start">
+      <div className="flex flex-col-reverse lg:flex-row justify-between items-center lg:items-start">
         <div className="flex flex-col w-full lg:max-w-[529px] h-auto lg:h-[465px] gap-[25px] py-[54px] px-6 lg:ml-[130px]">
           <div className="flex items-center">
             <div className="w-[7px] h-[68px] bg-[#FF8906] mr-6"></div>

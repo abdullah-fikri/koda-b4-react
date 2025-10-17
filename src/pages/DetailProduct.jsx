@@ -149,9 +149,14 @@ const DetailProduct = () => {
             </h1>
 
             <div className="flex items-center gap-3 md:gap-[16px] mb-3 md:mb-[16px]">
-              <span className="text-[#D00000] line-through text-base md:text-[20px]">
-                IDR {product.originalPrice}
-              </span>
+              {product.originalPrice ? (
+                <span className="text-[#D00000] line-through text-base md:text-[20px]">
+                  IDR {product.originalPrice}
+                </span>
+              ) : (
+                ""
+              )}
+
               <span className="text-[#FF8906] text-xl md:text-2xl lg:text-[32px] font-medium">
                 IDR {product.price}
               </span>
