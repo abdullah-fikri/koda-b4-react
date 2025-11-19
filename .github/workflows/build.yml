@@ -1,0 +1,38 @@
+name: Deploy Frontend
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --build-arg VITE_BASE_URL=${{ vars.VITE_BASE_URL }} \
+            -t ghcr.io/${{ github.repository_owner }}/frontend:latest .
+
+      - name: Push Image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/frontend:latest
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.KEY }}
+          script: |
+            docker pull ghcr.io/${{ github.repository_owner }}/frontend:latest
