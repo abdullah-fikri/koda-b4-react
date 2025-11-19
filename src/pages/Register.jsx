@@ -24,20 +24,47 @@ const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = (data) => {
-    const newUser = {
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-      role: "user",
-      since: new Date().toLocaleString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }),
-    };
-    dispatch(addAccount(newUser));
-    setShowAlert(true);
+  const onSubmit = async (data) => {
+    // const newUser = {
+    //   fullName: data.fullName,
+    //   email: data.email,
+    //   password: data.password,
+    //   role: "user",
+    //   since: new Date().toLocaleString("id-ID", {
+    //     day: "2-digit",
+    //     month: "long",
+    //     year: "numeric",
+    //   }),
+    // };
+    // dispatch(addAccount(newUser));
+    // setShowAlert(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          username: data.fullName,
+          phone: "",
+          address: ""
+        }),
+      });
+    
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.message || "Register gagal");
+        return;
+      }
+    
+      const result = await res.json();
+      console.log(result);
+    
+      setShowAlert(true);
+    } catch (error) {
+      console.log(error);
+    }
+    
   };
 
   const handleCloseAlert = () => {
