@@ -4,14 +4,14 @@ import { ButtonRegister } from "../components/Button";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { forgotSchema } from "../utils/util";
-import { Mail } from "lucide-react";
-import { useSelector } from "react-redux";
+import { forgotSchema, forgotStep2Schema } from "../utils/util";
+import { Mail, Lock } from "lucide-react";
+import {api} from "../utils/Fetch"
 
 const ForgotPassword = () => {
-  const { account } = useSelector((state) => state.account);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [step, setStep] = useState(1)
 
   const {
     register,
@@ -20,19 +20,60 @@ const ForgotPassword = () => {
   } = useForm({
     resolver: yupResolver(forgotSchema),
   });
+ 
+  const form2 = useForm({
+    resolver: yupResolver(forgotStep2Schema),
+    defaultValues: {
+      email: "",
+      otp: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
 
-  const onSubmit = (data) => {
-    const foundUser = account.find((acc) => acc.email === data.email);
-
-    if (foundUser) {
-      setAlertMessage("We’ve sent a new password to your email!");
-    } else {
-      setAlertMessage("Email not found. Please check again!");
+  // get otp
+  const onSubmit1 = async (data) => {
+  try {
+    const res = await api("/auth/forgot-password", "POST", {
+      email: data.email
+    })
+    const result = await res.json();
+    if (!res.ok){
+      setAlertMessage(result.message || "email not found");
+      return setShowAlert(true)
     }
-
+    setAlertMessage("We have sent a new OTP");
     setShowAlert(true);
-  };
+    setStep(2)
+    form2.setValue("email", data.email);
+    form2.setValue("otp", result.otp)
+  } catch (error) {
+    setAlertMessage("Terjadi kesalahan, coba lagi");
+    setShowAlert(true)
+  }
 
+  
+};
+// reset password
+const onSubmit2 = async (data)=>{
+  try {
+    const res = await api("/auth/reset-password", "POST", {
+      email: data.email,
+      otp: data.otp,
+      new_password: data.newPassword
+    })
+    const result = await res.json()
+    if (!res.ok){
+      setAlertMessage(result.message || "error")
+      return setShowAlert(true)
+    }
+    setAlertMessage("success reset password")
+    setShowAlert(true)
+  } catch (error) {
+    setAlertMessage("terjadi kesalahan")
+    setShowAlert(true)
+  }
+}
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
@@ -77,10 +118,10 @@ const ForgotPassword = () => {
           <span className="text-base text-[#4F5665] font-normal">
             We will send a new password to your email
           </span>
-
+          {step === 1 && (
           <form
             className="flex flex-col gap-[25px]"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit1)}
           >
             <div>
               <Input
@@ -102,7 +143,69 @@ const ForgotPassword = () => {
               Submit
             </ButtonRegister>
           </form>
-
+          )}
+          {step === 2 && (
+             <form
+             className="flex flex-col gap-[25px]"
+             onSubmit={form2.handleSubmit(onSubmit2)}
+           >
+             <div>
+               <Input
+                 leftIcon={Mail}
+                 label="Email"
+                 type="email"
+                 placeholder="Enter Your Email"
+                 {...form2.register("email")}
+               />
+               <p className="text-red-500 text-sm mt-1">
+                 {form2.formState.errors.email?.message}
+               </p>
+             </div>
+             <div>
+               <Input
+                 leftIcon={Mail}
+                 label="otp"
+                 type="text"
+                 placeholder="Enter Your otp"
+                 {...form2.register("otp")}
+               />
+               <p className="text-red-500 text-sm mt-1">
+                 {form2.formState.errors.otp?.message}
+               </p>
+             </div>
+             <div>
+               <Input
+                 leftIcon={Lock}
+                 label="newPassword"
+                 type="password"
+                 placeholder="Enter Your newPassword"
+                 {...form2.register("newPassword")}
+               />
+               <p className="text-red-500 text-sm mt-1">
+                {form2.formState.errors.newPassword?.message}
+               </p>
+             </div>
+             <div>
+               <Input
+                 leftIcon={Lock}
+                 label="Confirm Password"
+                 type="password"
+                 placeholder="Enter Your Confirm Password"
+                 {...form2.register("confirmPassword")}
+               />
+               <p className="text-red-500 text-sm mt-1">
+                {form2.formState.errors.confirmPassword?.message}
+               </p>
+             </div>
+ 
+             <ButtonRegister
+               className="w-full h-[50px] bg-[#FF8906] text-[#0B132A] rounded-[6px] font-jakarta text-base font-medium p-[10px] cursor-pointer"
+               type="submit"
+             >
+               Submit
+             </ButtonRegister>
+           </form>
+          )}
           <div className="flex items-center justify-center font-normal font-jakarta text-base mt-2">
             <span className="text-[#4F5665]">Remembered your password?</span>
             <Link to="/login" className="text-[#FF8906] cursor-pointer ml-1">
