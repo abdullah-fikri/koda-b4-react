@@ -4,6 +4,7 @@ import { ButtonRegister } from "../components/Button";
 import Input from "../components/Input";
 import { Mail, User, Eye, EyeOff, Lock, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import {api} from "../utils/Fetch"
 
 export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,26 +22,37 @@ export const Profile = () => {
   const orderAddress = orderFromNav?.customerInfo?.address;
 
   const [data, setData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     phone: "",
     password: "",
     address: "",
     since: "",
   });
+  
 
-  useEffect(() => {
-    if (currentUser) {
-      setData({
-        fullName: currentUser.fullName || "",
-        email: currentUser.email || "",
-        phone: currentUser.phone || "+62",
-        password: currentUser.password || "",
-        address: orderAddress || currentUser.address || "",
-        since: currentUser.since || "",
-      });
-    }
-  }, [currentUser, orderAddress]);
+  const token = useSelector((state)=> state.account.token)
+  useEffect(()=>{
+    if (!token) return
+    api(`/user/profile`, "GET", null, token)
+    .then(res => res.json())
+    .then(result => {
+      setData(result.data); 
+    })    
+    .catch(err => console.error("error fetch profile:", err))
+  },[token])
+  
+  useEffect(()=>{
+    api("/user/profile/update", "PUT",{
+      email: data.email,
+      password: data.password,
+      address: data.address,
+      phone: data.phone,
+      username: data.username
+    }, token)
+    .then(res => res.json())
+    .then(result => setData(result.data))
+  },[token])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -90,10 +102,10 @@ export const Profile = () => {
       <div className="flex flex-col lg:flex-row mt-6 sm:mt-8 lg:mt-[44px] gap-5 items-start">
         <div className="border border-[#E8E8E8] w-full lg:max-w-[280px] flex items-center flex-col gap-[15px] p-5">
           <h2 className="text-xl text-[#0B132A] font-medium text-center">
-            {data.fullName}
+            {data?.username}
           </h2>
           <span className="text-base font-normal text-[#4F5665] text-center break-words">
-            {data.email}
+            {data?.email}
           </span>
           <div className="w-[113px] h-[113px] rounded-full overflow-hidden">
             {image ? (
@@ -119,7 +131,7 @@ export const Profile = () => {
           <span className="text-[#4F5665] text-base font-normal flex gap-1.5">
             since
             <p className="text-base font-semibold text-[#4F5665]">
-              {data.since}
+              {data?.since}
             </p>
           </span>
         </div>
@@ -134,8 +146,8 @@ export const Profile = () => {
               leftIcon={User}
               type="text"
               name="fullName"
-              value={data.fullName}
-              onChange={(e) => setData({ ...data, fullName: e.target.value })}
+              defaultValue={data?.username || ""}
+              onChange={(e) => setData({ ...data, username: e.target.value })}
             />
 
             <Input
@@ -143,7 +155,7 @@ export const Profile = () => {
               leftIcon={Mail}
               type="email"
               name="email"
-              value={data.email}
+              defaultValue={data?.email || ""}
               onChange={(e) => setData({ ...data, email: e.target.value })}
             />
 
@@ -152,7 +164,7 @@ export const Profile = () => {
               leftIcon={User}
               type="text"
               name="phone"
-              value={data.phone}
+              defaultValue={data?.phone || ""}
               onChange={(e) => setData({ ...data, phone: e.target.value })}
             />
 
@@ -162,7 +174,7 @@ export const Profile = () => {
               label={"Password"}
               type={showPassword ? "text" : "password"}
               name="password"
-              value={data.password}
+              defaultValue={data?.password || ""}
               onChange={(e) => setData({ ...data, password: e.target.value })}
             >
               {showPassword ? (
@@ -183,7 +195,7 @@ export const Profile = () => {
               leftIcon={MapPin}
               type="text"
               name="address"
-              value={data.address}
+              defaultValue={data?.address || ""}
               onChange={(e) => setData({ ...data, address: e.target.value })}
             />
 
