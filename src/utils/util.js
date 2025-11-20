@@ -40,3 +40,13 @@ export const checkoutSchema = Yup.object().shape({
 export const forgotSchema = Yup.object().shape({
   email: Yup.string().email("Email tidak valid").required("Email wajib diisi"),
 });
+
+
+export const forgotStep2Schema = Yup.object().shape({
+  email: Yup.string().email().required(),
+  otp: Yup.string().required("OTP wajib diisi"),
+  newPassword: Yup.string().required("Password wajib diisi"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword")], "Password tidak cocok")
+    .required("Confirm password wajib diisi"),
+});
