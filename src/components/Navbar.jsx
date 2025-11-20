@@ -11,17 +11,19 @@ import {
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/reducers/account";
+import { persistor } from "../redux/store";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.account);
+  const { currentUser, token } = useSelector(state => state.account);
   const [dropdown, setDropdown] = useState(false);
   const [menu, setMenu] = useState(false);
   const [alertLog, setAlertLog] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    persistor.purge();
     navigate("/Register");
     setDropdown(false);
   };
