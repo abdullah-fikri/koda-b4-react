@@ -7,14 +7,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../utils/util";
 import { User, Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addAccount } from "../redux/reducers/account";
+import {api} from "../utils/Fetch"
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const {
     register,
@@ -24,48 +23,29 @@ const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = async (data) => {
-    // const newUser = {
-    //   fullName: data.fullName,
-    //   email: data.email,
-    //   password: data.password,
-    //   role: "user",
-    //   since: new Date().toLocaleString("id-ID", {
-    //     day: "2-digit",
-    //     month: "long",
-    //     year: "numeric",
-    //   }),
-    // };
-    // dispatch(addAccount(newUser));
-    // setShowAlert(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          username: data.fullName,
-          phone: "",
-          address: ""
-        }),
-      });
-    
-      if (!res.ok) {
-        const err = await res.json();
-        alert(err.message || "Register gagal");
-        return;
-      }
-    
-      const result = await res.json();
-      console.log(result);
-    
-      setShowAlert(true);
-    } catch (error) {
-      console.log(error);
+const onSubmit = async (data) => {
+  try {
+    const res = await api("/auth/register", "POST", {
+      email: data.email,
+      password: data.password,
+      username: data.fullName,
+      phone: "",
+      address: ""
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.message || "Register gagal");
+      return;
     }
-    
-  };
+
+    console.log(result);
+    setShowAlert(true);
+  } catch (error) {
+    console.log("Register error:", error);
+  }
+};
 
   const handleCloseAlert = () => {
     setShowAlert(false);

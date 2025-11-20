@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../utils/Fetch";
+
 
 export const CardProduct = () => {
   const [product, setProduct] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BASE_URL}/favorite-product`)
+      api("/favorite-product")
       .then((res) => res.json())
       .then((data) => setProduct(data.data.products))  
       .catch((err) => console.error("error fetch:", err));
@@ -66,7 +68,7 @@ export const CardProduct = () => {
               </button>
               <button
                 className="border border-orange-500 px-20 py-3 sm:p-2.5 rounded-lg hover:bg-orange-50 transition-colors duration-200"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {e.stopPropagation(); handleClick(item.id);}}
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
               </button>

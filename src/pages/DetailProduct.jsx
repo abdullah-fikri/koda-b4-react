@@ -3,6 +3,7 @@ import { ShoppingCart, ThumbsUp, Minus, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CartContext } from "../context/Context";
 import { useSelector } from "react-redux";
+import { api } from "../utils/Fetch"
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
@@ -20,7 +21,7 @@ const DetailProduct = () => {
   const { currentUser } = useSelector((state) => state.account);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BASE_URL}/products/${id}`)
+      api(`/products/${id}`)
       .then(res => res.json())
       .then(data => {
         setProduct(data.data.product);              
@@ -166,7 +167,7 @@ const DetailProduct = () => {
                 </span>
               </div>
               <div className="flex items-center gap-2 md:gap-[8px] text-sm md:text-base">
-                <span className="text-[#4F5665]">{product.reviews} Review</span>
+                <span className="text-[#4F5665]">200 Review</span>
                 <span className="text-[#4F5665]">|</span>
                 <span className="text-[#4F5665] flex items-center gap-[4px]">
                   Recommendation <ThumbsUp className="w-4 h-4" />
@@ -338,9 +339,9 @@ const DetailProduct = () => {
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-gray-400 line-through text-xs md:text-sm mr-2">
+                    {/* <span className="text-gray-400 line-through text-xs md:text-sm mr-2">
                       IDR {item.originalPrice}
-                    </span>
+                    </span> */}
                     <span className="text-lg md:text-xl font-medium text-[#FF8906]">
                       IDR {item.min_price}
                     </span>

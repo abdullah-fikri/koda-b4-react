@@ -6,8 +6,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/util";
 import { Mail, Lock, Eye, EyeOff, Facebook } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { addAccount, setCurrentUser } from "../redux/reducers/account";
+import { useDispatch,  } from "react-redux";
+import { setAuth } from "../redux/reducers/account"; 
+import { api } from "../utils/Fetch";
+
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,29 +18,6 @@ const Login = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const { account } = useSelector((state) => state.account);
-
-  useEffect(() => {
-    const adminExists = account.some(
-      (user) => user.email === "admin123@gmail.com"
-    );
-    if (!adminExists) {
-      dispatch(
-        addAccount({
-          fullName: "Admin",
-          email: "admin123@gmail.com",
-          password: "admin123",
-          role: "admin",
-          since: new Date().toLocaleString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          }),
-        })
-      );
-    }
-  }, [account, dispatch]);
 
   const {
     register,
@@ -47,25 +27,30 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    const foundUser = account.find(
-      (acc) => acc.email === data.email && acc.password === data.password
-    );
-
-    if (foundUser) {
-      dispatch(setCurrentUser(foundUser));
-
-      if (foundUser.role === "admin") {
-        setAlertMessage("Login Admin Success!");
-      } else {
-        setAlertMessage("Login Success!");
+  const onSubmit = async (data) => {
+    try {
+      const res = await api("/auth/login", "POST", data);
+  
+      const result = await res.json();
+  
+      if (!res.ok) {
+        setAlertMessage(result.message || "Wrong Email Or Password");
+        return setShowAlert(true);
       }
-    } else {
-      setAlertMessage("Invalid email or password");
+  
+      dispatch(setAuth({
+        user: result.data.user,
+        token: result.data.token
+      }));
+  
+      setAlertMessage("Login Success!");
+      setShowAlert(true);
+  
+    } catch (error) {
+      setAlertMessage("Terjadi kesalahan, coba lagi");
+      setShowAlert(true);
     }
-
-    setShowAlert(true);
-  };
+  };  
 
   const handleCloseAlert = () => {
     setShowAlert(false);
