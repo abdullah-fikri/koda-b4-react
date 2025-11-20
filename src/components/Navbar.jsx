@@ -16,7 +16,7 @@ import { persistor } from "../redux/store";
 export const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currentUser, token } = useSelector(state => state.account);
+  const { currentUser } = useSelector(state => state.account);
   const [dropdown, setDropdown] = useState(false);
   const [menu, setMenu] = useState(false);
   const [alertLog, setAlertLog] = useState(false);
