@@ -1,37 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  // semua akun terdaftar
-  account: [],
-  // user yang sedang login
   currentUser: null,
+  token: null,
 };
 
 const accountSlice = createSlice({
   name: "account",
   initialState,
   reducers: {
-    addAccount: (state, action) => {
-      state.account.push(action.payload);
-    },
-    setCurrentUser: (state, action) => {
-      const { email, password } = action.payload;
-
-      const foundUser = state.account.find(
-        (acc) => acc.email === email && acc.password === password
-      );
-
-      if (foundUser) {
-        state.currentUser = foundUser;
-      } else {
-        state.currentUser = null;
-      }
+    setAuth: (state, action) => {
+      state.currentUser = action.payload.user;
+      state.token = action.payload.token;
     },
     logoutUser: (state) => {
       state.currentUser = null;
+      state.token = null;
     },
   },
 });
 
-export const { addAccount, setCurrentUser, logoutUser } = accountSlice.actions;
+export const { setAuth, logoutUser } = accountSlice.actions;
 export default accountSlice.reducer;
