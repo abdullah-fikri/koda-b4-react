@@ -11,6 +11,7 @@ const DetailProduct = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
   const [product, setProduct] = useState(null);
+  const [selectedSizePrice, setSelectedSizePrice] = useState(product?.min_price || 0);
   const [alert, setAlert] = useState(false);
   const [alertLog, setAlertLog] = useState(false);
   const navigate = useNavigate();
@@ -19,25 +20,13 @@ const DetailProduct = () => {
   const { currentUser } = useSelector((state) => state.account);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/data/product.json").then((res) => res.json()),
-      fetch("/data/product-promo.json").then((res) => res.json()),
-    ])
-      .then(([regularProducts, promoProducts]) => {
-        const allProducts = [...regularProducts, ...promoProducts];
-
-        const selected = allProducts.find((item) => item.id === id);
-
-        if (selected) {
-          setProduct(selected);
-        } else {
-          console.error("Product not found with id:", id);
-          setProduct(allProducts[0]);
-        }
-
-        setRecommendations(promoProducts.slice(0, 3));
+    fetch(`${import.meta.env.VITE_BASE_URL}/products/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setProduct(data.data.product);              
+        setRecommendations(data.data.recommendations);
       })
-      .catch((err) => console.error("Failed to load data:", err));
+      .catch(err => console.error("Error fetch detail:", err));
   }, [id]);
 
   const handleQuantityChange = (type) => {
@@ -110,7 +99,7 @@ const DetailProduct = () => {
             <div className="relative w-full lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-[20px] overflow-hidden mb-[20px]">
               <img
                 src={product.images?.[selectedImage] || product.img}
-                alt={product.title}
+                alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -129,7 +118,7 @@ const DetailProduct = () => {
                   >
                     <img
                       src={img}
-                      alt={`${product.title} ${index + 1}`}
+                      alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -145,20 +134,20 @@ const DetailProduct = () => {
               </div>
             )}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-3 md:mb-[16px]">
-              {product.title}
+              {product.name}
             </h1>
 
             <div className="flex items-center gap-3 md:gap-[16px] mb-3 md:mb-[16px]">
-              {product.originalPrice ? (
+              {product.originalPriceprice ? (
                 <span className="text-[#D00000] line-through text-base md:text-[20px]">
-                  IDR {product.originalPrice}
+                  IDR {product.originalPriceprice}
                 </span>
               ) : (
                 ""
               )}
 
               <span className="text-[#FF8906] text-xl md:text-2xl lg:text-[32px] font-medium">
-                IDR {product.price}
+                IDR {selectedSizePrice}
               </span>
             </div>
 
@@ -217,17 +206,20 @@ const DetailProduct = () => {
                 Choose Size
               </h3>
               <div className="flex gap-3 md:gap-[16px]">
-                {["Regular", "Medium", "Large"].map((size) => (
+                {product.sizes.map((size) => (
                   <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
+                    key={size.size_id}
+                    onClick={() => {
+                      setSelectedSize(size)
+                      setSelectedSizePrice(size.price);
+                    }}
                     className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
                       selectedSize === size
                         ? "bg-white border border-[#FF8906] text-[#FF8906]"
                         : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#FF8906]"
                     }`}
                   >
-                    {size}
+                    {size.size_name}
                   </button>
                 ))}
               </div>
@@ -239,7 +231,7 @@ const DetailProduct = () => {
                 Hot/Ice?
               </h3>
               <div className="flex gap-3 md:gap-[16px]">
-                {["Ice", "Hot"].map((temp) => (
+                {product.variants.map((temp) => (
                   <button
                     key={temp}
                     onClick={() => setSelectedTemp(temp)}
@@ -316,15 +308,15 @@ const DetailProduct = () => {
 
                 <div className="w-full h-56 md:h-64 lg:h-72 overflow-hidden rounded-2xl">
                   <img
-                    src={item.img}
-                    alt={item.title}
+                    src={item.images[0]}
+                    alt={item.name}
                     className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
                   />
                 </div>
 
                 <div className="relative -mt-16 md:-mt-20 mx-4 bg-white rounded-2xl p-4 md:p-5 shadow-lg hover:shadow-xl transition-all">
                   <h3 className="text-lg md:text-xl font-medium text-[#0B132A] mb-2">
-                    {item.title}
+                    {item.name}
                   </h3>
 
                   <p className="text-[#4F5665] text-xs md:text-sm font-normal leading-relaxed mb-3">
@@ -350,7 +342,7 @@ const DetailProduct = () => {
                       IDR {item.originalPrice}
                     </span>
                     <span className="text-lg md:text-xl font-medium text-[#FF8906]">
-                      IDR {item.price}
+                      IDR {item.min_price}
                     </span>
                   </div>
                 </div>

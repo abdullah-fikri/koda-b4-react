@@ -1,16 +1,3 @@
-/**
- *
- * @typedef {Object} ProductItem
- * @property {number|string} id - Unique product ID
- * @property {string} title - Product title
- * @property {string} description - Short description of the product
- * @property {string} img - Image URL of the product
- * @property {string|number} price - Product price
- *
- * @component
- * @returns {JSX.Element} Rendered product cards
- */
-
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +7,10 @@ export const CardProduct = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/data/product.json")
+    fetch(`${import.meta.env.VITE_BASE_URL}/favorite-product`)
       .then((res) => res.json())
-      .then((data) => setProduct(data))
-      .catch((err) => console.error("Fetch gagal:", err));
+      .then((data) => setProduct(data.data.products))  
+      .catch((err) => console.error("error fetch:", err));
   }, []);
 
   const handleClick = (id) => {
@@ -40,15 +27,15 @@ export const CardProduct = () => {
         >
           <div className="w-full h-48 sm:h-60 md:h-72 overflow-hidden rounded-2xl">
             <img
-              src={item.img}
-              alt={item.title}
+              src={item.images[0]}  
+              alt={item.name}
               className="w-full h-full object-cover"
             />
           </div>
 
           <div className="relative lg:-mt-16 sm:-mt-20 mx-4 bg-white rounded-2xl p-1 lg:p-4 sm:p-5 lg:shadow-lg">
             <h3 className="text-lg sm:text-xl font-medium text-[#0B132A] mb-2">
-              {item.title}
+              {item.name}
             </h3>
 
             <p className="text-[#4F5665] text-xs sm:text-sm font-normal leading-relaxed mb-3 line-clamp-2">
@@ -64,7 +51,7 @@ export const CardProduct = () => {
             </div>
 
             <p className="text-lg sm:text-xl font-medium text-[#FF8906] mb-4">
-              IDR {item.price}
+              IDR {item.min_price}
             </p>
 
             <div className="flex flex-col lg:flex-row items-center gap-2">
