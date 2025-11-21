@@ -69,29 +69,35 @@ const DetailProduct = () => {
     }
   };  
 
-  const handleBuy = () => {
-    if (currentUser) {
-      if (!product) return;
-      const order = {
-        product: product.title,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        quantity,
-        size: selectedSize,
-        temp: selectedTemp,
-        flashSale: product.flashSale,
-        img: product.img,
-      };
-      setCart([...cart, order]);
-      navigate("/checkoutProduct");
-    } else {
+  const handleBuy = async () => {
+    if (!currentUser) {
       setAlertLog(true);
-      setTimeout(() => {
-        setAlertLog(false);
-      }, 3000);
+      setTimeout(() => setAlertLog(false), 3000);
+      return;
+    }
+  
+    try {
+      const variantId = selectedTemp === "Hot" ? 1 : 2;
+      const body = {
+        product_id: product.id,
+        size_id: selectedSize.size_id,
+        variant_id: variantId,
+        quantity: quantity,
+      };
+  
+      const res = await api("/cart", "POST", body, token);
+      const result = await res.json();
+  
+      if (result.success) {
+        navigate("/checkoutProduct");
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Buy error:", error);
     }
   };
-
+    
   if (!product) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
