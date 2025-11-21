@@ -5,6 +5,7 @@ import Input from "../components/Input";
 import { Mail, User, Eye, EyeOff, Lock, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import {api} from "../utils/Fetch"
+import { upload } from "../utils/UploadImg";
 
 export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,26 +39,56 @@ export const Profile = () => {
     .then(res => res.json())
     .then(result => {
       setData(result.data); 
+      setImage(result.data.profile_picture);
     })    
     .catch(err => console.error("error fetch profile:", err))
   },[token])
   
-  useEffect(()=>{
-    api("/user/profile/update", "PUT",{
-      email: data.email,
-      password: data.password,
-      address: data.address,
-      phone: data.phone,
-      username: data.username
-    }, token)
-    .then(res => res.json())
-    .then(result => setData(result.data))
-  },[token])
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlertMessage("Profile updated successfully!");
-    setShowAlert(!showAlert);
+  
+    const body = {
+      username: data.username,
+      phone: data.phone,
+      address: data.address,
+    };
+  
+    if (data.password && data.password.length >= 6) {
+      body.password = data.password;
+    }
+  
+    api("/user/profile/update", "PUT", body, token)
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          setAlertMessage("Profile updated successfully!");
+          setShowAlert(true);
+        } else {
+          setAlertMessage(result.message);
+          setShowAlert(true);
+        }
+      })
+      .catch(err => console.error("Error:", err));
+  };
+
+  const handleUpload = async (file) => {
+    try {
+      const res = await upload("/user/profile/upload", file, token);
+      const result = await res.json();
+      if (result.success) {
+        setImage(result.data.profile_picture);
+        setAlertMessage("Profile picture updated!");
+        setShowAlert(true);
+      } else {
+        setAlertMessage(result.message || "Upload failed");
+        setShowAlert(true);
+      }
+  
+    } catch (err) {
+      console.error(err)
+      setAlertMessage("Upload error");
+      setShowAlert(true);
+    }
   };
 
   if (!currentUser) {
@@ -74,8 +105,9 @@ export const Profile = () => {
 
   const handleImage = (e) => {
     const file = e.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    setImage(imageUrl);
+    if (!file) return;
+    setImage(URL.createObjectURL(file));
+    handleUpload(file);
   };
 
   return (
@@ -146,7 +178,7 @@ export const Profile = () => {
               leftIcon={User}
               type="text"
               name="fullName"
-              defaultValue={data?.username || ""}
+              value={data?.username || ""}
               onChange={(e) => setData({ ...data, username: e.target.value })}
             />
 
@@ -155,7 +187,8 @@ export const Profile = () => {
               leftIcon={Mail}
               type="email"
               name="email"
-              defaultValue={data?.email || ""}
+              value={data?.email || ""}
+              disabled
               onChange={(e) => setData({ ...data, email: e.target.value })}
             />
 
@@ -164,7 +197,7 @@ export const Profile = () => {
               leftIcon={User}
               type="text"
               name="phone"
-              defaultValue={data?.phone || ""}
+              value={data?.phone || ""}
               onChange={(e) => setData({ ...data, phone: e.target.value })}
             />
 
@@ -174,7 +207,7 @@ export const Profile = () => {
               label={"Password"}
               type={showPassword ? "text" : "password"}
               name="password"
-              defaultValue={data?.password || ""}
+              value={data?.password || ""}
               onChange={(e) => setData({ ...data, password: e.target.value })}
             >
               {showPassword ? (
@@ -195,7 +228,7 @@ export const Profile = () => {
               leftIcon={MapPin}
               type="text"
               name="address"
-              defaultValue={data?.address || ""}
+              value={data?.address || ""}
               onChange={(e) => setData({ ...data, address: e.target.value })}
             />
 
