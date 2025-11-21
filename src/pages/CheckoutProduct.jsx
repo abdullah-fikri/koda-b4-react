@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { Plus, X, MapPin, Mail, User, ChevronLeft } from "lucide-react";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { checkoutSchema } from "../utils/util";
 import { CartContext } from "../context/Context";
 import { History } from "../context/Context";
 import { useSelector } from "react-redux";
+import { api } from "../utils/Fetch";
 
 const parsePrice = (value) => {
   if (!value) return 0;
@@ -33,9 +34,25 @@ const CheckoutProduct = () => {
   const [selectedPayment, setSelectedPayment] = useState("");
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.account);
+  const token = useSelector((state) => state.account.token);
+  const [data, setData] = useState(null);
 
-  const handleRemoveItem = (index) => {
-    setCart(cart.filter((_, i) => i !== index));
+  useEffect(() => {
+    if (!token) return;
+    api("/cart", "GET", null, token)
+      .then((res) => res.json())
+      .then((result) => setData(result.data))
+      .catch((err) => console.error("error fetch data cart:", err));
+  }, [token, data]);
+
+  const handleRemoveItem = async(index) => {
+    // setCart(cart.filter((_, i) => i !== index));
+    try {
+      const res = await api(`/cart/delete/${index}`, "DELETE", null, token)
+      const result = await res.json()
+    } catch (error) {
+      console.error("failed remove cart:", error)
+    }
   };
 
   const calculateSubtotal = () =>
@@ -128,22 +145,18 @@ const CheckoutProduct = () => {
 
             {/* Cart List */}
             <div className="space-y-4 mb-8 md:mb-[50px]">
-              {cart.length === 0 ? (
+              {!data || data.length === 0 ? (
                 <div className="text-center py-10 text-[#4F5665]">
                   <p className="text-base md:text-lg">Your cart is empty</p>
                 </div>
               ) : (
-                cart.map((item, index) => {
-                  const pricePerItem = parsePrice(item.price);
-                  const originalPricePerItem = parsePrice(item.originalPrice);
-                  const totalPrice = pricePerItem * (item.quantity || 1);
-                  const totalOriginalPrice = originalPricePerItem
-                    ? originalPricePerItem * (item.quantity || 1)
-                    : null;
+                data.map((item, index) => {
+                  const pricePerItem = parsePrice(item["base-price"]);
+                  const totalPrice = parsePrice(item.subtotal);
 
                   return (
                     <div
-                      key={index}
+                      key={item.id}
                       className="flex flex-col sm:flex-row gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
                     >
                       <div className="w-full sm:w-[120px] h-[200px] sm:h-[120px] rounded-xl overflow-hidden flex-shrink-0 relative">
@@ -153,8 +166,8 @@ const CheckoutProduct = () => {
                           </div>
                         )}
                         <img
-                          src={item.img || "/image 22.png"}
-                          alt={item.product}
+                          src={item.image || "/image 22.png"}
+                          alt={item.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -162,11 +175,11 @@ const CheckoutProduct = () => {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-lg md:text-xl font-medium text-[#0B132A]">
-                            {item.product}
+                            {item.name}
                           </h3>
                           <button
                             type="button"
-                            onClick={() => handleRemoveItem(index)}
+                            onClick={() => handleRemoveItem(item.id)}
                             className="text-red-500 hover:bg-red-50 p-1 rounded-full transition-colors"
                           >
                             <X className="w-5 h-5" />
@@ -174,16 +187,16 @@ const CheckoutProduct = () => {
                         </div>
 
                         <p className="text-[#4F5665] text-xs md:text-sm mb-3">
-                          {item.quantity} pcs | {item.size} | {item.temp} |{" "}
+                          {item.quantity} pcs | {item.size} | {item.variant} |{" "}
                           {deliveryMethod}
                         </p>
 
                         <div className="flex items-center gap-2 flex-wrap">
-                          {totalOriginalPrice && (
+                          {/* {totalOriginalPrice && (
                             <span className="text-[#D00000] line-through text-xs md:text-sm">
                               {formatCurrency(totalOriginalPrice)}
                             </span>
-                          )}
+                          )} */}
                           <span className="text-[#FF8906] text-lg md:text-xl font-medium">
                             {formatCurrency(totalPrice)}
                           </span>
