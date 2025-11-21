@@ -7,18 +7,19 @@ import { api } from "../utils/Fetch"
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("Regular");
+  const [selectedSize, setSelectedSize] = useState(null);
   const [selectedTemp, setSelectedTemp] = useState("Ice");
   const [selectedImage, setSelectedImage] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
   const [product, setProduct] = useState(null);
-  const [selectedSizePrice, setSelectedSizePrice] = useState(product?.min_price || 0);
+  const [selectedSizePrice, setSelectedSizePrice] = useState(0);
   const [alert, setAlert] = useState(false);
   const [alertLog, setAlertLog] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { cart, setCart } = useContext(CartContext);
   const { currentUser } = useSelector((state) => state.account);
+  const token = useSelector((state)=> state.account.token)
 
   useEffect(() => {
       api(`/products/${id}`)
@@ -26,6 +27,8 @@ const DetailProduct = () => {
       .then(data => {
         setProduct(data.data.product);              
         setRecommendations(data.data.recommendations);
+        setSelectedSize(data.data.product.sizes[0]); 
+        setSelectedSizePrice(data.data.product.sizes[0].price);
       })
       .catch(err => console.error("Error fetch detail:", err));
   }, [id]);
@@ -35,31 +38,36 @@ const DetailProduct = () => {
     else if (type === "kurang" && quantity > 1) setQuantity(quantity - 1);
   };
 
-  const handleAddToCart = () => {
-    if (currentUser) {
-      if (!product) return;
-      const order = {
-        product: product.title,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        quantity,
-        size: selectedSize,
-        temp: selectedTemp,
-        flashSale: product.flashSale,
-        img: product.img,
-      };
-      setCart([...cart, order]);
-      setAlert(true);
-      setTimeout(() => {
-        setAlert(false);
-      }, 500);
-    } else {
+  const handleAddToCart = async () => {
+    if (!currentUser) {
       setAlertLog(true);
-      setTimeout(() => {
-        setAlertLog(false);
-      }, 3000);
+      setTimeout(() => setAlertLog(false), 3000);
+      return;
     }
-  };
+  
+    try {
+      const variantId = selectedTemp === "Hot" ? 1 : 2;
+  
+      const body = {
+        product_id: product.id,
+        size_id: selectedSize.size_id,
+        variant_id: variantId,
+        quantity: quantity
+      };
+  
+      const res = await api("/cart", "POST", body, token);
+      const result = await res.json();
+  
+      if (result.success) {
+        setAlert(true);
+        setTimeout(() => setAlert(false), 2000);
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Add to cart error:", error);
+    }
+  };  
 
   const handleBuy = () => {
     if (currentUser) {
@@ -139,9 +147,9 @@ const DetailProduct = () => {
             </h1>
 
             <div className="flex items-center gap-3 md:gap-[16px] mb-3 md:mb-[16px]">
-              {product.originalPriceprice ? (
+              {product.original_price ? (
                 <span className="text-[#D00000] line-through text-base md:text-[20px]">
-                  IDR {product.originalPriceprice}
+                  IDR {product.original_price}
                 </span>
               ) : (
                 ""
@@ -215,7 +223,7 @@ const DetailProduct = () => {
                       setSelectedSizePrice(size.price);
                     }}
                     className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
-                      selectedSize === size
+                      selectedSize?.size_id === size.size_id
                         ? "bg-white border border-[#FF8906] text-[#FF8906]"
                         : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#FF8906]"
                     }`}
