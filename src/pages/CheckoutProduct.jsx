@@ -27,42 +27,59 @@ const formatCurrency = (value) =>
     minimumFractionDigits: 0,
   })}`;
 
+  const deliveryMethodPrice = (delivery) => {
+    if (delivery === "Dine in"){
+      return 0
+    } else if(delivery === "Door Delivery"){
+      return 5000
+    } else {
+      return 3000
+    }
+  }
+
 const CheckoutProduct = () => {
-  const { cart, setCart } = useContext(CartContext);
-  const { history, setHistory } = useContext(History);
   const [deliveryMethod, setDeliveryMethod] = useState("Dine in");
   const [selectedPayment, setSelectedPayment] = useState("");
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.account);
   const token = useSelector((state) => state.account.token);
   const [data, setData] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
-  useEffect(() => {
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    setAlertMessage("");
+  };  
+
+  const getCart = () => {
     if (!token) return;
     api("/cart", "GET", null, token)
       .then((res) => res.json())
       .then((result) => setData(result.data))
       .catch((err) => console.error("error fetch data cart:", err));
-  }, [token, data]);
-
-  const handleRemoveItem = async(index) => {
-    // setCart(cart.filter((_, i) => i !== index));
+  };
+  
+  useEffect(() => {
+    getCart();
+  }, [token]);
+  
+  const handleRemoveItem = async (index) => {
     try {
-      const res = await api(`/cart/delete/${index}`, "DELETE", null, token)
-      const result = await res.json()
+      const res = await api(`/cart/delete/${index}`, "DELETE", null, token);
+      const result = await res.json();
+      if (result.success) {
+        getCart();  
+      }
     } catch (error) {
-      console.error("failed remove cart:", error)
+      console.error("failed remove cart:", error);
     }
   };
+  
 
-  const calculateSubtotal = () =>
-    cart.reduce((total, item) => {
-      const price = parsePrice(item.price);
-      return total + price * (item.quantity || 1);
-    }, 0);
-
-  const subtotal = calculateSubtotal();
-  const delivery = 0;
+  const subtotal = data?.reduce((acc, item) => acc + parsePrice(item.subtotal), 0) || 0;
+  const delivery = deliveryMethodPrice(deliveryMethod)
   const tax = subtotal * 0.1;
   const total = subtotal + delivery + tax;
 
@@ -72,38 +89,47 @@ const CheckoutProduct = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(checkoutSchema) });
 
-  const onSubmit = (data) => {
-    const orderNumber = `12354-${Math.floor(10000 + Math.random() * 90000)}`;
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleString("id-ID", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    const order = {
-      orderNumber,
-      date: formattedDate,
-      total: Math.round(total),
-      status: "On Progress",
-      items: cart,
-      customerInfo: {
-        fullName: data.fullName,
-        email: data.email,
-        address: data.address,
-      },
-      deliveryMethod,
-      paymentMethod: selectedPayment,
-      img: cart[0]?.img || "/image 22.png",
-      product: cart.map((item) => item.product).join(", "),
+  const onSubmit = async (formData) => {
+    if (!data || data.length === 0){
+      setAlertMessage("Your cart is empty")
+      setShowAlert(true)
+      return
+    }
+    if (!selectedPayment) {
+      setAlertMessage("Please select a payment method");
+      setShowAlert(true)
+      return;
+    }
+    const payment = {
+      BRI: 1,
+      DANA: 2,
+      BCA: 3,
+      GoPay: 4,
+      OVO: 5,
+      PayPal: 6
     };
-
-    setHistory([...history, order]);
-    setCart([]);
-    navigate("/HistoryOrder");
-  };
+  
+    const delivery = {
+      "Dine in": 1,
+      "Door Delivery": 2,
+      "Pick Up": 3
+    };
+    const body = {
+      payment_id: payment[selectedPayment],
+      customer_name: formData.fullName,
+      customer_email: formData.email, 
+      customer_address: formData.address,
+      method_id: delivery[deliveryMethod]
+    };
+  
+    const res = await api("/user/order", "POST", body, token);
+    const result = await res.json();
+  
+    if (result.success) {
+      navigate("/HistoryOrder");
+    };
+  }
+  
   const ref = useRef([]);
   const handlePaymentMethod = (i) => {
     const choisePayment = ref.current[i];
@@ -115,6 +141,21 @@ const CheckoutProduct = () => {
 
   return (
     <div className="pt-[76px] px-4 sm:px-6 md:px-10 lg:px-20 xl:px-[130px] py-8 md:py-[50px] mt-[76px] min-h-screen">
+       {showAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-[90%] text-center">
+            <h2 className="text-lg font-semibold text-[#8E6447]">
+              {alertMessage}
+            </h2>
+            <button
+              onClick={handleCloseAlert}
+              className="mt-4 px-6 py-2 bg-[#FF8906] text-white rounded-md hover:bg-[#e07a05] transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       <button
         className="border border-gray-400 hover:bg-[#FF8906] rounded-full w-9 h-9 flex items-center justify-center mb-3"
         onClick={() => navigate("/Product")}
