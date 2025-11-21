@@ -1,16 +1,31 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Calendar, MessageCircle, ArrowLeft } from "lucide-react";
 import { RoundButton } from "../components/RoundButton";
 import { useNavigate } from "react-router-dom";
 import { History } from "../context/Context";
+import { useSelector } from "react-redux";
+import {api} from "../utils/Fetch"
 
 export const HistoryOrder = () => {
   const [activeTab, setActiveTab] = useState("On Progress");
   const [selectedMonth, setSelectedMonth] = useState("");
   const navigate = useNavigate();
-  const { history } = useContext(History);
+  // const { history } = useContext(History);
+  const [history, setHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPages = 6;
+  const token = useSelector((state => state.account.token))
+
+  useEffect(()=>{
+    try {
+      if(!token) return
+      api("/user/history", "GET", null, token)
+      .then((res) => res.json())
+      .then((result) => setHistory(result.data))
+    } catch (error) {
+      console.error("gagal fetch data history:", error)
+    }
+  },[token])
 
   const tabs = ["On Progress", "Sending Goods", "Finish Order"];
   const filteredOrders = history.filter((order) => order.status === activeTab);
@@ -105,8 +120,8 @@ export const HistoryOrder = () => {
                   >
                     <div className="w-full sm:w-[80px] md:w-[100px] h-[200px] sm:h-[80px] md:h-[100px] rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={order.img || "/image 22.png"}
-                        alt={order.product}
+                        src={order.image || "/image 22.png"}
+                        alt={order.order_id}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -117,7 +132,7 @@ export const HistoryOrder = () => {
                           No. Order
                         </p>
                         <p className="font-medium text-[#0B132A] text-xs md:text-sm">
-                          #{order.orderNumber}
+                          #{order.invoice}
                         </p>
                         <button
                           onClick={() => handleViewDetail(order.orderNumber)}
@@ -132,7 +147,7 @@ export const HistoryOrder = () => {
                           Date
                         </p>
                         <p className="font-medium text-[#0B132A] text-xs md:text-sm">
-                          {order.date}
+                          {order.order_date}
                         </p>
                       </div>
 
