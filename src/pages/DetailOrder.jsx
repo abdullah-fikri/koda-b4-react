@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import {api} from "../utils/Fetch"
 
 import {
   ArrowLeft,
@@ -10,6 +11,7 @@ import {
   Package,
 } from "lucide-react";
 import { History } from "../context/Context";
+import { useSelector } from "react-redux";
 
 const parsePrice = (value) => {
   if (!value) return 0;
@@ -23,25 +25,35 @@ const parsePrice = (value) => {
   return isNaN(num) ? 0 : num;
 };
 
-const formatCurrency = (value) =>
-  `IDR ${value.toLocaleString("id-ID", {
-    minimumFractionDigits: 0,
-  })}`;
+// const formatCurrency = (value) =>
+//   `IDR ${value.toLocaleString("id-ID", {
+//     minimumFractionDigits: 0,
+//   })}`;
 
 export const DetailOrder = () => {
   const { orderNumber } = useParams();
   const navigate = useNavigate();
-  const { history } = useContext(History);
+  // const { history } = useContext(History);
+  const {id} = useParams()
+  const token = useSelector((state)=> state.account.token)
+  const [history, setHistory] = useState(null)
 
-  const order = history.find((o) => o.orderNumber === orderNumber);
+  useEffect(()=>{
+    api(`/user/order/${orderNumber}`, "GET", null, token)
+    .then((res) => res.json())
+    .then((result) => setHistory(result.data))
+    .catch((err)=> console.error("failed fetch data detail history order:", err))
+  },[id])
 
-  useEffect(() => {
-    if (history.length === 0) return;
+  // const order = history.find((o) => o.orderNumber === orderNumber);
 
-    if (!order) {
-      navigate("/HistoryOrder");
-    }
-  }, [order, navigate, history]);
+  // useEffect(() => {
+  //   if (history.length === 0) return;
+
+  //   if (!order) {
+  //     navigate("/HistoryOrder");
+  //   }
+  // }, [order, navigate, history]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -55,6 +67,13 @@ export const DetailOrder = () => {
         return "bg-gray-100 text-gray-600";
     }
   };
+  if (!history) {
+    return (
+      <div className="min-h-screen pt-[76px] flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pt-[76px]">
@@ -67,12 +86,12 @@ export const DetailOrder = () => {
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
           </button>
           <h1 className="text-xl sm:text-2xl md:text-[32px] font-medium text-[#0B132A]">
-            Order #{order.orderNumber}
+            Order #{history.invoice}
           </h1>
         </div>
 
         <p className="text-[#4F5665] mb-6 md:mb-10 text-sm md:text-base">
-          {order.date}
+          {history.order_date}
         </p>
 
         <div className="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-[60px]">
@@ -91,13 +110,13 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-2">
-                    <Link to="/Profile" state={{ order }}>
+                    <Link to="/Profile" >
                       <p className="text-[#4F5665] text-sm md:text-base">
                         Full Name
                       </p>
                     </Link>
                     <p className="font-medium text-[#0B132A] text-right text-sm md:text-base">
-                      {order.customerInfo.fullName}
+                      {history.customer_name}
                     </p>
                   </div>
                 </div>
@@ -112,14 +131,13 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-2">
-                    <Link to={"/Profile"} state={{ order }}>
-                      {console.log(order.customerInfo.address)}
+                    <Link to={"/Profile"} >
                       <p className="text-[#4F5665] text-sm md:text-base">
                         Address
                       </p>
                     </Link>
                     <p className="font-medium text-[#0B132A] text-right max-w-full sm:max-w-[300px] text-sm md:text-base">
-                      {order.customerInfo.address}
+                      {history.customer_address}
                     </p>
                   </div>
                 </div>
@@ -140,7 +158,7 @@ export const DetailOrder = () => {
                       </p>
                     </Link>
                     <p className="font-medium text-[#0B132A] text-right text-sm md:text-base">
-                      {order.customerInfo.phone || "+62"}
+                      {history.customer_phone || "+62"}
                     </p>
                   </div>
                 </div>
@@ -159,7 +177,7 @@ export const DetailOrder = () => {
                       Payment Method
                     </p>
                     <p className="font-medium text-[#0B132A] text-right text-sm md:text-base">
-                      {order.paymentMethod || "Cash"}
+                      {history.payment_method}
                     </p>
                   </div>
                 </div>
@@ -178,7 +196,7 @@ export const DetailOrder = () => {
                       Shipping
                     </p>
                     <p className="font-medium text-[#0B132A] text-right text-sm md:text-base">
-                      {order.deliveryMethod}
+                      {history.shipping_method}
                     </p>
                   </div>
                 </div>
@@ -198,10 +216,10 @@ export const DetailOrder = () => {
                     </p>
                     <span
                       className={`inline-block px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium ${getStatusColor(
-                        order.status
+                        history.status
                       )}`}
                     >
-                      {order.status}
+                      {history.status}
                     </span>
                   </div>
                 </div>
@@ -216,7 +234,7 @@ export const DetailOrder = () => {
                       Total Transaksi
                     </p>
                     <p className="font-medium text-[#FF8906] text-lg md:text-xl">
-                      {formatCurrency(order.total)}
+                      {history.total}
                     </p>
                   </div>
                 </div>
@@ -230,15 +248,15 @@ export const DetailOrder = () => {
             </h2>
 
             <div className="space-y-4 md:space-y-5">
-              {order.items?.map((item, index) => {
-                const pricePerItem = parsePrice(item.price);
-                const originalPricePerItem = item.originalPrice
-                  ? parsePrice(item.originalPrice)
+              {history.items?.map((item, index) => {
+                const pricePerItem = parsePrice(item.base_price);
+                const originalPricePerItem = item.discount_price
+                  ? parsePrice(item.discount_price)
                   : null;
 
-                const totalPrice = pricePerItem * item.quantity;
+                const totalPrice = pricePerItem * item.qty;
                 const totalOriginalPrice = originalPricePerItem
-                  ? originalPricePerItem * item.quantity
+                  ? originalPricePerItem * item.qty
                   : null;
 
                 return (
@@ -248,36 +266,36 @@ export const DetailOrder = () => {
                   >
                     <div className="flex flex-col sm:flex-row gap-4 md:gap-5">
                       <div className="w-full sm:w-[120px] md:w-[140px] h-[200px] sm:h-[120px] md:h-[140px] rounded-xl overflow-hidden flex-shrink-0 relative">
-                        {item.flashSale && (
+                        {item.discount_price && (
                           <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 md:px-2.5 py-1 rounded-full z-10">
                             FLASH SALE!
                           </div>
                         )}
                         <img
                           src={item.img || "/image 22.png"}
-                          alt={item.product}
+                          alt={item.product_name}
                           className="w-full h-full object-cover"
                         />
                       </div>
 
                       <div className="flex-1">
                         <h3 className="text-lg md:text-xl font-medium text-[#0B132A] mb-2">
-                          {item.product}
+                          {item.product_name}
                         </h3>
 
                         <p className="text-[#4F5665] text-xs md:text-sm mb-3 md:mb-4">
                           {item.quantity}pcs | {item.size} | {item.temp} |{" "}
-                          {order.deliveryMethod}
+                          {history.shipping_method}
                         </p>
 
                         <div className="flex flex-col gap-1">
                           {totalOriginalPrice && (
                             <span className="text-[#D00000] line-through text-xs md:text-sm">
-                              {formatCurrency(totalOriginalPrice)}
+                              {totalPrice}
                             </span>
                           )}
                           <span className="text-[#FF8906] text-lg md:text-xl font-medium">
-                            {formatCurrency(totalPrice)}
+                            {totalOriginalPrice}
                           </span>
                         </div>
                       </div>
