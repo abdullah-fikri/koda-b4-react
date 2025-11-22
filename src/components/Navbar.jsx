@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   ShoppingCart,
@@ -12,14 +12,18 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/reducers/account";
 import { persistor } from "../redux/store";
+import { api } from "../utils/Fetch";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currentUser } = useSelector(state => state.account);
+  const { currentUser } = useSelector((state) => state.account);
   const [dropdown, setDropdown] = useState(false);
   const [menu, setMenu] = useState(false);
   const [alertLog, setAlertLog] = useState(false);
+  const [image, setImage] = useState(null);
+  const [data, setData] = useState(null);
+  const token = useSelector((state) => state.account.token);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -33,6 +37,16 @@ export const Navbar = () => {
       setAlertLog(false);
     }, 2000);
   }
+  useEffect(() => {
+    if (!token) return;
+    api(`/user/profile`, "GET", null, token)
+      .then((res) => res.json())
+      .then((result) => {
+        setData(result.data);
+        setImage(result.data.profile_picture);
+      })
+      .catch((err) => console.error("error fetch profile:", err));
+  }, [token]);
 
   return (
     <>
@@ -100,8 +114,14 @@ export const Navbar = () => {
               />
             </Link>
             <Link to="/Profile">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-300 hidden lg:block">
-                {/* logo user/profile */}
+              <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full overflow-hidden hidden lg:block">
+                {image && (
+                  <img
+                    src={image}
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
             </Link>
 
@@ -175,10 +195,16 @@ export const Navbar = () => {
 
                     {/* user */}
                     <div className="flex items-center gap-3 mb-9 border-b border-[#C47F3E] py-3 text-black/60">
-                      <div className="bg-gray-300 rounded-full w-8 h-8"></div>
-                      <p className="text-xl font-bold">
-                        {currentUser.fullName}
-                      </p>
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full overflow-hidden lg:block">
+                        {image && (
+                          <img
+                            src={image}
+                            alt="profile"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <p className="text-xl font-bold">{data.username}</p>
                     </div>
 
                     {/* Search */}
