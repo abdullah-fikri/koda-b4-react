@@ -20,8 +20,9 @@ export const HistoryOrder = () => {
 
   const prosesShippingId = {
     "On Progress": 3,
-    "Sending Goods": 2,
-    "Finish Order": 1,
+    "Pending": 2,
+    "Done": 1,
+    "Waiting": 4,
   };
 
   const monthSelect = selectedMonth
@@ -48,7 +49,7 @@ export const HistoryOrder = () => {
     setCurrentPage(1);
   }, [activeTab, selectedMonth]);
 
-  const tabs = ["On Progress", "Sending Goods", "Finish Order"];
+  const tabs = ["On Progress", "Pending", "Done", "Waiting"];
   const filteredOrders = history;
 
   const handleViewDetail = (orderNumber) => {
