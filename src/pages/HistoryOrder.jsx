@@ -4,7 +4,8 @@ import { RoundButton } from "../components/RoundButton";
 import { useNavigate } from "react-router-dom";
 import { History } from "../context/Context";
 import { useSelector } from "react-redux";
-import {api} from "../utils/Fetch"
+import { api } from "../utils/Fetch";
+import { FormatDate } from "../utils/FormatDate";
 
 export const HistoryOrder = () => {
   const [activeTab, setActiveTab] = useState("On Progress");
@@ -14,34 +15,48 @@ export const HistoryOrder = () => {
   const [history, setHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPages = 6;
-  const token = useSelector((state => state.account.token))
+  const [totalPage, setTotalPage] = useState(0);
+  const token = useSelector((state) => state.account.token);
 
-  useEffect(()=>{
-    try {
-      if(!token) return
-      api("/user/history", "GET", null, token)
+  const prosesShippingId = {
+    "On Progress": 3,
+    "Sending Goods": 2,
+    "Finish Order": 1,
+  };
+
+  const monthSelect = selectedMonth
+    ? new Date(selectedMonth).getMonth() + 1
+    : 0;
+
+  useEffect(() => {
+    if (!token) return;
+
+    const shipping_id = prosesShippingId[activeTab];
+    const month = monthSelect;
+    const page = currentPage;
+
+    api(`/user/history?shipping_id=${shipping_id}&month=${month}&page=${page}`,"GET", null, token)
       .then((res) => res.json())
-      .then((result) => setHistory(result.data))
-    } catch (error) {
-      console.error("gagal fetch data history:", error)
-    }
-  },[token])
+      .then((result) => {
+        setHistory(result.data || []);
+        setTotalPage(result.pagination.total_page || 0);
+      })
+      .catch((err) => console.error("gagal fetch:", err));
+  }, [token, activeTab, selectedMonth, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, selectedMonth]);
 
   const tabs = ["On Progress", "Sending Goods", "Finish Order"];
-  const filteredOrders = history.filter((order) => order.status === activeTab);
+  const filteredOrders = history;
 
   const handleViewDetail = (orderNumber) => {
     navigate(`/detailorder/${orderNumber}`);
   };
 
-  const totalPages = Math.ceil(filteredOrders.length / productPerPages);
-
-  const indexOfLastProduct = currentPage * productPerPages;
-  const indexOfFirstProduct = indexOfLastProduct - productPerPages;
-  const currentOrders = filteredOrders.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+  const currentOrders = history;
+  const totalPages = totalPage;
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -135,7 +150,7 @@ export const HistoryOrder = () => {
                           #{order.invoice}
                         </p>
                         <button
-                          onClick={() => handleViewDetail(order.orderNumber)}
+                          onClick={() => handleViewDetail(order.order_id)}
                           className="text-[#FF8906] text-[10px] md:text-xs mt-1 hover:underline"
                         >
                           View Order Detail
@@ -147,7 +162,7 @@ export const HistoryOrder = () => {
                           Date
                         </p>
                         <p className="font-medium text-[#0B132A] text-xs md:text-sm">
-                          {order.order_date}
+                          {FormatDate(order.order_date)}
                         </p>
                       </div>
 
