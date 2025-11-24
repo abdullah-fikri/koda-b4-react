@@ -3,12 +3,12 @@ import { ShoppingCart, ThumbsUp, Minus, Plus, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CartContext } from "../context/Context";
 import { useSelector } from "react-redux";
-import { api } from "../utils/Fetch"
+import { api } from "../utils/Fetch";
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedTemp, setSelectedTemp] = useState("Ice");
+  const [selectedTemp, setSelectedTemp] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
   const [product, setProduct] = useState(null);
@@ -19,14 +19,19 @@ const DetailProduct = () => {
   const { id } = useParams();
   const { cart, setCart } = useContext(CartContext);
   const { currentUser } = useSelector((state) => state.account);
-  const token = useSelector((state)=> state.account.token)
+  const token = useSelector((state) => state.account.token);
 
   useEffect(() => {
-      api(`/products/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        setProduct(data.data.product);              
+    api(`/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProduct(data.data.product);
         setRecommendations(data.data.recommendations);
+
+        if (data.data.product.variants.length > 0) {
+          setSelectedTemp(data.data.product.variants[0]);  
+        }
+
         if (data.data.product.sizes.length > 0) {
           setSelectedSize(data.data.product.sizes[0]);
           setSelectedSizePrice(data.data.product.sizes[0].price);
@@ -34,9 +39,9 @@ const DetailProduct = () => {
           setSelectedSize(null);
           setSelectedSizePrice(data.data.product.min_price);
         }
-        
       })
-      .catch(err => console.error("Error fetch detail:", err));
+      .catch((err) => console.error("Error fetch detail:", err));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
   const handleQuantityChange = (type) => {
@@ -50,21 +55,20 @@ const DetailProduct = () => {
       setTimeout(() => setAlertLog(false), 3000);
       return;
     }
-  
+
     try {
       const variantId = selectedTemp === "Hot" ? 1 : 2;
       const body = {
         product_id: product.id,
         quantity: quantity,
       };
-      
+
       if (selectedSize) body.size_id = selectedSize.size_id;
-      if (product.variants.length > 0) body.variant_id = selectedTemp.variant_id;
-      
-  
+      if (selectedTemp) body.variant_id = selectedTemp.variant_id;
+
       const res = await api("/cart", "POST", body, token);
       const result = await res.json();
-  
+
       if (result.success) {
         setAlert(true);
         setTimeout(() => setAlert(false), 2000);
@@ -74,7 +78,7 @@ const DetailProduct = () => {
     } catch (error) {
       console.error("Add to cart error:", error);
     }
-  };  
+  };
 
   const handleBuy = async () => {
     if (!currentUser) {
@@ -82,21 +86,20 @@ const DetailProduct = () => {
       setTimeout(() => setAlertLog(false), 3000);
       return;
     }
-  
+
     try {
       const variantId = selectedTemp === "Hot" ? 1 : 2;
       const body = {
         product_id: product.id,
         quantity: quantity,
       };
-      
+
       if (selectedSize) body.size_id = selectedSize.size_id;
-      if (product.variants.length > 0) body.variant_id = selectedTemp.variant_id;
-      
-  
+      if (selectedTemp) body.variant_id = selectedTemp.variant_id;
+
       const res = await api("/cart", "POST", body, token);
       const result = await res.json();
-  
+
       if (result.success) {
         navigate("/checkoutProduct");
       } else {
@@ -106,7 +109,7 @@ const DetailProduct = () => {
       console.error("Buy error:", error);
     }
   };
-    
+
   if (!product) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
@@ -226,53 +229,53 @@ const DetailProduct = () => {
 
             {/* Pilihan size */}
             {product.sizes.length > 0 && (
-            <div className="mb-6 md:mb-[32px]">
-              <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
-                Choose Size
-              </h3>
-              <div className="flex gap-3 md:gap-[16px]">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size.size_id}
-                    onClick={() => {
-                      setSelectedSize(size)
-                      setSelectedSizePrice(size.price);
-                    }}
-                    className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
-                      selectedSize?.size_id === size.size_id
-                        ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
-                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
-                    }`}
-                  >
-                    {size.size_name}
-                  </button>
-                ))}
+              <div className="mb-6 md:mb-[32px]">
+                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
+                  Choose Size
+                </h3>
+                <div className="flex gap-3 md:gap-[16px]">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size.size_id}
+                      onClick={() => {
+                        setSelectedSize(size);
+                        setSelectedSizePrice(size.price);
+                      }}
+                      className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
+                        selectedSize?.size_id === size.size_id
+                          ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
+                          : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
+                      }`}
+                    >
+                      {size.size_name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
 
             {/* Pilihan suhu */}
             {product.variants.length > 0 && (
-            <div className="mb-6 md:mb-[40px]">
-              <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
-                Hot/Ice?
-              </h3>
-              <div className="flex gap-3 md:gap-[16px]">
-                {product.variants.map((temp) => (
-                  <button
-                    key={temp}
-                    onClick={() => setSelectedTemp(temp)}
-                    className={`flex-1 w-full px-6 md:px-[32px] py-3 md:py-[12px] rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
-                      selectedTemp === temp
-                        ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
-                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
-                    }`}
-                  >
-                    {temp}
-                  </button>
-                ))}
+              <div className="mb-6 md:mb-[40px]">
+                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
+                  Hot/Ice?
+                </h3>
+                <div className="flex gap-3 md:gap-[16px]">
+                  {product.variants.map((temp) => (
+                    <button
+                      key={temp.variant_id}
+                      onClick={() => setSelectedTemp(temp)}
+                      className={`flex-1 w-full px-6 md:px-[32px] py-3 md:py-[12px] rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
+                        selectedTemp === temp
+                          ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
+                          : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
+                      }`}
+                    >
+                      {temp.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
 
             {/* buy or cart */}
