@@ -281,7 +281,7 @@ const ProductDashboard = () => {
               </h1>
               <button
                 onClick={handleAddProduct}
-                className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors"
+                className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-blue-950 transition-colors"
               >
                 <Plus size={18} />
                 Add Product
@@ -308,7 +308,7 @@ const ProductDashboard = () => {
                 </div>
               </div>
 
-              <button className="mt-6 bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors">
+              <button className="mt-6 bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-blue-950 transition-colors">
                 <Filter size={18} />
                 Filter
               </button>
@@ -431,7 +431,7 @@ const ProductDashboard = () => {
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#FF8906] transition-colors disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#1D4ED8] transition-colors disabled:cursor-not-allowed"
               >
                 Prev
               </button>
@@ -458,7 +458,7 @@ const ProductDashboard = () => {
                   setCurrentPage(Math.min(totalPages, currentPage + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#FF8906] transition-colors disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#1D4ED8] transition-colors disabled:cursor-not-allowed"
               >
                 Next
               </button>
