@@ -6,6 +6,7 @@ import { Mail, User, Eye, EyeOff, Lock, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import {api} from "../utils/Fetch"
 import { upload } from "../utils/UploadImg";
+import {FormatDate} from "../utils/FormatDate"
 
 export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -163,7 +164,7 @@ export const Profile = () => {
           <span className="text-[#4F5665] text-base font-normal flex gap-1.5">
             since
             <p className="text-base font-semibold text-[#4F5665]">
-              {data?.since}
+              {FormatDate(data.since)}
             </p>
           </span>
         </div>

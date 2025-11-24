@@ -43,190 +43,111 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col-reverse lg:flex-row mt-[76px]">
-        <div className="bg-gradient-to-r from-[#0B0909] to-[#777C82] w-full lg:max-w-[715px] h-auto lg:h-[1024px] py-12 sm:py-16 lg:py-[283px] px-6 sm:px-10 lg:pl-32">
-          <div className="flex flex-col w-full lg:max-w-[518px] h-auto lg:h-[457px] gap-[25px]">
-            <h1 className="text-white font-medium text-2xl sm:text-3xl lg:text-5xl">
-              Start Your Day with Coffee and Good Meals
-            </h1>
-            <span className="font-normal text-sm lg:text-base text-white">
-              We provide high quality beans, good taste, and healthy meals made
-              by love just for you. Start your day with us for a bigger smile!
-            </span>
-            <Link to="/Product">
-              <ButtonRegister className="bg-[#FF8906] p-2.5 rounded-md font-normal text-sm cursor-pointer w-fit">
-                Get Started
-              </ButtonRegister>
-            </Link>
-            <div className="flex flex-row gap-[20px] lg:gap-[40px]">
-              <div className="flex flex-col w-full lg:max-w-[146px] border-r border-r-[white] gap-[12px]">
-                <h1 className="text-[#FF8906] font-medium text-2xl sm:text-3xl lg:text-5xl">
-                  90+
-                </h1>
-                <span className="text-white text-xs sm:text-sm lg:text-base">
-                  Staff
-                </span>
-              </div>
-              <div className="flex flex-col w-full lg:max-w-[146px] border-r border-r-[white] gap-[12px]">
-                <h1 className="text-[#FF8906] font-medium text-2xl sm:text-3xl lg:text-5xl">
-                  30+
-                </h1>
-                <span className="text-white text-xs sm:text-sm lg:text-base">
-                  Stores
-                </span>
-              </div>
-              <div className="flex flex-col w-full lg:max-w-[146px] gap-[12px]">
-                <h1 className="text-[#FF8906] font-medium text-2xl sm:text-3xl lg:text-5xl">
-                  800+
-                </h1>
-                <span className="text-white text-xs sm:text-sm lg:text-base">
-                  Customers
-                </span>
-              </div>
-            </div>
-          </div>
+      <section className="flex flex-col lg:flex-row items-center justify-between h-auto lg:h-[760px] bg-gradient-to-r from-[#0A2342] to-[#1D4ED8] px-6 lg:px-[120px] py-[80px] gap-12 text-white">
+        <div className="max-w-[550px] flex flex-col gap-6 text-center lg:text-left">
+          <h1 className="text-3xl lg:text-6xl font-semibold leading-tight">
+            Start Your Day with <span className="text-[#60A5FA]">Coffee</span> and Good Meals
+          </h1>
+          <p className="opacity-90 text-sm lg:text-lg">
+            High-quality coffee beans with fresh and healthy meals just for you.
+          </p>
+          <Link to="/Product" className="mx-auto lg:mx-0">
+            <ButtonRegister className="bg-[#60A5FA] hover:bg-[#3B82F6] text-[#0A2342] px-6 py-3 rounded-xl text-sm font-semibold transition-all">
+              Get Started
+            </ButtonRegister>
+          </Link>
         </div>
 
-        <div className="relative w-full lg:max-w-[712px]">
-          <img
-            className="w-full h-[300px] sm:h-[400px] lg:h-[1024px] object-cover"
-            src="/Rectangle 287.svg"
-            alt="Coffe"
-          />
+        <div className="relative w-full max-w-[550px] rounded-3xl overflow-hidden shadow-2xl">
+          <img src="/Rectangle 287.svg" alt="coffee" className="w-full h-[420px] object-cover" />
           <Chat />
         </div>
-      </div>
+      </section>
 
-      <div className="flex flex-col-reverse lg:flex-row justify-between items-center lg:items-start">
-        <div className="flex flex-col w-full lg:max-w-[529px] h-auto lg:h-[465px] gap-[25px] py-[54px] px-6 lg:ml-[130px]">
-          <div className="flex items-center">
-            <div className="w-[7px] h-[68px] bg-[#FF8906] mr-6"></div>
-            <h1 className="text-2xl sm:text-3xl lg:text-5xl font-medium font-jakarta">
-              We Provide
-              <span className="text-[#8E6447]"> Good Coffee</span>
-              <br className="hidden lg:block" />
-              <span className="lg:hidden"> </span>
-              <span className="text-[#8E6447]">and Healthy Meals</span>
-            </h1>
-          </div>
-          <span className="text-sm lg:text-base font-normal text-[#4F5665] font-jakarta">
-            You can explore the menu that we provide with fun and have their own
-            taste and make your day better.
-          </span>
-          <ul className="flex flex-col gap-[25px]">
-            <li className="flex gap-[10px] items-start">
-              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
-              <span className="text-sm lg:text-base">High quality beans</span>
-            </li>
-            <li className="flex gap-[10px] items-start">
-              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
-              <span className="text-sm lg:text-base">
-                Healthy meals, you can request the ingredients
-              </span>
-            </li>
-            <li className="flex gap-[10px] items-start">
-              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
-              <span className="text-sm lg:text-base">
-                Chat with our staff to get better experience for ordering
-              </span>
-            </li>
-            <li className="flex gap-[10px] items-start">
-              <img src="/Vector.svg" alt="Checklist" className="mt-1" />
-              <span className="text-sm lg:text-base">
-                Free member card with a minimum purchase of IDR 200.000.
-              </span>
-            </li>
-          </ul>
+      <section className="px-6 lg:px-[130px] py-[90px] bg-gray-300">
+        <h2 className="text-3xl lg:text-5xl font-semibold text-center mb-4">
+          We Provide <span className="text-[#1D4ED8]">Good Coffee</span> & <span className="text-[#1D4ED8]">Healthy Meals</span>
+        </h2>
+        <p className="text-[#4F5565] text-center max-w-[650px] mx-auto mb-12">
+          Explore our menu and find the taste that suits your day.
+        </p>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            "High quality beans",
+            "Healthy custom meals",
+            "Chat with our staff",
+            "Free member card",
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-4 bg-white border border-[#E0E7FF] rounded-xl px-5 py-6"
+            >
+              <span className="text-[15px] font-medium text-[#0A2342]">{item}</span>
+            </div>
+          ))}
         </div>
-        <div className="w-full lg:w-auto px-6 lg:px-0 mt-6 lg:mt-0">
-          <img
-            src="/Rectangle 291.png"
-            alt="barista"
-            className="w-full h-auto"
-          />
-        </div>
-      </div>
+      </section>
 
       {/* favorite */}
-      <div className="flex flex-col justify-center items-center mt-[81px] px-6 lg:px-[130px]">
-        <h1 className="text-2xl sm:text-3xl lg:text-5xl font-medium font-jakarta text-center">
-          Here is People's
-          <span className="text-[#8E6447]"> Favorite</span>
-        </h1>
-        <div className="w-[7px] h-[68px] bg-[#FF8906] rotate-90"></div>
-        <span className="font-jakarta text-sm lg:text-base font-normal text-[#4F5665] text-center">
-          Let's choose and have a bit taste of poeple's favorite. It might be
-          yours too!
-        </span>
+      <section className="px-6 lg:px-[130px] mb-[90px] bg-gray-400">
+        <h2 className="text-3xl lg:text-5xl font-semibold text-center text-[#1D4ED8]">
+          People's Favorite
+        </h2>
+        <p className="text-center text-[#4F5565] mt-2 mb-10">
+          Choose and try — maybe it's yours too!
+        </p>
         <CardProduct />
-      </div>
+      </section>
 
-      <div className="flex flex-col justify-center items-center mt-[81px] px-6 lg:px-[130px]">
-        <h1 className="text-2xl sm:text-3xl lg:text-5xl font-medium font-jakarta text-[#8E6447] text-center">
+      {/* map */}
+      <section className="px-6 lg:px-[130px] mb-[90px]">
+        <h2 className="text-3xl lg:text-5xl font-semibold text-center text-[#1D4ED8]">
           Visit Our Store
-          <span className="text-[#0B132A]"> in the Spot on the Map Below</span>
-        </h1>
-        <div className="w-[7px] h-[68px] bg-[#FF8906] rotate-90"></div>
-        <span className="font-jakarta text-sm lg:text-base font-normal text-[#4F5665] text-center">
-          You can explore the menu that we provide with fun and have their own
-          taste and make your day better.
-        </span>
-        <img
-          className="mt-[60px] w-full h-auto"
-          src="/Frame 399.png"
-          alt="map-store"
-        />
-      </div>
+        </h2>
+        <p className="text-center text-[#4F5565] mt-2">
+          Locate the nearest branch around you.
+        </p>
+        <img src="/Frame 399.png" className="mt-[50px] rounded-2xl shadow-xl w-full" />
+      </section>
 
-      {/* testimoni */}
+      {/* testi */}
       {testimonial && (
-        <div className="flex flex-col lg:flex-row bg-gradient-to-r from-[#777C82] to-[#0B0909] w-full lg:max-w-[1441px] py-[76px] px-6 lg:px-[132px] gap-5 items-center transition-all duration-500 ease-in-out">
+        <section className="flex flex-col lg:flex-row items-center gap-10 bg-gradient-to-r from-[#1D4ED8] to-[#0A2342] py-[80px] px-6 lg:px-[130px] text-white transition-all">
           <img
             src={testimonial.image}
             alt={testimonial.name}
-            className="w-full lg:w-[400px] h-[300px] lg:h-[400px] rounded-2xl object-cover shadow-lg"
+            className="w-full lg:w-[380px] h-[350px] object-cover rounded-2xl shadow-xl"
           />
-          <div className="flex flex-col gap-[25px] w-full">
-            <p className="text-white text-sm lg:text-base font-normal">
-              TESTIMONIAL
-            </p>
-            <div className="flex items-center">
-              <div className="w-[7px] h-[68px] bg-[#FF8906]"></div>
-              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-medium text-white ml-4">
-                {testimonial.name}
-              </h2>
-            </div>
-            <span className="text-[#FF8906] font-normal text-sm lg:text-base">
-              {testimonial.position}
-            </span>
-            <span className="text-white font-normal text-sm lg:text-base">
-              "{testimonial.testimonial}"
-            </span>
-            <div className="flex gap-[25px] items-center">
+          <div className="flex flex-col gap-4 w-full max-w-[700px]">
+            <p className="opacity-80">TESTIMONIAL</p>
+            <h3 className="text-3xl lg:text-4xl font-semibold">{testimonial.name}</h3>
+            <span className="text-[#93C5FD]">{testimonial.position}</span>
+            <p className="text-lg leading-relaxed mt-2">"{testimonial.testimonial}"</p>
+            <div className="flex gap-3 items-center mt-4">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-[13px] h-[13px] ${
+                  className={`w-5 h-5 ${
                     i < Math.round(testimonial.rating)
-                      ? "text-[#FF8906] fill-[#FF8906]"
-                      : "text-gray-400"
+                      ? "text-[#60A5FA] fill-[#60A5FA]"
+                      : "text-gray-300"
                   }`}
                 />
               ))}
-              <span className="text-white text-sm lg:text-base font-normal font-jakarta">
-                {testimonial.rating.toFixed(1)}
-              </span>
+              <span className="text-white font-medium text-lg">{testimonial.rating.toFixed(1)}</span>
             </div>
-            <div className="flex gap-[9px]">
+
+            <div className="flex gap-3 mt-4">
               <RoundButton bgColor="#E8E8E8" onClick={handlePrev}>
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4 text-[#0A2342]" />
               </RoundButton>
-              <RoundButton bgColor="#FF8906" onClick={handleNext}>
-                <ArrowLeft className="w-4 h-4 rotate-180" />
+              <RoundButton bgColor="#60A5FA" onClick={handleNext}>
+                <ArrowLeft className="w-4 h-4 rotate-180 text-[#0A2342]" />
               </RoundButton>
             </div>
           </div>
-        </div>
+        </section>
       )}
     </>
   );

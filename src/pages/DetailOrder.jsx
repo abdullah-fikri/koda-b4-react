@@ -284,7 +284,7 @@ export const DetailOrder = () => {
                         </h3>
 
                         <p className="text-[#4F5665] text-xs md:text-sm mb-3 md:mb-4">
-                          {item.quantity}pcs | {item.size} | {item.temp} |{" "}
+                          {item.qty}pcs | {item.size} | {item.temp} {" "}
                           {history.shipping_method}
                         </p>
 

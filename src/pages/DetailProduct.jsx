@@ -27,8 +27,14 @@ const DetailProduct = () => {
       .then(data => {
         setProduct(data.data.product);              
         setRecommendations(data.data.recommendations);
-        setSelectedSize(data.data.product.sizes[0]); 
-        setSelectedSizePrice(data.data.product.sizes[0].price);
+        if (data.data.product.sizes.length > 0) {
+          setSelectedSize(data.data.product.sizes[0]);
+          setSelectedSizePrice(data.data.product.sizes[0].price);
+        } else {
+          setSelectedSize(null);
+          setSelectedSizePrice(data.data.product.min_price);
+        }
+        
       })
       .catch(err => console.error("Error fetch detail:", err));
   }, [id]);
@@ -47,13 +53,14 @@ const DetailProduct = () => {
   
     try {
       const variantId = selectedTemp === "Hot" ? 1 : 2;
-  
       const body = {
         product_id: product.id,
-        size_id: selectedSize.size_id,
-        variant_id: variantId,
-        quantity: quantity
+        quantity: quantity,
       };
+      
+      if (selectedSize) body.size_id = selectedSize.size_id;
+      if (product.variants.length > 0) body.variant_id = selectedTemp.variant_id;
+      
   
       const res = await api("/cart", "POST", body, token);
       const result = await res.json();
@@ -80,10 +87,12 @@ const DetailProduct = () => {
       const variantId = selectedTemp === "Hot" ? 1 : 2;
       const body = {
         product_id: product.id,
-        size_id: selectedSize.size_id,
-        variant_id: variantId,
         quantity: quantity,
       };
+      
+      if (selectedSize) body.size_id = selectedSize.size_id;
+      if (product.variants.length > 0) body.variant_id = selectedTemp.variant_id;
+      
   
       const res = await api("/cart", "POST", body, token);
       const result = await res.json();
@@ -127,7 +136,7 @@ const DetailProduct = () => {
                     onClick={() => setSelectedImage(index)}
                     className={`w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex-shrink-0 rounded-[10px] overflow-hidden cursor-pointer border-2 ${
                       selectedImage === index
-                        ? "border-[#FF8906]"
+                        ? "border-[#1D4ED8]"
                         : "border-transparent"
                     }`}
                   >
@@ -161,7 +170,7 @@ const DetailProduct = () => {
                 ""
               )}
 
-              <span className="text-[#FF8906] text-xl md:text-2xl lg:text-[32px] font-medium">
+              <span className="text-[#1D4ED8] text-xl md:text-2xl lg:text-[32px] font-medium">
                 IDR {selectedSizePrice}
               </span>
             </div>
@@ -171,7 +180,7 @@ const DetailProduct = () => {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
-                    className="text-[#FF8906] text-base md:text-[20px]"
+                    className="text-[#1D4ED8] text-base md:text-[20px]"
                   >
                     ★
                   </span>
@@ -197,7 +206,7 @@ const DetailProduct = () => {
             <div className="flex items-center gap-3 md:gap-[16px] mb-6 md:mb-[32px]">
               <button
                 onClick={() => handleQuantityChange("kurang")}
-                className="w-[40px] h-[40px] border-2 border-[#E8E8E8] rounded-[8px] flex items-center justify-center hover:border-[#FF8906] transition-colors"
+                className="w-[40px] h-[40px] border-2 border-[#E8E8E8] rounded-[8px] flex items-center justify-center hover:border-[#1D4ED8] transition-colors"
               >
                 <Minus className="w-5 h-5" />
               </button>
@@ -209,13 +218,14 @@ const DetailProduct = () => {
               />
               <button
                 onClick={() => handleQuantityChange("tambah")}
-                className="w-[40px] h-[40px] bg-[#FF8906] rounded-[8px] flex items-center justify-center hover:bg-orange-600 transition-colors"
+                className="w-[40px] h-[40px] bg-[#1D4ED8] text-white rounded-[8px] flex items-center justify-center hover:bg-gray-400 transition-colors hover:text-black"
               >
-                <Plus className="w-5 h-5 text-white" />
+                <Plus className="w-5 h-5" />
               </button>
             </div>
 
             {/* Pilihan size */}
+            {product.sizes.length > 0 && (
             <div className="mb-6 md:mb-[32px]">
               <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
                 Choose Size
@@ -230,8 +240,8 @@ const DetailProduct = () => {
                     }}
                     className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
                       selectedSize?.size_id === size.size_id
-                        ? "bg-white border border-[#FF8906] text-[#FF8906]"
-                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#FF8906]"
+                        ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
+                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
                     }`}
                   >
                     {size.size_name}
@@ -239,8 +249,10 @@ const DetailProduct = () => {
                 ))}
               </div>
             </div>
+            )}
 
             {/* Pilihan suhu */}
+            {product.variants.length > 0 && (
             <div className="mb-6 md:mb-[40px]">
               <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
                 Hot/Ice?
@@ -252,8 +264,8 @@ const DetailProduct = () => {
                     onClick={() => setSelectedTemp(temp)}
                     className={`flex-1 w-full px-6 md:px-[32px] py-3 md:py-[12px] rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
                       selectedTemp === temp
-                        ? "bg-white border border-[#FF8906] text-[#FF8906]"
-                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#FF8906]"
+                        ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
+                        : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
                     }`}
                   >
                     {temp}
@@ -261,18 +273,19 @@ const DetailProduct = () => {
                 ))}
               </div>
             </div>
+            )}
 
             {/* buy or cart */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-[16px]">
               <button
-                className="flex-1 bg-[#FF8906] text-white font-medium py-3 md:py-[16px] rounded-[12px] text-base md:text-[18px] hover:bg-orange-600 transition-colors cursor-pointer"
+                className="flex-1 bg-[#1D4ED8] text-white font-medium py-3 md:py-[16px] rounded-[12px] text-base md:text-[18px] hover:bg-orange-600 transition-colors cursor-pointer"
                 onClick={handleBuy}
               >
                 Buy
               </button>
 
               <button
-                className="flex items-center justify-center gap-3 bg-white border border-[#FF8906] hover:bg-[#e97e05] text-[#FF8906] font-semibold text-sm md:text-[16px] py-3 md:py-[14px] px-5 md:px-[24px] rounded-[8px] transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-3 bg-white border border-[#1D4ED8] hover:text-white hover:bg-[#1D4ED8] text-black font-semibold text-sm md:text-[16px] py-3 md:py-[14px] px-5 md:px-[24px] rounded-[8px] transition-colors cursor-pointer"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -305,7 +318,7 @@ const DetailProduct = () => {
         {/* rekomendasi */}
         <div className="mt-12 md:mt-20 lg:mt-[100px]">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-6 md:mb-[40px]">
-            Recommendation <span className="text-[#8E6447]">For You</span>
+            Recommendation <span className="text-blue-900">For You</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-[24px]">
@@ -342,7 +355,7 @@ const DetailProduct = () => {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
                         key={star}
-                        className="text-orange-500 text-base md:text-lg"
+                        className="text-[#1D4ED8] text-base md:text-lg"
                       >
                         ★
                       </span>
@@ -356,7 +369,7 @@ const DetailProduct = () => {
                     {/* <span className="text-gray-400 line-through text-xs md:text-sm mr-2">
                       IDR {item.originalPrice}
                     </span> */}
-                    <span className="text-lg md:text-xl font-medium text-[#FF8906]">
+                    <span className="text-lg md:text-xl font-medium text-[#1D4ED8]">
                       IDR {item.min_price}
                     </span>
                   </div>

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Search, Filter, Edit2, Trash2 } from "lucide-react";
 import { SideBar } from "../components/SideBar";
 import { ProductFormModal } from "../components/ProductFormModal";
+import { api } from "../utils/Fetch";
+import { useSelector } from "react-redux";
 
 const ProductDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,139 +13,57 @@ const ProductDashboard = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const itemsPerPage = 5;
+  const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=100&h=100&fit=crop",
-      name: "Caramel Machiato",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=100&h=100&fit=crop",
-      name: "Hazelnut Latte",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=100&h=100&fit=crop",
-      name: "Kopi Susu",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Dine In",
-      stock: 200,
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=100&h=100&fit=crop",
-      name: "Espresso Supreme",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver",
-      stock: 200,
-    },
-    {
-      id: 5,
-      image:
-        "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=100&h=100&fit=crop",
-      name: "Caramel Velvet Latte",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-    },
-    {
-      id: 6,
-      image:
-        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&h=100&fit=crop",
-      name: "Vanilla Latte",
-      price: "35.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L"],
-      method: "Deliver, Dine In",
-      stock: 150,
-    },
-    {
-      id: 7,
-      image:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop",
-      name: "Americano",
-      price: "30.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL"],
-      method: "Dine In",
-      stock: 180,
-    },
-    {
-      id: 8,
-      image:
-        "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=100&h=100&fit=crop",
-      name: "Cappuccino",
-      price: "38.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL"],
-      method: "Deliver, Dine In",
-      stock: 120,
-    },
-    {
-      id: 9,
-      image:
-        "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=100&h=100&fit=crop",
-      name: "Mocha",
-      price: "42.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver",
-      stock: 90,
-    },
-  ]);
+  const itemsPerPage = 5;
+  const token = useSelector((state) => state.account.token);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await api(`/admin/product?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,"GET",null,token);
+      const result = await res.json();
+
+      const mapped = result.data.map((p) => ({
+        id: p.id,
+        image: p.image ?? "", 
+        name: p.name,
+        price: (p.min_price ?? p.price)?.toLocaleString("id-ID"),
+        size: p.sizes,
+        desc: p.description,
+        method: p.method,
+        stock: p.stock,
+      }));
+      
+      setProducts(mapped);
+      setTotalPages(result.pagination.total_page);
+      setTotalItems(result.pagination.total_item);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage, searchQuery]);
 
   const [formData, setFormData] = useState({
     name: "",
-    price: "",
     desc: "",
-    size: [],
     stock: "",
-    image: "",
+    category_id: 0,
+    images: [],
+    variants: [],
+    sizes: [],
+    imageFile: null,  
   });
 
-  // Filter search
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  // nomor page
   const getPageNumbers = () => {
     const pages = [];
-    const maxPagesToShow = 5;
+    const maxPages = 5;
 
-    if (totalPages <= maxPagesToShow) {
+    if (totalPages <= maxPages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
@@ -174,57 +94,147 @@ const ProductDashboard = () => {
       name: "",
       price: "",
       desc: "",
-      size: [],
+      sizes: [],
       stock: "",
-      image: "",
+      category_id: 0,
+      imageFile: null, 
     });
     setShowAddModal(true);
   };
 
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
+    
+    const sizeArray = product.size ? product.size.split(", ").map(sizeName => {
+      const sizeMap = { "Reguler": 1, "Regular": 1, "Medium": 2, "Large": 3 };
+      return { size_id: sizeMap[sizeName] || 1, price: 0 };
+    }) : [];
+    
     setFormData({
       name: product.name,
       price: product.price,
       desc: product.desc,
-      size: product.size,
+      sizes: sizeArray,
       stock: product.stock.toString(),
+      category_id: 0,
+      imageFile: null,
       image: product.image,
     });
     setShowEditModal(true);
   };
 
-  const handleSaveProduct = () => {
-    const newProduct = {
-      id: products.length + 1,
-      name: formData.name,
-      price: formData.price,
-      desc: formData.desc,
-      size: formData.size,
-      method: "Deliver, Dine In",
-      stock: parseInt(formData.stock),
-      image: formData.image || "foto product",
-    };
-    setProducts([...products, newProduct]);
-    setShowAddModal(false);
+  const handleSaveProduct = async () => {
+    try {
+      if (!formData.name || !formData.desc || !formData.stock || !formData.category_id) {
+        return;
+      }
+
+      if (formData.sizes.length === 0 && !formData.price) {
+        return;
+      }
+
+      const minPrice =
+        formData.sizes.length > 0
+          ? Math.min(...formData.sizes.map((s) => Number(s.price)))
+          : Number(formData.price);
+  
+      const body = {
+        name: formData.name,
+        description: formData.desc,
+        stock: parseInt(formData.stock),
+        category_id: parseInt(formData.category_id),
+        min_price: minPrice,
+        sizes: formData.sizes.map((s) => ({
+          size_id: Number(s.size_id),
+          price: Number(s.price),
+        })),
+      };
+  
+      const res = await api("/admin/product-create", "POST", body, token);
+      const result = await res.json();
+  
+      if (!result.success) {
+        return;
+      }
+  
+      const productId = result.data?.id;
+      
+      if (productId && formData.imageFile instanceof File) {
+        const uploadResult = await uploadProductImage(productId, formData.imageFile);
+        if (!uploadResult.success) {
+          return
+        }
+      }      
+      setShowAddModal(false);
+      fetchProducts(); 
+    } catch (error) {
+      console.error("Error save product:", error);
+    }
+  };
+  
+  const uploadProductImage = async (productId, file) => {
+    try {
+      const formDataImg = new FormData();
+      formDataImg.append("image", file);
+  
+      const baseURL = import.meta.env.VITE_BASE_URL
+      const res = await fetch(`${baseURL}/admin/product/${productId}/pictures`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        body: formDataImg,
+      });
+
+      const result = await res.json();
+      return result;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
   };
 
-  const handleUpdateProduct = () => {
-    const updatedProducts = products.map((p) =>
-      p.id === selectedProduct.id
-        ? {
-            ...p,
-            name: formData.name,
-            price: formData.price,
-            desc: formData.desc,
-            size: formData.size,
-            stock: parseInt(formData.stock),
-            image: formData.image,
-          }
-        : p
-    );
-    setProducts(updatedProducts);
-    setShowEditModal(false);
+  const handleUpdateProduct = async () => {
+    try {
+      if (!formData.name || !formData.desc || !formData.stock || !formData.category_id) {
+        return;
+      }
+
+      if (formData.sizes.length === 0 && !formData.price) {
+        return;
+      }
+
+      const body = {
+        name: formData.name,
+        description: formData.desc,
+        stock: parseInt(formData.stock),
+        category_id: parseInt(formData.category_id),
+        images: [],
+        variants: [],
+        sizes: formData.sizes.map((s) => ({
+          size_id: Number(s.size_id),
+          price: Number(s.price),
+        })),
+      };
+
+      const res = await api(`/admin/product/${selectedProduct.id}`, "PUT", body, token);
+      const result = await res.json();
+
+      if (formData.imageFile instanceof File) {
+        const uploadResult = await uploadProductImage(selectedProduct.id, formData.imageFile);
+        if (!uploadResult.success) {
+          console.log("Product updated but image upload failed: " + uploadResult.message);
+        } else {
+          console.log("Product and image updated successfully!");
+        }
+      } else {
+        console.log("Product updated successfully!");
+      }
+
+      setShowEditModal(false);
+      fetchProducts();
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   const handleDeleteClick = (product) => {
@@ -232,13 +242,19 @@ const ProductDashboard = () => {
     setShowDeleteConfirm(true);
   };
 
-  const handleConfirmDelete = () => {
-    setProducts(products.filter((p) => p.id !== productToDelete.id));
-    setShowDeleteConfirm(false);
-    setProductToDelete(null);
+  const handleConfirmDelete = async () => {
+    try {
+      const res = await api(`/admin/product/${productToDelete.id}`, "DELETE", null, token);
+      const result = await res.json();
 
-    if (currentProducts.length === 1 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      if (!result.success) {
+        return;
+      }
+      setShowDeleteConfirm(false);
+      setProductToDelete(null);
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -257,15 +273,15 @@ const ProductDashboard = () => {
     <>
       <div className="flex mt-[76px]">
         <SideBar />
-        <div className="flex-1  px-8 py-6">
+        <div className="flex-1 px-8 py-6">
           <div className="flex justify-between items-center mb-8">
-            <div className="flex flex-col items-center gap-6 ">
+            <div className="flex flex-col items-center gap-6">
               <h1 className="text-[#4F5665] text-2xl font-semibold">
                 Product List
               </h1>
               <button
                 onClick={handleAddProduct}
-                className="bg-[#FF8906] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors"
+                className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors"
               >
                 <Plus size={18} />
                 Add Product
@@ -292,14 +308,13 @@ const ProductDashboard = () => {
                 </div>
               </div>
 
-              <button className="mt-6 bg-[#FF8906] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors">
+              <button className="mt-6 bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors">
                 <Filter size={18} />
                 Filter
               </button>
             </div>
           </div>
 
-          {/*  Table */}
           <div className="bg-white rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
@@ -337,8 +352,8 @@ const ProductDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentProducts.length > 0 ? (
-                  currentProducts.map((product, index) => (
+                {products.length > 0 ? (
+                  products.map((product, index) => (
                     <tr
                       key={product.id}
                       className={index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"}
@@ -366,7 +381,7 @@ const ProductDashboard = () => {
                         {product.desc.substring(0, 40)}...
                       </td>
                       <td className="py-4 px-4 text-[#4F5665] text-sm">
-                        {product.size.join(", ")}
+                        {product.size}
                       </td>
                       <td className="py-4 px-4 text-[#4F5665] text-sm">
                         {product.method}
@@ -406,11 +421,10 @@ const ProductDashboard = () => {
             </table>
           </div>
 
-          {/* Pagination */}
+          {/* paginasi */}
           <div className="flex justify-between items-center mt-6">
             <p className="text-[#9CA3AF] text-sm">
-              Show {currentProducts.length} product of {filteredProducts.length}{" "}
-              product
+              Show {products.length} product of {totalItems} product
             </p>
 
             <div className="flex items-center gap-2">
@@ -453,7 +467,7 @@ const ProductDashboard = () => {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* modals */}
       <ProductFormModal
         isOpen={showAddModal}
         isEdit={false}
@@ -471,7 +485,6 @@ const ProductDashboard = () => {
         onSave={handleUpdateProduct}
       />
 
-      {/* Delete konfirmasi Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 w-[400px]">

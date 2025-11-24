@@ -7,49 +7,65 @@
  * @param {string} [props.className] - Optional class name for additional styling.
  * @returns {JSX.Element} The filter sidebar with options for filtering and sorting products.
  */
-
 import { useState } from "react";
 
 export const FilterSidebar = ({ onFilterChange, className }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState(["Coffee"]);
-  const [selectedSort, setSelectedSort] = useState(["Flash sale"]);
-  const [priceRange, setPriceRange] = useState([10, 20]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSort, setSelectedSort] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 100000]);
 
-  const toggleCategory = (value) => {
+  const categoryMapping = {
+    Tea: 1,
+    Mocktail: 2,
+    Smoothies: 3,
+    "Milk Based": 4,
+    Snacks: 5,
+  };
+
+  const toggleCategory = (categoryName) => {
+    const categoryId = categoryMapping[categoryName];
     setSelectedCategories((prev) =>
-      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+      prev.includes(categoryId)
+        ? prev.filter((c) => c !== categoryId)
+        : [...prev, categoryId]
     );
   };
 
-  const toggleSort = (value) => {
-    setSelectedSort((prev) =>
-      prev.includes(value) ? prev.filter((s) => s !== value) : [...prev, value]
-    );
-  };
-
+  const handleSortChange = (value) => setSelectedSort(value);
   const handleApplyFilter = () => {
     onFilterChange({
       search: searchTerm,
       category: selectedCategories,
       sort: selectedSort,
-      priceRange: priceRange,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+    });
+  };
+
+  const handleResetFilter = () => {
+    setSearchTerm("");
+    setSelectedCategories([]);
+    setSelectedSort("");
+    setPriceRange([0, 100000]);
+
+    onFilterChange({
+      search: "",
+      category: [],
+      sort: "",
+      minPrice: 0,
+      maxPrice: 0,
     });
   };
 
   return (
     <div className={className}>
-      <div className="bg-black text-white rounded-2xl p-6 w-[280px]">
+      <div className="bg-[#0F172A] text-white rounded-2xl p-6 w-[280px]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold">Filter</h3>
           <button
-            className="text-sm text-white/70 hover:text-orange-500 transition-colors"
-            onClick={() => {
-              setSearchTerm("");
-              setSelectedCategories([]);
-              setSelectedSort([]);
-              setPriceRange([374, 500]);
-            }}
+            className="text-sm text-white/70 hover:text-[#3B82F6] transition-colors"
+            onClick={handleResetFilter}
           >
             Reset Filter
           </button>
@@ -69,24 +85,15 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
         <div className="mb-6">
           <label className="block text-sm mb-3">Category</label>
           <div className="flex flex-col gap-3">
-            {[
-              "Favorite Product",
-              "Coffee",
-              "Non Coffee",
-              "Foods",
-              "Add-On",
-            ].map((cat) => (
-              <label
-                key={cat}
-                className="flex items-center gap-2 cursor-pointer"
-              >
+            {Object.keys(categoryMapping).map((categoryName) => (
+              <label key={categoryName} className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={selectedCategories.includes(cat)}
-                  onChange={() => toggleCategory(cat)}
-                  className="w-4 h-4 accent-orange-500"
+                  checked={selectedCategories.includes(categoryMapping[categoryName])}
+                  onChange={() => toggleCategory(categoryName)}
+                  className="w-4 h-4 accent-[#3B82F6]"
                 />
-                <span className="text-sm">{cat}</span>
+                <span className="text-sm">{categoryName}</span>
               </label>
             ))}
           </div>
@@ -95,60 +102,58 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
         <div className="mb-6">
           <label className="block text-sm mb-3">Sort By</label>
           <div className="flex flex-col gap-3">
-            {["Buy 1 get 1", "Flash sale", "Birthday Package", "Cheap"].map(
-              (sort) => (
-                <label
-                  key={sort}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedSort.includes(sort)}
-                    onChange={() => toggleSort(sort)}
-                    className="w-4 h-4 accent-orange-500"
-                  />
-                  <span className="text-sm">{sort}</span>
-                </label>
-              )
-            )}
+            {[
+              { label: "Terbaru", value: "" },
+              { label: "Terlama", value: "oldest" },
+              { label: "Termurah", value: "price_low" },
+              { label: "Termahal", value: "price_high" },
+            ].map((sort) => (
+              <label key={sort.value} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="sort"
+                  checked={selectedSort === sort.value}
+                  onChange={() => handleSortChange(sort.value)}
+                  className="w-4 h-4 accent-[#3B82F6]"
+                />
+                <span className="text-sm">{sort.label}</span>
+              </label>
+            ))}
           </div>
         </div>
 
         <div className="mb-6">
           <label className="block text-sm mb-3">Range Price</label>
           <div className="flex flex-col gap-2">
-            <div className="relative flex items-center">
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                value={priceRange[0]}
-                onChange={(e) =>
-                  setPriceRange([parseInt(e.target.value), priceRange[1]])
-                }
-                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
-              />
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                value={priceRange[1]}
-                onChange={(e) =>
-                  setPriceRange([priceRange[0], parseInt(e.target.value)])
-                }
-                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-orange-500 -ml-2"
-              />
-            </div>
+            <input
+              type="range"
+              min="0"
+              max="100000"
+              step="1000"
+              value={priceRange[0]}
+              onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-[#3B82F6]"
+            />
+            <input
+              type="range"
+              min="0"
+              max="100000"
+              step="1000"
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-[#3B82F6]"
+            />
+
             <div className="flex justify-between text-xs mt-1">
-              <span>Idr.{priceRange[0]}</span>
-              <span>Idr.{priceRange[1]}</span>
+              <span>Idr {priceRange[0].toLocaleString()}</span>
+              <span>Idr {priceRange[1].toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         <button
           onClick={handleApplyFilter}
-          className="w-full bg-orange-500 text-black font-medium py-3 rounded-md hover:bg-orange-600 transition-colors"
+          className="w-full bg-[#3B82F6] text-white font-medium py-3 rounded-md hover:bg-[#2563EB] transition-colors"
         >
           Apply Filter
         </button>

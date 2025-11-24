@@ -72,14 +72,14 @@ export const Footer = () => {
               Social Media
             </h3>
             <div className="flex gap-4">
-              <div className="bg-[#FF8906] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
-                <Facebook className="w-5 h-5 text-black" />
+              <div className="bg-[#1D4ED8] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
+                <Facebook className="w-5 h-5 text-white" />
               </div>
-              <div className="bg-[#FF8906] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
-                <Twitter className="w-5 h-5 text-black" />
+              <div className="bg-[#1D4ED8] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
+                <Twitter className="w-5 h-5 text-white" />
               </div>
-              <div className="bg-[#FF8906] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
-                <Instagram className="w-5 h-5 text-black" />
+              <div className="bg-[#1D4ED8] w-10 h-10 flex items-center justify-center rounded-full shadow-md cursor-pointer">
+                <Instagram className="w-5 h-5 text-white" />
               </div>
             </div>
           </div>

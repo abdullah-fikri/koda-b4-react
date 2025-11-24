@@ -66,7 +66,7 @@ const Chat = () => {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50"
+        className="fixed bottom-6 right-6 bg-[#1D4ED8] hover:bg-orange-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50"
       >
         {isOpen ? (
           <X className="w-6 h-6" />

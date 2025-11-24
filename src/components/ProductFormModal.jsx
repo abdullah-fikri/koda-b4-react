@@ -19,17 +19,42 @@ export const ProductFormModal = ({
   setFormData,
   onSave,
 }) => {
-  const sizeOptions = ["R", "L", "XL", "250gr", "500gr"];
+  const sizeOptions = [
+    { id: 1, label: "Reguler" },
+    { id: 2, label: "Medium" },
+    { id: 3, label: "Large" },
+  ];
 
-  const handleSizeToggle = (size) => {
-    if (formData.size.includes(size)) {
+  const categoryOptions = [
+    { id: 1, label: "Tea" },
+    { id: 2, label: "Mocktail" },
+    { id: 3, label: "Smoothies" },
+    { id: 4, label: "Milk Based" },
+    { id: 5, label: "Snacks" },
+  ];
+
+  const handleCategorySelect = (categoryId) => {
+    setFormData({ ...formData, category_id: categoryId });
+  };
+
+  const handleSizeToggle = (sizeObj) => {
+    const exists = formData.sizes.some((s) => s.size_id === sizeObj.id);
+
+    if (exists) {
       setFormData({
         ...formData,
-        size: formData.size.filter((s) => s !== size),
+        sizes: formData.sizes.filter((s) => s.size_id !== sizeObj.id),
       });
     } else {
-      setFormData({ ...formData, size: [...formData.size, size] });
+      setFormData({
+        ...formData,
+        sizes: [...formData.sizes, { size_id: sizeObj.id, price: 0 }],
+      });
     }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, imageFile: null, currentImage: null });
   };
 
   if (!isOpen) return null;
@@ -56,31 +81,68 @@ export const ProductFormModal = ({
             <label className="block text-[#4F5665] font-medium mb-3">
               Photo Product
             </label>
-            {isEdit && formData.image ? (
-              <div className="flex items-center gap-3 mb-3">
-                <img
-                  src={formData.image}
-                  alt="Product"
-                  className="w-16 h-16 rounded-lg object-cover"
-                />
-                <button className="text-red-500 hover:text-red-600">
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
-                <ImageIcon size={24} className="text-gray-400" />
-              </div>
+            
+            <div className="mb-3">
+              {formData.imageFile ? (
+                <div className="relative inline-block">
+                  <img
+                    src={URL.createObjectURL(formData.imageFile)}
+                    alt="Preview"
+                    className="w-24 h-24 rounded-lg object-cover"
+                  />
+                  <button
+                    onClick={handleRemoveImage}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ) : isEdit && formData.currentImage ? (
+                <div className="relative inline-block">
+                  <img
+                    src={formData.currentImage}
+                    alt="Current"
+                    className="w-24 h-24 rounded-lg object-cover"
+                  />
+                  <button
+                    onClick={handleRemoveImage}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <ImageIcon size={32} className="text-gray-400" />
+                </div>
+              )}
+            </div>
+
+            <label className="bg-[#1D4ED8] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#E67A05] cursor-pointer inline-block">
+              {formData.imageFile || formData.currentImage ? "Change Image" : "Upload Image"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setFormData({ ...formData, imageFile: file });
+                  }
+                }}
+              />
+            </label>
+            {isEdit && !formData.imageFile && (
+              <p className="text-xs text-gray-500 mt-2">
+                Leave empty to keep current image
+              </p>
             )}
-            <button className="bg-[#FF8906] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#E67A05]">
-              Upload
-            </button>
           </div>
 
           {/* Product Name */}
           <div className="mb-6">
             <label className="block text-[#4F5665] font-medium mb-2">
-              Product name
+              Product name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -93,26 +155,10 @@ export const ProductFormModal = ({
             />
           </div>
 
-          {/* Price */}
-          <div className="mb-6">
-            <label className="block text-[#4F5665] font-medium mb-2">
-              Price
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Product Price"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#4F5665] placeholder-[#9CA3AF] focus:outline-none focus:border-[#FF8906]"
-            />
-          </div>
-
           {/* Description */}
           <div className="mb-6">
             <label className="block text-[#4F5665] font-medium mb-2">
-              Description
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
               placeholder="Enter Product Description"
@@ -128,32 +174,61 @@ export const ProductFormModal = ({
           {/* Product Size */}
           <div className="mb-6">
             <label className="block text-[#4F5665] font-medium mb-3">
-              Product Size
+              Product Size <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-3">
               {sizeOptions.map((size) => (
                 <button
-                  key={size}
+                  key={size.id}
                   onClick={() => handleSizeToggle(size)}
+                  type="button"
                   className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    formData.size.includes(size)
+                    formData.sizes.some((s) => s.size_id === size.id)
                       ? "bg-[#FF8906] text-white"
                       : "bg-gray-100 text-[#4F5665] hover:bg-gray-200"
                   }`}
                 >
-                  {size}
+                  {size.label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Stock */}
-          <div className="mb-8">
+          {/* price  */}
+          {formData.sizes.length > 0 && (
+            <div className="mb-6 mt-4">
+              <label className="block text-[#4F5665] font-medium mb-3">
+                Price per Size <span className="text-red-500">*</span>
+              </label>
+
+              {formData.sizes.map((s, idx) => (
+                <div key={s.size_id} className="flex items-center gap-4 mb-3">
+                  <span className="w-24 text-[#4F5665] font-medium">
+                    {sizeOptions.find((size) => size.id === s.size_id)?.label}
+                  </span>
+                  <input
+                    type="number"
+                    placeholder="Enter price"
+                    value={s.price || ""}
+                    onChange={(e) => {
+                      const updated = [...formData.sizes];
+                      updated[idx].price = Number(e.target.value);
+                      setFormData({ ...formData, sizes: updated });
+                    }}
+                    className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#4F5665] focus:outline-none focus:border-[#FF8906]"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* stock */}
+          <div className="mb-6">
             <label className="block text-[#4F5665] font-medium mb-2">
-              Stock
+              Stock <span className="text-red-500">*</span>
             </label>
             <input
-              type="text"
+              type="number"
               placeholder="Enter Product Stock"
               value={formData.stock}
               onChange={(e) =>
@@ -163,12 +238,35 @@ export const ProductFormModal = ({
             />
           </div>
 
-          {/* Save Button */}
+          {/* category */}
+          <div className="mb-8">
+            <label className="block text-[#4F5665] font-medium mb-3">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <div className="flex flex-wrap gap-3">
+              {categoryOptions.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategorySelect(cat.id)}
+                  type="button"
+                  className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    formData.category_id === cat.id
+                      ? "bg-[#1D4ED8] text-white"
+                      : "bg-gray-100 text-[#4F5665] hover:bg-gray-200"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* sv btn */}
           <button
             onClick={onSave}
             className="w-full bg-[#FF8906] text-white py-3 rounded-lg font-medium hover:bg-[#E67A05] transition-colors"
           >
-            {isEdit ? "Edit Save" : "Save Product"}
+            {isEdit ? "Update Product" : "Save Product"}
           </button>
         </div>
       </div>

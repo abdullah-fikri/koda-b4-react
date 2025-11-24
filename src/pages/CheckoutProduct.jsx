@@ -144,12 +144,12 @@ const CheckoutProduct = () => {
        {showAlert && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-[90%] text-center">
-            <h2 className="text-lg font-semibold text-[#8E6447]">
+            <h2 className="text-lg font-semibold text-blue-950">
               {alertMessage}
             </h2>
             <button
               onClick={handleCloseAlert}
-              className="mt-4 px-6 py-2 bg-[#FF8906] text-white rounded-md hover:bg-[#e07a05] transition"
+              className="mt-4 px-6 py-2 bg-[#1D4ED8] text-white rounded-md hover:bg-blue-900 transition"
             >
               OK
             </button>
@@ -157,7 +157,7 @@ const CheckoutProduct = () => {
         </div>
       )}
       <button
-        className="border border-gray-400 hover:bg-[#FF8906] rounded-full w-9 h-9 flex items-center justify-center mb-3"
+        className="border border-gray-400 hover:bg-[#1D4ED8] rounded-full w-9 h-9 flex items-center justify-center mb-3"
         onClick={() => navigate("/Product")}
       >
         <ChevronLeft color="gray" />
@@ -176,7 +176,7 @@ const CheckoutProduct = () => {
               <Link to="/product">
                 <button
                   type="button"
-                  className="flex items-center gap-2 bg-[#FF8906] text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
+                  className="flex items-center gap-2 bg-[#1D4ED8] text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors w-full sm:w-auto"
                 >
                   <Plus className="w-5 h-5" />
                   Add Menu
@@ -238,7 +238,7 @@ const CheckoutProduct = () => {
                               {formatCurrency(totalOriginalPrice)}
                             </span>
                           )} */}
-                          <span className="text-[#FF8906] text-lg md:text-xl font-medium">
+                          <span className="text-[#1D4ED8] text-lg md:text-xl font-medium">
                             {formatCurrency(totalPrice)}
                           </span>
                         </div>
@@ -328,8 +328,8 @@ const CheckoutProduct = () => {
                         onClick={() => setDeliveryMethod(method)}
                         className={`flex-1 py-2.5 md:py-3 rounded-md font-normal text-xs md:text-sm transition-colors ${
                           deliveryMethod === method
-                            ? "bg-white border border-[#FF8906] text-[#FF8906]"
-                            : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#FF8906]"
+                            ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
+                            : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
                         }`}
                       >
                         {method}
@@ -377,7 +377,7 @@ const CheckoutProduct = () => {
 
               <button
                 type="submit"
-                className="w-full bg-[#FF8906] text-white font-medium py-3 md:py-4 rounded-xl hover:bg-orange-600 transition-colors mb-4 md:mb-6 text-sm md:text-base"
+                className="w-full bg-[#1D4ED8] text-white font-medium py-3 md:py-4 rounded-xl hover:bg-blue-900 transition-colors mb-4 md:mb-6 text-sm md:text-base"
               >
                 Checkout
               </button>
@@ -396,14 +396,14 @@ const CheckoutProduct = () => {
                         onClick={() => handlePaymentMethod(i)}
                         className={`bg-white border rounded px-2 md:px-3 py-1.5 md:py-2 text-center transition-colors ${
                           selectedPayment === bank
-                            ? "border-[#FF8906] bg-[#FF8906]"
+                            ? "border-[#1D4ED8] bg-[#1D4ED8]"
                             : "border-gray-200"
                         }`}
                       >
                         <span
                           className={`text-[10px] md:text-xs font-semibold ${
                             selectedPayment === bank
-                              ? "text-[#FF8906]"
+                              ? "text-[#1D4ED8]"
                               : "text-[#0B132A]"
                           }`}
                         >

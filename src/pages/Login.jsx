@@ -43,8 +43,13 @@ const Login = () => {
         token: result.data.token
       }));
   
-      setAlertMessage("Login Success!");
-      setShowAlert(true);
+      if (result.data.user.role === "admin") {
+        setAlertMessage("Login Admin Success!");
+        setShowAlert(true);
+      } else {
+        setAlertMessage("Login Success!");
+        setShowAlert(true);
+      }
   
     } catch (error) {
       setAlertMessage("Terjadi kesalahan, coba lagi");

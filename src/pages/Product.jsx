@@ -5,97 +5,65 @@ import { ArrowLeft, Search, SlidersHorizontal, X } from "lucide-react";
 import { FilterSidebar } from "../components/Filter";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../utils/Fetch";
 
 const Product = () => {
   const arr = [1, 2, 3, 4];
   const navigate = useNavigate();
-  const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const productsPerPage = 6;
+  const [sortBy, setSortBy] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    fetch("/data/product-promo.json")
+    let url = `/products?page=${currentPage}&limit=10`;
+
+    if (searchTerm !== "") url += `&q=${searchTerm}`;
+
+    if (selectedCategories.length > 0) {
+      selectedCategories.forEach((cat) => {
+        url += `&category[]=${cat}`;
+      });
+    }
+
+    if (sortBy !== "") url += `&sort=${sortBy}`;
+    if (minPrice > 0) url += `&min_price=${minPrice}`;
+    if (maxPrice > 0) url += `&max_price=${maxPrice}`;
+
+    api(url, "GET")
       .then((res) => res.json())
-      .then((data) => {
-        setAllProducts(data);
-        setFilteredProducts(data);
+      .then((result) => {
+        const mapped = result.data.map((p) => ({
+          id: p.id,
+          title: p.name,
+          description: p.description,
+          price: p.min_price,
+          category: p.category,
+          img: p.images[0],
+        }));
+
+        setProducts(mapped);
+        setTotalPages(result.pagination.total_page);
       })
-      .catch((err) => console.error("Fetch gagal:", err));
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+      });
+  }, [searchTerm, selectedCategories, sortBy, minPrice, maxPrice, currentPage]);
+
+  const handleFilterChange = useCallback((filters) => {
+    setSearchTerm(filters.search || "");
+    setSelectedCategories(filters.category || []);
+    setSortBy(filters.sort || "");
+    setMinPrice(filters.minPrice || 0);
+    setMaxPrice(filters.maxPrice || 0);
+    setCurrentPage(1);
   }, []);
-
-  const handleFilterChange = useCallback(
-    (filters) => {
-      let filtered = [...allProducts];
-
-      if (filters.search) {
-        filtered = filtered.filter((product) =>
-          product.title.toLowerCase().includes(filters.search.toLowerCase())
-        );
-      }
-
-      if (filters.category && filters.category.length > 0) {
-        filtered = filtered.filter((product) => {
-          const productCategories = product.category || [];
-          return filters.category.some((selectedCat) => {
-            const normalizedSelectedCat = selectedCat
-              .replace(/\s+/g, "")
-              .toLowerCase();
-            return productCategories.some(
-              (cat) =>
-                cat.replace(/\s+/g, "").toLowerCase() === normalizedSelectedCat
-            );
-          });
-        });
-        setShowFilter(false);
-      }
-
-      if (filters.sort && filters.sort.length > 0) {
-        filtered = filtered.filter((product) => {
-          const productSortBy = product.sortBy || [];
-          return filters.sort.some((selectedSort) => {
-            if (
-              selectedSort.toLowerCase() === "flash sale" &&
-              product.isFlashSale
-            ) {
-              return true;
-            }
-            const normalizedSelectedSort = selectedSort
-              .replace(/\s+/g, "")
-              .toLowerCase();
-            return productSortBy.some(
-              (sort) =>
-                sort.replace(/\s+/g, "").toLowerCase() ===
-                normalizedSelectedSort
-            );
-          });
-        });
-      }
-
-      if (filters.priceRange) {
-        filtered = filtered.filter((product) => {
-          const price = parseInt(product.price.replace(/[^0-9]/g, "")) / 1000;
-          return (
-            price >= filters.priceRange[0] && price <= filters.priceRange[1]
-          );
-        });
-      }
-
-      setFilteredProducts(filtered);
-      setCurrentPage(1);
-    },
-    [allProducts]
-  );
-
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -105,19 +73,6 @@ const Product = () => {
   const handleProductClick = (id) => {
     navigate(`/detailproduct/${id}`);
   };
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      handleFilterChange({
-        search: searchTerm,
-        category: [],
-        sort: [],
-        priceRange: [0, 1000],
-      });
-    }, 300);
-
-    return () => clearTimeout(delay);
-  }, [searchTerm, allProducts, handleFilterChange]);
 
   return (
     <>
@@ -137,7 +92,7 @@ const Product = () => {
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 sm:px-[130px] my-[48px] text-left">
         <span className="text-4xl sm:text-5xl font-medium text-[#0B0909] font-jakarta">
-          Today<span className="text-[#8E6447]"> Promo</span>
+          Today<span className="text-[#1D4ED8]"> Promo</span>
         </span>
 
         <div className="hidden lg:block">
@@ -145,14 +100,14 @@ const Product = () => {
             <RoundButton bgColor="#E8E8E8">
               <ArrowLeft className="w-4 h-4" />
             </RoundButton>
-            <RoundButton bgColor="#FF8906">
-              <ArrowLeft className="w-4 h-4 rotate-180" />
+            <RoundButton bgColor="#1D4ED8">
+              <ArrowLeft className="w-4 h-4 rotate-180 text-white" />
             </RoundButton>
           </div>
         </div>
       </div>
 
-      <div className="flex overflow-x-auto  justify-center gap-4 px-4">
+      <div className="flex overflow-x-auto justify-center gap-4 px-4">
         {arr.map((item) =>
           item <= 3 ? (
             <PromoCard
@@ -166,7 +121,7 @@ const Product = () => {
           ) : (
             <PromoCard
               key={item}
-              bgColor="#FFBA33"
+              bgColor="#60A5FA"
               image="/image 43.png"
               title="Get a cup of coffee for free"
               description="Only at 7 to 9 AM"
@@ -175,7 +130,7 @@ const Product = () => {
         )}
       </div>
 
-      {/* filter toggl */}
+      {/* filter toggle */}
       <div className="lg:hidden flex justify-center items-center mt-10">
         <div className="flex gap-2.5">
           <div className="border border-[#DEDEDE] p-3 gap-2.5 flex items-center w-[260px] sm:w-[300px]">
@@ -184,14 +139,15 @@ const Product = () => {
               type="text"
               placeholder="Find Product"
               className="border-none outline-none w-full text-sm"
+              value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
             onClick={() => setShowFilter(!showFilter)}
-            className="bg-[#FF8906] rounded-sm p-3"
+            className="bg-[#1D4ED8] rounded-sm p-3"
           >
-            <SlidersHorizontal size={20} strokeWidth={2} />
+            <SlidersHorizontal size={20} strokeWidth={2} color="white" />
           </button>
         </div>
       </div>
@@ -199,11 +155,11 @@ const Product = () => {
       {/* popup */}
       {showFilter && (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-end lg:hidden">
-          <div className="relative w-full sm:w-1/2 h-full shadow-lg  overflow-y-auto">
+          <div className="relative w-full sm:w-1/2 h-full shadow-lg overflow-y-auto">
             <button onClick={() => setShowFilter(false)}>
               <X
                 size={30}
-                color="#FF8906"
+                color="#1D4ED8"
                 className="absolute -mt2 right-11 top-5"
               />
             </button>
@@ -214,7 +170,7 @@ const Product = () => {
 
       <div className="px-6 sm:px-[130px] mt-[59px] mb-16">
         <span className="text-4xl sm:text-5xl font-medium text-[#0B0909] font-jakarta block mb-10">
-          Our<span className="text-[#8E6447]"> Product</span>
+          Our<span className="text-[#1D4ED8]"> Product</span>
         </span>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -224,9 +180,9 @@ const Product = () => {
 
           {/* product  */}
           <div className="flex-1">
-            {currentProducts.length > 0 ? (
+            {products.length > 0 ? (
               <div className="grid grid-cols-2 gap-4 sm:gap-6 p-3 sm:p-6 md:gap-8">
-                {currentProducts.map((item) => (
+                {products.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => handleProductClick(item.id)}
@@ -246,7 +202,7 @@ const Product = () => {
                       />
                     </div>
 
-                    <div className="relative mt-3 sm:-mt-16 mx-2 sm:mx-4 bg-white rounded-2xl  lg:p-3 sm:p-5 lg:shadow-md lg:hover:shadow-lg transition-shadow duration-200">
+                    <div className="relative mt-3 sm:-mt-16 mx-2 sm:mx-4 bg-white rounded-2xl lg:p-3 sm:p-5 lg:shadow-md lg:hover:shadow-lg transition-shadow duration-200">
                       <h3 className="text-lg sm:text-base md:text-lg font-medium text-[#0B132A] mb-1 sm:mb-2 line-clamp-1">
                         {item.title}
                       </h3>
@@ -259,7 +215,7 @@ const Product = () => {
                           {[...Array(5)].map((_, index) => (
                             <span
                               key={index}
-                              className="text-orange-500 text-xs sm:text-sm"
+                              className="text-blue-500 text-xs sm:text-sm"
                             >
                               ★
                             </span>
@@ -276,17 +232,17 @@ const Product = () => {
                             IDR {item.originalPrice}
                           </span>
                         )}
-                        <span className="text-sm sm:text-xl font-medium text-[#FF8906]">
-                          IDR {item.price}
+                        <span className="text-sm sm:text-xl font-medium text-[#1D4ED8]">
+                          IDR {item.price.toLocaleString()}
                         </span>
                       </div>
 
                       <div className="flex flex-col lg:flex-row items-center gap-1.5 sm:gap-2">
-                        <button className="flex-1 bg-[#FF8906] text-white text-xs sm:text-sm font-medium px-10 py-1.5 sm:py-2 rounded-lg hover:bg-orange-600 transition-colors duration-200">
+                        <button className="flex-1 bg-[#1D4ED8] text-white text-xs sm:text-sm font-medium px-10 py-1.5 sm:py-2 rounded-lg hover:bg-[#2563EB] transition-colors duration-200">
                           Buy
                         </button>
-                        <button className="border border-orange-500 px-10 py-1.5 sm:p-2 rounded-lg hover:bg-orange-50 transition-colors duration-200">
-                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+                        <button className="border border-blue-500 px-10 py-1.5 sm:p-2 rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                         </button>
                       </div>
                     </div>
@@ -307,7 +263,7 @@ const Product = () => {
         </div>
 
         {/* pagination */}
-        {filteredProducts.length > 0 && totalPages > 1 && (
+        {products.length > 0 && totalPages > 1 && (
           <div className="flex mt-[35px] gap-5 justify-center">
             {currentPage > 1 && (
               <RoundButton
@@ -322,7 +278,7 @@ const Product = () => {
               return (
                 <RoundButton
                   key={pageNumber}
-                  bgColor={currentPage === pageNumber ? "#FF8906" : "#E8E8E8"}
+                  bgColor={currentPage === pageNumber ? "#1D4ED8" : "#E8E8E8"}
                   onClick={() => handlePageChange(pageNumber)}
                 >
                   <span
@@ -337,7 +293,7 @@ const Product = () => {
             })}
             {currentPage < totalPages && (
               <RoundButton
-                bgColor="#FF8906"
+                bgColor="#1D4ED8"
                 onClick={() => handlePageChange(currentPage + 1)}
               >
                 <ArrowLeft className="text-white rotate-180" />

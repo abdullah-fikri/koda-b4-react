@@ -38,7 +38,7 @@ export const SideBar = () => {
             className={({ isActive }) =>
               `cursor-pointer ${
                 isActive
-                  ? "bg-[#FF8906] text-white rounded-lg font-medium"
+                  ? "bg-[#1D4ED8] text-white rounded-lg font-medium"
                   : "text-[#4F5665]"
               }`
             }
@@ -53,7 +53,7 @@ export const SideBar = () => {
             className={({ isActive }) =>
               `cursor-pointer ${
                 isActive
-                  ? "bg-[#FF8906] text-white rounded-lg font-medium"
+                  ? "bg-[#1D4ED8] text-white rounded-lg font-medium"
                   : "text-[#4F5665]"
               }`
             }
