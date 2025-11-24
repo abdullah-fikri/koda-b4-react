@@ -7,6 +7,7 @@ import {
   User,
   Menu,
   X,
+  CircleUserRound,
 } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -93,13 +94,13 @@ export const Navbar = () => {
 
             <Link to="/Profile">
               <div className="hidden lg:block w-10 h-10 rounded-full overflow-hidden">
-                {image && (
+                {image ? (
                   <img
                     src={image}
                     alt="profile"
                     className="w-full h-full object-cover"
                   />
-                )}
+                ) : ( <CircleUserRound color="white" size={35}/>)}
               </div>
             </Link>
 
@@ -161,9 +162,9 @@ export const Navbar = () => {
 
                     <div className="flex items-center gap-3 mb-8 border-b border-blue-300 pb-4 text-black">
                       <div className="w-10 h-10 rounded-full overflow-hidden">
-                        {image && (
+                        {image ? (
                           <img src={image} className="w-full h-full object-cover" />
-                        )}
+                        ): (<CircleUserRound color="white" size={35}/>)}
                       </div>
                       <p className="text-xl font-semibold">{data?.username}</p>
                     </div>
