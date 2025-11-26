@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import {api} from "../utils/Fetch"
+import { api } from "../utils/Fetch";
 
 import {
   ArrowLeft,
@@ -34,16 +34,18 @@ export const DetailOrder = () => {
   const { orderNumber } = useParams();
   const navigate = useNavigate();
   // const { history } = useContext(History);
-  const {id} = useParams()
-  const token = useSelector((state)=> state.account.token)
-  const [history, setHistory] = useState(null)
+  const { id } = useParams();
+  const token = useSelector((state) => state.account.token);
+  const [history, setHistory] = useState(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     api(`/user/order/${orderNumber}`, "GET", null, token)
-    .then((res) => res.json())
-    .then((result) => setHistory(result.data))
-    .catch((err)=> console.error("failed fetch data detail history order:", err))
-  },[id])
+      .then((res) => res.json())
+      .then((result) => setHistory(result.data))
+      .catch((err) =>
+        console.error("failed fetch data detail history order:", err)
+      );
+  }, [id]);
 
   // const order = history.find((o) => o.orderNumber === orderNumber);
 
@@ -110,7 +112,7 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-2">
-                    <Link to="/Profile" >
+                    <Link to="/Profile">
                       <p className="text-[#4F5665] text-sm md:text-base">
                         Full Name
                       </p>
@@ -131,7 +133,7 @@ export const DetailOrder = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-2">
-                    <Link to={"/Profile"} >
+                    <Link to={"/Profile"}>
                       <p className="text-[#4F5665] text-sm md:text-base">
                         Address
                       </p>
@@ -284,16 +286,25 @@ export const DetailOrder = () => {
                         </h3>
 
                         <p className="text-[#4F5665] text-xs md:text-sm mb-3 md:mb-4">
-                          {item.qty}pcs | {item.size} | {item.temp} {" "}
+                          {item.qty}pcs | {item.size} | {item.temp}{" "}
                           {history.shipping_method}
                         </p>
 
                         <div className="flex flex-col gap-1">
-                          {totalOriginalPrice && (
-                            <span className="text-[#D00000] line-through text-xs md:text-sm">
-                              {totalPrice}
-                            </span>
-                          )}
+                          <div className="flex gap-5 items-center">
+                            {totalOriginalPrice && (
+                              <span className="text-[#D00000] line-through text-xs md:text-sm">
+                                {totalPrice}
+                              </span>
+                            )}
+                            <div>
+                              {item.discount_percent > 0 && (
+                                <span className="text-[#D00000] text-xs md:text-sm">
+                                  Discount {item.discount_percent}%
+                                </span>
+                              )}
+                            </div>
+                          </div>
                           <span className="text-[#FF8906] text-lg md:text-xl font-medium">
                             {totalOriginalPrice}
                           </span>
