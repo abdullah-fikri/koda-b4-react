@@ -4,15 +4,16 @@ import { ButtonRegister } from "../components/Button";
 import Input from "../components/Input";
 import { Mail, User, Eye, EyeOff, Lock, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import {api} from "../utils/Fetch"
+import { api } from "../utils/Fetch";
 import { upload } from "../utils/UploadImg";
-import {FormatDate} from "../utils/FormatDate"
+import { FormatDate } from "../utils/FormatDate";
 
 export const Profile = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   // redux
   const { currentUser } = useSelector((state) => state.account);
@@ -31,36 +32,35 @@ export const Profile = () => {
     address: "",
     since: "",
   });
-  
 
-  const token = useSelector((state)=> state.account.token)
-  useEffect(()=>{
-    if (!token) return
+  const token = useSelector((state) => state.account.token);
+  useEffect(() => {
+    if (!token) return;
     api(`/user/profile`, "GET", null, token)
-    .then(res => res.json())
-    .then(result => {
-      setData(result.data); 
-      setImage(result.data.profile_picture);
-    })    
-    .catch(err => console.error("error fetch profile:", err))
-  },[token])
-  
+      .then((res) => res.json())
+      .then((result) => {
+        setData(result.data);
+        setImage(result.data.profile_picture);
+      })
+      .catch((err) => console.error("error fetch profile:", err));
+  }, [token]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const body = {
       username: data.username,
       phone: data.phone,
       address: data.address,
     };
-  
+
     if (data.password && data.password.length >= 6) {
       body.password = data.password;
     }
-  
+
     api("/user/profile/update", "PUT", body, token)
-      .then(res => res.json())
-      .then(result => {
+      .then((res) => res.json())
+      .then((result) => {
         if (result.success) {
           setAlertMessage("Profile updated successfully!");
           setShowAlert(true);
@@ -69,10 +69,11 @@ export const Profile = () => {
           setShowAlert(true);
         }
       })
-      .catch(err => console.error("Error:", err));
+      .catch((err) => console.error("Error:", err));
   };
 
   const handleUpload = async (file) => {
+    setUploading(true);
     try {
       const res = await upload("/user/profile/upload", file, token);
       const result = await res.json();
@@ -84,12 +85,12 @@ export const Profile = () => {
         setAlertMessage(result.message || "Upload failed");
         setShowAlert(true);
       }
-  
     } catch (err) {
-      console.error(err)
+      console.error(err);
       setAlertMessage("Upload error");
       setShowAlert(true);
     }
+    setUploading(false);
   };
 
   if (!currentUser) {
@@ -126,6 +127,11 @@ export const Profile = () => {
               OK
             </button>
           </div>
+        </div>
+      )}
+      {uploading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <p className="text-white text-xl">Uploading...</p>
         </div>
       )}
 
