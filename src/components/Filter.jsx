@@ -60,7 +60,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
 
   return (
     <div className={className}>
-      <div className="bg-[#0F172A] text-white rounded-2xl p-6 w-[280px]">
+      <div className="bg-blue-800 text-white rounded-2xl p-6 w-[280px]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold">Filter</h3>
           <button
@@ -91,7 +91,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
                   type="checkbox"
                   checked={selectedCategories.includes(categoryMapping[categoryName])}
                   onChange={() => toggleCategory(categoryName)}
-                  className="w-4 h-4 accent-[#3B82F6]"
+                  className="w-4 h-4 accent-black"
                 />
                 <span className="text-sm">{categoryName}</span>
               </label>
@@ -114,7 +114,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
                   name="sort"
                   checked={selectedSort === sort.value}
                   onChange={() => handleSortChange(sort.value)}
-                  className="w-4 h-4 accent-[#3B82F6]"
+                  className="w-4 h-4 accent-black"
                 />
                 <span className="text-sm">{sort.label}</span>
               </label>
@@ -132,7 +132,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
               step="1000"
               value={priceRange[0]}
               onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-[#3B82F6]"
+              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-gray-300"
             />
             <input
               type="range"
@@ -141,7 +141,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
               step="1000"
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-[#3B82F6]"
+              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer accent-gray-300"
             />
 
             <div className="flex justify-between text-xs mt-1">
@@ -153,7 +153,7 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
 
         <button
           onClick={handleApplyFilter}
-          className="w-full bg-[#3B82F6] text-white font-medium py-3 rounded-md hover:bg-[#2563EB] transition-colors"
+          className="w-full bg-white text-black font-medium py-3 rounded-md hover:bg-gray-200 transition-colors"
         >
           Apply Filter
         </button>
