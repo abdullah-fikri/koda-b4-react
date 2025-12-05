@@ -77,58 +77,57 @@ const Product = () => {
   return (
     <>
       <div
-        className="w-full h-[300px] sm:h-[376px] flex items-center py-[60px] sm:py-[96px] px-6 sm:px-[130px] mt-[76px]"
+        className="w-full h-[300px] sm:h-[376px] flex items-center py-[60px] sm:py-24 px-6 sm:px-[130px] mt-[76px]"
         style={{
-          backgroundImage: "url('/Rectangle 299.png')",
+          backgroundImage: "url('https://plus.unsplash.com/premium_photo-1673959393387-59c08c4f700f?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <span className="text-3xl sm:text-5xl font-medium text-white font-jakarta leading-snug">
+        {/* <span className="text-3xl sm:text-5xl font-bold text-white font-jakarta leading-snug">
           We Provide Good Coffee and Healthy <br className="hidden sm:block" />{" "}
           Meals
-        </span>
+        </span> */}
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 sm:px-[130px] my-[48px] text-left">
-        <span className="text-4xl sm:text-5xl font-medium text-[#0B0909] font-jakarta">
-          Today<span className="text-[#1D4ED8]"> Promo</span>
-        </span>
-
-        <div className="hidden lg:block">
-          <div className="flex gap-[9px] ">
-            <RoundButton bgColor="#E8E8E8">
-              <ArrowLeft className="w-4 h-4" />
-            </RoundButton>
-            <RoundButton bgColor="#1D4ED8">
-              <ArrowLeft className="w-4 h-4 rotate-180 text-white" />
-            </RoundButton>
+      
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-6 sm:px-[130px] my-12 text-left">
+          <span className="text-4xl sm:text-5xl font-medium text-[#0B0909] font-jakarta">
+            Today<span className="text-[#1D4ED8]"> Promo</span>
+          </span>
+          <div className="hidden lg:block">
+            <div className="flex gap-[9px] ">
+              <RoundButton bgColor="#E8E8E8">
+                <ArrowLeft className="w-4 h-4" />
+              </RoundButton>
+              <RoundButton bgColor="#1D4ED8">
+                <ArrowLeft className="w-4 h-4 rotate-180 text-white" />
+              </RoundButton>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex overflow-x-auto justify-center gap-4 px-4">
-        {arr.map((item) =>
-          item <= 3 ? (
-            <PromoCard
-              key={item}
-              bgColor="#88B788"
-              image="/image 46.png"
-              title="HAPPY MOTHER'S DAY!"
-              description="Get one of our favorite menu for free!"
-              cta="Klaim Kupon"
-            />
-          ) : (
-            <PromoCard
-              key={item}
-              bgColor="#60A5FA"
-              image="/image 43.png"
-              title="Get a cup of coffee for free"
-              description="Only at 7 to 9 AM"
-            />
-          )
-        )}
-      </div>
+        <div className="flex overflow-x-auto justify-center gap-4 px-4">
+          {arr.map((item) =>
+            item <= 3 ? (
+              <PromoCard
+                key={item}
+                bgColor="#60A5FA"
+                image="/image 46.png"
+                title="HAPPY MOTHER'S DAY!"
+                description="Get one of our favorite menu for free!"
+                cta="Klaim Kupon"
+              />
+            ) : (
+              <PromoCard
+                key={item}
+                bgColor="#60A5FA"
+                image="/image 43.png"
+                title="Get a cup of coffee for free"
+                description="Only at 7 to 9 AM"
+              />
+            )
+          )}
+        </div>
 
       {/* filter toggle */}
       <div className="lg:hidden flex justify-center items-center mt-10">
@@ -174,7 +173,7 @@ const Product = () => {
         </span>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="hidden lg:block flex-shrink-0 w-[280px]">
+          <div className="hidden lg:block shrink-0 w-[280px]">
             <FilterSidebar onFilterChange={handleFilterChange} />
           </div>
 

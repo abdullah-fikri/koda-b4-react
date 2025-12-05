@@ -21,6 +21,11 @@ const DetailProduct = () => {
   const { currentUser } = useSelector((state) => state.account);
   const token = useSelector((state) => state.account.token);
 
+  const formatRupiah = (value) => {
+    return new Intl.NumberFormat("id-ID").format(value);
+  };
+  
+
   useEffect(() => {
     api(`/products/${id}`)
       .then((res) => res.json())
@@ -122,8 +127,8 @@ const DetailProduct = () => {
     <>
       <div className="pt-[76px] px-4 sm:px-6 md:px-10 lg:px-20 xl:px-[130px] py-8 md:py-[50px] mt-[76px]">
         <div className="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-[60px]">
-          <div className="flex-shrink-0 w-full lg:w-auto">
-            <div className="relative w-full lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-[20px] overflow-hidden mb-[20px]">
+          <div className="shrink-0 w-full lg:w-auto">
+            <div className="relative w-full lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-[20px] overflow-hidden mb-5">
               <img
                 src={product.images?.[selectedImage] || product.img}
                 alt={product.name}
@@ -132,12 +137,12 @@ const DetailProduct = () => {
             </div>
 
             {product.images && product.images.length > 0 && (
-              <div className="flex gap-3 md:gap-[20px] overflow-x-auto pb-2">
+              <div className="flex gap-3 md:gap-5 overflow-x-auto pb-2">
                 {product.images.map((img, index) => (
                   <div
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex-shrink-0 rounded-[10px] overflow-hidden cursor-pointer border-2 ${
+                    className={`w-20 h-20 md:w-[100px] md:h-[100px] shrink-0 rounded-[10px] overflow-hidden cursor-pointer border-2 ${
                       selectedImage === index
                         ? "border-[#1D4ED8]"
                         : "border-transparent"
@@ -160,26 +165,26 @@ const DetailProduct = () => {
                 FLASH SALE!
               </div>
             )}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-3 md:mb-[16px]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-3 md:mb-4">
               {product.name}
             </h1>
 
-            <div className="flex items-center gap-3 md:gap-[16px] mb-3 md:mb-[16px]">
+            <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
               {product.original_price ? (
                 <span className="text-[#D00000] line-through text-base md:text-[20px]">
-                  IDR {product.original_price}
+                 {product.original_price}
                 </span>
               ) : (
                 ""
               )}
 
               <span className="text-[#1D4ED8] text-xl md:text-2xl lg:text-[32px] font-medium">
-                IDR {selectedSizePrice}
+              {formatRupiah(selectedSizePrice)}
               </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-[24px] mb-4 md:mb-[24px]">
-              <div className="flex items-center gap-[8px]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-6 mb-4 md:mb-6">
+              <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
@@ -188,28 +193,28 @@ const DetailProduct = () => {
                     ★
                   </span>
                 ))}
-                <span className="text-[#0B132A] font-medium ml-[4px]">
+                <span className="text-[#0B132A] font-medium ml-1">
                   {product.rating}
                 </span>
               </div>
-              <div className="flex items-center gap-2 md:gap-[8px] text-sm md:text-base">
+              <div className="flex items-center gap-2 md:gap-2 text-sm md:text-base">
                 <span className="text-[#4F5665]">200 Review</span>
                 <span className="text-[#4F5665]">|</span>
-                <span className="text-[#4F5665] flex items-center gap-[4px]">
+                <span className="text-[#4F5665] flex items-center gap-1">
                   Recommendation <ThumbsUp className="w-4 h-4" />
                 </span>
               </div>
             </div>
 
-            <p className="text-[#4F5665] text-sm md:text-[16px] leading-6 md:leading-[28px] mb-6 md:mb-[32px]">
+            <p className="text-[#4F5665] text-sm md:text-[16px] leading-6 md:leading-7 mb-6 md:mb-8">
               {product.description}
             </p>
 
             {/* Quantity */}
-            <div className="flex items-center gap-3 md:gap-[16px] mb-6 md:mb-[32px]">
+            <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
               <button
                 onClick={() => handleQuantityChange("kurang")}
-                className="w-[40px] h-[40px] border-2 border-[#E8E8E8] rounded-[8px] flex items-center justify-center hover:border-[#1D4ED8] transition-colors"
+                className="w-10 h-10 border-2 border-[#E8E8E8] rounded-lg flex items-center justify-center hover:border-[#1D4ED8] transition-colors"
               >
                 <Minus className="w-5 h-5" />
               </button>
@@ -217,11 +222,11 @@ const DetailProduct = () => {
                 type="text"
                 value={quantity}
                 readOnly
-                className="w-[60px] h-[40px] text-center border-2 border-[#E8E8E8] rounded-[8px] font-medium text-[18px]"
+                className="w-[60px] h-10 text-center border-2 border-[#E8E8E8] rounded-lg font-medium text-[18px]"
               />
               <button
                 onClick={() => handleQuantityChange("tambah")}
-                className="w-[40px] h-[40px] bg-[#1D4ED8] text-white rounded-[8px] flex items-center justify-center hover:bg-gray-400 transition-colors hover:text-black"
+                className="w-10 h-10 bg-[#1D4ED8] text-white rounded-lg flex items-center justify-center hover:bg-gray-400 transition-colors hover:text-black"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -229,11 +234,11 @@ const DetailProduct = () => {
 
             {/* Pilihan size */}
             {product.sizes.length > 0 && (
-              <div className="mb-6 md:mb-[32px]">
-                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
+              <div className="mb-6 md:mb-8">
+                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-4">
                   Choose Size
                 </h3>
-                <div className="flex gap-3 md:gap-[16px]">
+                <div className="flex gap-3 md:gap-4">
                   {product.sizes.map((size) => (
                     <button
                       key={size.size_id}
@@ -241,7 +246,7 @@ const DetailProduct = () => {
                         setSelectedSize(size);
                         setSelectedSizePrice(size.price);
                       }}
-                      className={`flex-1 w-full p-2 md:p-2.5 rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
+                      className={`flex-1 w-full p-2 md:p-2.5 rounded-lg font-medium text-sm md:text-[16px] transition-colors ${
                         selectedSize?.size_id === size.size_id
                           ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
                           : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
@@ -256,16 +261,16 @@ const DetailProduct = () => {
 
             {/* Pilihan suhu */}
             {product.variants.length > 0 && (
-              <div className="mb-6 md:mb-[40px]">
-                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-[16px]">
+              <div className="mb-6 md:mb-10">
+                <h3 className="text-[#0B132A] font-medium text-base md:text-[18px] mb-3 md:mb-4">
                   Hot/Ice?
                 </h3>
-                <div className="flex gap-3 md:gap-[16px]">
+                <div className="flex gap-3 md:gap-4">
                   {product.variants.map((temp) => (
                     <button
                       key={temp.variant_id}
                       onClick={() => setSelectedTemp(temp)}
-                      className={`flex-1 w-full px-6 md:px-[32px] py-3 md:py-[12px] rounded-[8px] font-medium text-sm md:text-[16px] transition-colors ${
+                      className={`flex-1 w-full px-6 md:px-8 py-3 md:py-3 rounded-lg font-medium text-sm md:text-[16px] transition-colors ${
                         selectedTemp === temp
                           ? "bg-white border border-[#1D4ED8] text-[#1D4ED8]"
                           : "bg-white border border-[#E8E8E8] text-[#0B132A] hover:border-[#1D4ED8]"
@@ -279,16 +284,16 @@ const DetailProduct = () => {
             )}
 
             {/* buy or cart */}
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-[16px]">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <button
-                className="flex-1 bg-[#1D4ED8] text-white font-medium py-3 md:py-[16px] rounded-[12px] text-base md:text-[18px] hover:bg-orange-600 transition-colors cursor-pointer"
+                className="flex-1 bg-[#1D4ED8] text-white font-medium py-3 md:py-4 rounded-xl text-base md:text-[18px] hover:bg-orange-600 transition-colors cursor-pointer"
                 onClick={handleBuy}
               >
                 Buy
               </button>
 
               <button
-                className="flex items-center justify-center gap-3 bg-white border border-[#1D4ED8] hover:text-white hover:bg-[#1D4ED8] text-black font-semibold text-sm md:text-[16px] py-3 md:py-[14px] px-5 md:px-[24px] rounded-[8px] transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-3 bg-white border border-[#1D4ED8] hover:text-white hover:bg-[#1D4ED8] text-black font-semibold text-sm md:text-[16px] py-3 md:py-3.5 px-5 md:px-6 rounded-lg transition-colors cursor-pointer"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -320,11 +325,11 @@ const DetailProduct = () => {
 
         {/* rekomendasi */}
         <div className="mt-12 md:mt-20 lg:mt-[100px]">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-6 md:mb-[40px]">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-medium text-[#0B132A] mb-6 md:mb-10">
             Recommendation <span className="text-blue-900">For You</span>
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-[24px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-6">
             {recommendations.map((item) => (
               <div
                 key={item.id}
@@ -373,7 +378,7 @@ const DetailProduct = () => {
                       IDR {item.originalPrice}
                     </span> */}
                     <span className="text-lg md:text-xl font-medium text-[#1D4ED8]">
-                      IDR {item.min_price}
+                      IDR {formatRupiah(item.min_price)}
                     </span>
                   </div>
                 </div>

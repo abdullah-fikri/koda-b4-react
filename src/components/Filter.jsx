@@ -60,11 +60,11 @@ export const FilterSidebar = ({ onFilterChange, className }) => {
 
   return (
     <div className={className}>
-      <div className="bg-blue-800 text-white rounded-2xl p-6 w-[280px]">
+      <div className="bg-blue-500 text-black rounded-2xl p-6 w-[280px]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold">Filter</h3>
           <button
-            className="text-sm text-white/70 hover:text-[#3B82F6] transition-colors"
+            className="text-sm text-white hover:text-black transition-colors"
             onClick={handleResetFilter}
           >
             Reset Filter
