@@ -62,7 +62,7 @@ export const Navbar = () => {
         >
           <div className="flex items-center gap-4 sm:gap-8 lg:gap-[60px]">
             <button onClick={() => navigate("/Home")}>
-              <img className="h-8 w-auto" src="https://dcoffeecup.id/layout/wider/img/logomobile.jpg" alt="logo" />
+              <img className="h-15 w-auto" src="/kopi.png" alt="logo" />
             </button>
 
             {["/Home", "/product", "/HistoryOrder"].map((link, i) => {
@@ -120,9 +120,9 @@ export const Navbar = () => {
             </button>
 
             {dropdown && (
-              <div className="fixed inset-0 z-[998]" onClick={() => setDropdown(false)}>
+              <div className="fixed inset-0 z-998" onClick={() => setDropdown(false)}>
                 <div
-                  className="absolute right-[50px] top-[75px] bg-white px-8 py-5 rounded-xl shadow-xl z-[999]"
+                  className="absolute right-[50px] top-[75px] bg-white px-8 py-5 rounded-xl shadow-xl z-999"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -145,7 +145,7 @@ export const Navbar = () => {
 
             {menu && (
               <div
-                className="fixed inset-0 bg-black/40 z-[999]"
+                className="fixed inset-0 bg-black/40 z-999"
                 onClick={() => setMenu(false)}
               >
                 <div
@@ -215,7 +215,7 @@ export const Navbar = () => {
       ) : (
         <nav className="flex justify-between fixed top-0 w-full h-[76px] px-4 sm:px-8 md:px-16 lg:px-[130px] z-40 bg-[#0A2540]/80 backdrop-blur-md">
           <div className="flex items-center gap-4 sm:gap-8 lg:gap-[60px] text-white">
-            <img src="/Frame 13.svg" alt="logo" className="h-8 w-auto" />
+            <img src="/kopi.png" alt="logo" className="h-15 w-auto" />
             {["/Home", "/product"].map((link, i) => {
               const names = ["Home", "Product"];
               return (
@@ -243,7 +243,7 @@ export const Navbar = () => {
             </button>
 
             {alertLog && (
-              <div className="fixed top-[80px] left-1/2 -translate-x-1/2 z-[1000] bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md text-center">
+              <div className="fixed top-20 left-1/2 -translate-x-1/2 z-1000 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md text-center">
                 <strong className="font-semibold">Upss!</strong>{" "}
                 <span>You must be logged in to continue.</span>
               </div>
@@ -266,7 +266,7 @@ export const Navbar = () => {
 
             {menu && (
               <div
-                className="fixed inset-0 bg-black/40 z-[999]"
+                className="fixed inset-0 bg-black/40 z-999"
                 onClick={() => setMenu(false)}
               >
                 <div
