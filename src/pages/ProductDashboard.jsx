@@ -92,11 +92,13 @@ const ProductDashboard = () => {
         id: p.id,
         image: p.image ?? "",
         name: p.name,
-        price: (p.min_price ?? p.price)?.toLocaleString("id-ID"),
+        price: (p.base_price ?? p.price)?.toLocaleString("id-ID"),
+        rawPrice: p.base_price ?? p.price, 
         size: p.sizes,
         desc: p.description,
         method: p.method,
         stock: p.stock,
+        category_id: p.category_id, 
       }));
 
       setProducts(mapped);
@@ -115,6 +117,7 @@ const ProductDashboard = () => {
     name: "",
     desc: "",
     stock: "",
+    price: "",
     category_id: 0,
     images: [],
     variants: [],
@@ -167,21 +170,21 @@ const ProductDashboard = () => {
 
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
-
+  
     const sizeArray = product.size
       ? product.size.split(", ").map((sizeName) => {
           const sizeMap = { Reguler: 1, Regular: 1, Medium: 2, Large: 3 };
           return { size_id: sizeMap[sizeName] || 1, price: 0 };
         })
       : [];
-
+  
     setFormData({
       name: product.name,
-      price: product.price,
+      price: product.rawPrice || "", 
       desc: product.desc,
       sizes: sizeArray,
       stock: product.stock.toString(),
-      category_id: 0,
+      category_id: product.category_id || 0,
       imageFile: null,
       image: product.image,
     });
@@ -190,30 +193,29 @@ const ProductDashboard = () => {
 
   const handleSaveProduct = async () => {
     try {
-      if (
-        !formData.name ||
-        !formData.desc ||
-        !formData.stock ||
-        !formData.category_id
-      ) {
-        return;
+      if (!formData.name || !formData.desc || !formData.stock) return;
+
+      if (!formData.category_id || formData.category_id === 0) return;
+      
+      if (formData.sizes.length === 0 && !formData.price) {
+          return;
       }
 
       if (formData.sizes.length === 0 && !formData.price) {
         return;
       }
 
-      const minPrice =
-        formData.sizes.length > 0
-          ? Math.min(...formData.sizes.map((s) => Number(s.price)))
-          : Number(formData.price);
+      // const minPrice =
+      //   formData.sizes.length > 0
+      //     ? Math.min(...formData.sizes.map((s) => Number(s.price)))
+      //     : Number(formData.price);
 
       const body = {
         name: formData.name,
         description: formData.desc,
         stock: parseInt(formData.stock),
         category_id: parseInt(formData.category_id),
-        min_price: minPrice,
+        base_price: Number(formData.price),
         sizes: formData.sizes.map((s) => ({
           size_id: Number(s.size_id),
           price: Number(s.price),
@@ -288,6 +290,7 @@ const ProductDashboard = () => {
         name: formData.name,
         description: formData.desc,
         stock: parseInt(formData.stock),
+        base_price: Number(formData.price), 
         category_id: parseInt(formData.category_id),
         images: [],
         variants: [],
@@ -310,15 +313,7 @@ const ProductDashboard = () => {
           selectedProduct.id,
           formData.imageFile
         );
-        if (!uploadResult.success) {
-          console.log(
-            "Product updated but image upload failed: " + uploadResult.message
-          );
-        } else {
-          console.log("Product and image updated successfully!");
-        }
-      } else {
-        console.log("Product updated successfully!");
+        
       }
 
       setShowEditModal(false);

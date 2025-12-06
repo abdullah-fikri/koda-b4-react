@@ -81,7 +81,7 @@ export const ProductFormModal = ({
             <label className="block text-[#4F5665] font-medium mb-3">
               Photo Product
             </label>
-            
+
             <div className="mb-3">
               {formData.imageFile ? (
                 <div className="relative inline-block">
@@ -119,7 +119,9 @@ export const ProductFormModal = ({
             </div>
 
             <label className="bg-[#1D4ED8] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#E67A05] cursor-pointer inline-block">
-              {formData.imageFile || formData.currentImage ? "Change Image" : "Upload Image"}
+              {formData.imageFile || formData.currentImage
+                ? "Change Image"
+                : "Upload Image"}
               <input
                 type="file"
                 accept="image/*"
@@ -219,6 +221,27 @@ export const ProductFormModal = ({
                   />
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Base Price */}
+          {formData.sizes.length === 0 && (
+            <div className="mb-6">
+              <label className="block text-[#4F5665] font-medium mb-2">
+                Base Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                placeholder="Enter Base Price"
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#4F5665] placeholder-[#9CA3AF] focus:outline-none focus:border-[#FF8906]"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                This price applies because no size is selected.
+              </p>
             </div>
           )}
 
