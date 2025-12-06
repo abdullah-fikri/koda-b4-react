@@ -4,8 +4,14 @@ import { SideBar } from "../components/SideBar";
 import { ProductFormModal } from "../components/ProductFormModal";
 import { api } from "../utils/Fetch";
 import { useSelector } from "react-redux";
+import { CategoryModal } from "../components/CategoryModal";
 
 const ProductDashboard = () => {
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [categoryMode, setCategoryMode] = useState("list");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -17,17 +23,74 @@ const ProductDashboard = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
+  const openCategoryList = async () => {
+    try {
+      const res = await api("/admin/category", "GET", null, token);
+      const result = await res.json();
+      setCategories(result.data);
+      setCategoryMode("list");
+      setCategoryModalOpen(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddCategory = async (name) => {
+    if (!name) {
+      setCategoryMode("add");
+      setSelectedCategory(null);
+      return;
+    }
+    try {
+      await api("/admin/category", "POST", { name }, token);
+      openCategoryList(); 
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  
+  
+  const handleEditCategory = async (id, name) => {
+    if (typeof id === "object") {
+      setSelectedCategory(id);
+      setCategoryMode("edit");
+      return;
+    }
+    try {
+      const res = await api(`/admin/category/${id}`, "PUT", { name }, token);
+      const result = await res.json();
+      openCategoryList();
+    } catch (err) {
+      console.error("Error in handleEditCategory:", err);
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    try {
+      await api(`/admin/category/${id}`, "DELETE", null, token);
+      openCategoryList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const itemsPerPage = 5;
   const token = useSelector((state) => state.account.token);
 
   const fetchProducts = async () => {
     try {
-      const res = await api(`/admin/product?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,"GET",null,token);
+      const res = await api(
+        `/admin/product?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`,
+        "GET",
+        null,
+        token
+      );
       const result = await res.json();
 
       const mapped = result.data.map((p) => ({
         id: p.id,
-        image: p.image ?? "", 
+        image: p.image ?? "",
         name: p.name,
         price: (p.min_price ?? p.price)?.toLocaleString("id-ID"),
         size: p.sizes,
@@ -35,7 +98,7 @@ const ProductDashboard = () => {
         method: p.method,
         stock: p.stock,
       }));
-      
+
       setProducts(mapped);
       setTotalPages(result.pagination.total_page);
       setTotalItems(result.pagination.total_item);
@@ -56,7 +119,7 @@ const ProductDashboard = () => {
     images: [],
     variants: [],
     sizes: [],
-    imageFile: null,  
+    imageFile: null,
   });
 
   const getPageNumbers = () => {
@@ -97,19 +160,21 @@ const ProductDashboard = () => {
       sizes: [],
       stock: "",
       category_id: 0,
-      imageFile: null, 
+      imageFile: null,
     });
     setShowAddModal(true);
   };
 
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
-    
-    const sizeArray = product.size ? product.size.split(", ").map(sizeName => {
-      const sizeMap = { "Reguler": 1, "Regular": 1, "Medium": 2, "Large": 3 };
-      return { size_id: sizeMap[sizeName] || 1, price: 0 };
-    }) : [];
-    
+
+    const sizeArray = product.size
+      ? product.size.split(", ").map((sizeName) => {
+          const sizeMap = { Reguler: 1, Regular: 1, Medium: 2, Large: 3 };
+          return { size_id: sizeMap[sizeName] || 1, price: 0 };
+        })
+      : [];
+
     setFormData({
       name: product.name,
       price: product.price,
@@ -125,7 +190,12 @@ const ProductDashboard = () => {
 
   const handleSaveProduct = async () => {
     try {
-      if (!formData.name || !formData.desc || !formData.stock || !formData.category_id) {
+      if (
+        !formData.name ||
+        !formData.desc ||
+        !formData.stock ||
+        !formData.category_id
+      ) {
         return;
       }
 
@@ -137,7 +207,7 @@ const ProductDashboard = () => {
         formData.sizes.length > 0
           ? Math.min(...formData.sizes.map((s) => Number(s.price)))
           : Number(formData.price);
-  
+
       const body = {
         name: formData.name,
         description: formData.desc,
@@ -149,42 +219,48 @@ const ProductDashboard = () => {
           price: Number(s.price),
         })),
       };
-  
+
       const res = await api("/admin/product-create", "POST", body, token);
       const result = await res.json();
-  
+
       if (!result.success) {
         return;
       }
-  
+
       const productId = result.data?.id;
-      
+
       if (productId && formData.imageFile instanceof File) {
-        const uploadResult = await uploadProductImage(productId, formData.imageFile);
+        const uploadResult = await uploadProductImage(
+          productId,
+          formData.imageFile
+        );
         if (!uploadResult.success) {
-          return
+          return;
         }
-      }      
+      }
       setShowAddModal(false);
-      fetchProducts(); 
+      fetchProducts();
     } catch (error) {
       console.error("Error save product:", error);
     }
   };
-  
+
   const uploadProductImage = async (productId, file) => {
     try {
       const formDataImg = new FormData();
       formDataImg.append("image", file);
-  
-      const baseURL = import.meta.env.VITE_BASE_URL
-      const res = await fetch(`${baseURL}/admin/product/${productId}/pictures`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-        body: formDataImg,
-      });
+
+      const baseURL = import.meta.env.VITE_BASE_URL;
+      const res = await fetch(
+        `${baseURL}/admin/product/${productId}/pictures`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataImg,
+        }
+      );
 
       const result = await res.json();
       return result;
@@ -195,7 +271,12 @@ const ProductDashboard = () => {
 
   const handleUpdateProduct = async () => {
     try {
-      if (!formData.name || !formData.desc || !formData.stock || !formData.category_id) {
+      if (
+        !formData.name ||
+        !formData.desc ||
+        !formData.stock ||
+        !formData.category_id
+      ) {
         return;
       }
 
@@ -216,13 +297,23 @@ const ProductDashboard = () => {
         })),
       };
 
-      const res = await api(`/admin/product/${selectedProduct.id}`, "PUT", body, token);
+      const res = await api(
+        `/admin/product/${selectedProduct.id}`,
+        "PUT",
+        body,
+        token
+      );
       const result = await res.json();
 
       if (formData.imageFile instanceof File) {
-        const uploadResult = await uploadProductImage(selectedProduct.id, formData.imageFile);
+        const uploadResult = await uploadProductImage(
+          selectedProduct.id,
+          formData.imageFile
+        );
         if (!uploadResult.success) {
-          console.log("Product updated but image upload failed: " + uploadResult.message);
+          console.log(
+            "Product updated but image upload failed: " + uploadResult.message
+          );
         } else {
           console.log("Product and image updated successfully!");
         }
@@ -244,7 +335,12 @@ const ProductDashboard = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const res = await api(`/admin/product/${productToDelete.id}`, "DELETE", null, token);
+      const res = await api(
+        `/admin/product/${productToDelete.id}`,
+        "DELETE",
+        null,
+        token
+      );
       const result = await res.json();
 
       if (!result.success) {
@@ -279,13 +375,21 @@ const ProductDashboard = () => {
               <h1 className="text-[#4F5665] text-2xl font-semibold">
                 Product List
               </h1>
-              <button
-                onClick={handleAddProduct}
-                className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-blue-950 transition-colors"
-              >
-                <Plus size={18} />
-                Add Product
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAddProduct}
+                  className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-blue-950 transition-colors"
+                >
+                  <Plus size={18} />
+                  Add Product
+                </button>
+                <button
+                  onClick={openCategoryList}
+                  className="bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-blue-950 transition-colors"
+                >
+                  Category
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-4">
@@ -512,6 +616,16 @@ const ProductDashboard = () => {
           </div>
         </div>
       )}
+      <CategoryModal
+        isOpen={categoryModalOpen}
+        mode={categoryMode}
+        categories={categories}
+        category={selectedCategory}
+        onClose={() => setCategoryModalOpen(false)}
+        onAdd={handleAddCategory}
+        onEdit={handleEditCategory}
+        onDelete={handleDeleteCategory}
+      />
     </>
   );
 };
