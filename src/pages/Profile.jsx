@@ -73,20 +73,26 @@ export const Profile = () => {
   };
 
   const handleUpload = async (file) => {
+    const start = Date.now();
     setUploading(true);
     try {
       const res = await upload("/user/profile/upload", file, token);
       const result = await res.json();
+
+      const time = Date.now() - start;
+      const min = 400; 
+      if (time < min) {
+        await new Promise(r => setTimeout(r, min - time));
+      }
+  
       if (result.success) {
         setImage(result.data.profile_picture);
         setAlertMessage("Profile picture updated!");
-        setShowAlert(true);
       } else {
         setAlertMessage(result.message || "Upload failed");
-        setShowAlert(true);
       }
+      setShowAlert(true);
     } catch (err) {
-      console.error(err);
       setAlertMessage("Upload error");
       setShowAlert(true);
     }
