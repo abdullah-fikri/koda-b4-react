@@ -11,7 +11,6 @@ export const HistoryOrder = () => {
   const [activeTab, setActiveTab] = useState("On Progress");
   const [selectedMonth, setSelectedMonth] = useState("");
   const navigate = useNavigate();
-  // const { history } = useContext(History);
   const [history, setHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPages = 6;
@@ -20,9 +19,9 @@ export const HistoryOrder = () => {
 
   const prosesShippingId = {
     "On Progress": 3,
-    "Pending": 2,
-    "Done": 1,
-    "Waiting": 4,
+    Pending: 2,
+    Done: 1,
+    Waiting: 4,
   };
 
   const monthSelect = selectedMonth
@@ -36,11 +35,16 @@ export const HistoryOrder = () => {
     const month = monthSelect;
     const page = currentPage;
 
-    api(`/user/history?shipping_id=${shipping_id}&month=${month}&page=${page}`,"GET", null, token)
+    api(
+      `/user/history?shipping_id=${shipping_id}&month=${month}&page=${page}`,
+      "GET",
+      null,
+      token
+    )
       .then((res) => res.json())
       .then((result) => {
         setHistory(result.data || []);
-        setTotalPage(result.pagination.total_page || 0);
+        setTotalPage(result.pagination?.total_page || 0);
       })
       .catch((err) => console.error("gagal fetch:", err));
   }, [token, activeTab, selectedMonth, currentPage]);
@@ -56,7 +60,6 @@ export const HistoryOrder = () => {
     navigate(`/detailorder/${orderNumber}`);
   };
 
-  const currentOrders = history;
   const totalPages = totalPage;
 
   const handlePageChange = (pageNumber) => {
@@ -67,7 +70,7 @@ export const HistoryOrder = () => {
   return (
     <div className="min-h-screen bg-white pt-[76px]">
       <div className="px-4 sm:px-6 md:px-10 lg:px-20 xl:px-[130px] py-8 md:py-[50px]">
-        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-[40px]">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
           <h1 className="text-2xl md:text-[32px] font-medium text-[#0B132A]">
             History Order
           </h1>
@@ -97,7 +100,7 @@ export const HistoryOrder = () => {
                 </div>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#4F5665] flex-shrink-0" />
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#4F5665]" />
                   <select
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(e.target.value)}
@@ -121,20 +124,20 @@ export const HistoryOrder = () => {
               </div>
             </div>
 
-            <div className="space-y-4 md:space-y-5 mt-4 md:mt-[24px]">
-              {currentOrders.length === 0 ? (
+            <div className="space-y-4 md:space-y-5 mt-4 md:mt-6">
+              {history.length === 0 ? (
                 <div className="bg-white rounded-xl border border-[#E8E8E8] p-6 md:p-8 text-center">
                   <p className="text-[#4F5665] text-sm md:text-base">
                     No orders found
                   </p>
                 </div>
               ) : (
-                currentOrders.map((order, index) => (
+                history.map((order, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-xl border border-[#E8E8E8] p-4 md:p-5 flex flex-col sm:flex-row gap-4 md:gap-6 items-start sm:items-center"
                   >
-                    <div className="w-full sm:w-[80px] md:w-[100px] h-[200px] sm:h-[80px] md:h-[100px] rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-full sm:w-20 md:w-[100px] h-[200px] sm:h-20 md:h-[100px] rounded-lg overflow-hidden shrink-0">
                       <img
                         src={order.image || "/image 22.png"}
                         alt={order.order_id}
@@ -152,7 +155,7 @@ export const HistoryOrder = () => {
                         </p>
                         <button
                           onClick={() => handleViewDetail(order.order_id)}
-                          className="text-[#FF8906] text-[10px] md:text-xs mt-1 hover:underline"
+                          className="text-[#2563EB] text-[10px] md:text-xs mt-1 hover:underline"
                         >
                           View Order Detail
                         </button>
@@ -180,7 +183,7 @@ export const HistoryOrder = () => {
                         <p className="text-xs md:text-sm text-[#4F5665] mb-1">
                           Status
                         </p>
-                        <span className="inline-block bg-[#FFF4E6] text-[#FF8906] px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-medium">
+                        <span className="inline-block bg-[#E0ECFF] text-[#2563EB] px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-medium">
                           {order.status}
                         </span>
                       </div>
@@ -191,7 +194,7 @@ export const HistoryOrder = () => {
             </div>
 
             {filteredOrders.length > 0 && totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-6 md:mt-[40px] flex-wrap">
+              <div className="flex justify-center gap-2 mt-6 md:mt-10 flex-wrap">
                 {currentPage > 1 && (
                   <RoundButton
                     onClick={() => handlePageChange(currentPage - 1)}
@@ -206,7 +209,7 @@ export const HistoryOrder = () => {
                     <RoundButton
                       key={pageNumber}
                       bgColor={
-                        currentPage === pageNumber ? "#FF8906" : "#E8E8E8"
+                        currentPage === pageNumber ? "#2563EB" : "#E8E8E8"
                       }
                       onClick={() => handlePageChange(pageNumber)}
                     >
@@ -224,7 +227,7 @@ export const HistoryOrder = () => {
                 })}
                 {currentPage < totalPages && (
                   <RoundButton
-                    bgColor="#FF8906"
+                    bgColor="#2563EB"
                     onClick={() => handlePageChange(currentPage + 1)}
                   >
                     <ArrowLeft className="text-white rotate-180" />
@@ -234,10 +237,10 @@ export const HistoryOrder = () => {
             )}
           </div>
 
-          <div className="w-full lg:w-[380px] flex-shrink-0">
+          <div className="w-full lg:w-[380px] shrink-0">
             <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-[#F0F0F0] lg:sticky lg:top-[100px]">
               <div className="flex justify-start mb-4">
-                <div className="w-14 h-14 md:w-16 md:h-16 bg-[#FF8906] rounded-full flex items-center justify-center">
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-[#2563EB] rounded-full flex items-center justify-center">
                   <MessageCircle className="w-7 h-7 md:w-8 md:h-8 text-white" />
                 </div>
               </div>
@@ -252,7 +255,7 @@ export const HistoryOrder = () => {
                 solution.
               </p>
 
-              <button className="w-full bg-[#FF8906] text-white font-medium py-2.5 md:py-3 rounded-lg hover:bg-orange-600 transition-colors text-sm md:text-base">
+              <button className="w-full bg-[#2563EB] text-white font-medium py-2.5 md:py-3 rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base">
                 Send Message
               </button>
             </div>

@@ -169,7 +169,7 @@ const CheckoutProduct = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-[60px]">
           <div className="flex-1 w-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-[24px]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <h2 className="text-xl md:text-2xl font-medium text-[#0B132A]">
                 Your Order
               </h2>
@@ -200,7 +200,7 @@ const CheckoutProduct = () => {
                       key={item.id}
                       className="flex flex-col sm:flex-row gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
                     >
-                      <div className="w-full sm:w-[120px] h-[200px] sm:h-[120px] rounded-xl overflow-hidden flex-shrink-0 relative">
+                      <div className="w-full sm:w-[120px] h-[200px] sm:h-[120px] rounded-xl overflow-hidden shrink-0 relative">
                         {item.flashSale && (
                           <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
                             FLASH SALE!
@@ -341,7 +341,7 @@ const CheckoutProduct = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-[400px] flex-shrink-0">
+          <div className="w-full lg:w-[400px] shrink-0">
             <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 lg:sticky lg:top-[100px]">
               <h3 className="text-xl md:text-2xl font-medium text-[#0B132A] mb-4 md:mb-6">
                 Total
