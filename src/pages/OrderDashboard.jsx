@@ -1,10 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Search, Filter, Edit2, Trash2, Group } from "lucide-react";
 import { SideBar } from "../components/SideBar";
 import { ProductFormModal } from "../components/ProductFormModal";
 import { DetailOrderModal } from "../components/DetailOrderModal";
+import { useSelector } from "react-redux";
+import { api } from "../utils/Fetch";
 
 const OrderDashboard = () => {
+  const [alertMessage, setAlertMessage] = useState("");
+const [alertType, setAlertType] = useState("success"); 
+const [showAlertBox, setShowAlertBox] = useState(false);
+
+const showAlert = (type, message) => {
+  setAlertType(type);
+  setAlertMessage(message);
+  setShowAlertBox(true);
+  setTimeout(() => {
+    setShowAlertBox(false);
+  }, 3000);
+};
+
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -14,146 +29,92 @@ const OrderDashboard = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
-  const itemsPerPage = 5;
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [orderToUpdate, setOrderToUpdate] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
+  const itemsPerPage = 10;
 
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=100&h=100&fit=crop",
-      name: "Caramel Machiato",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-      status: "On Progress",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=100&h=100&fit=crop",
-      name: "Hazelnut Latte",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-      status: "Sending Goods",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=100&h=100&fit=crop",
-      name: "Kopi Susu",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Dine In",
-      stock: 200,
-      status: "Finish Order",
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=100&h=100&fit=crop",
-      name: "Espresso Supreme",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver",
-      stock: 200,
-      status: "Finish Order",
-    },
-    {
-      id: 5,
-      image:
-        "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=100&h=100&fit=crop",
-      name: "Caramel Velvet Latte",
-      price: "40.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor. It is brewed in small batches and steeped for as long as 48 hours.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver, Dine In",
-      stock: 200,
-      status: "Waiting",
-    },
-    {
-      id: 6,
-      image:
-        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&h=100&fit=crop",
-      name: "Vanilla Latte",
-      price: "35.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L"],
-      method: "Deliver, Dine In",
-      stock: 150,
-      status: "Finish Order",
-    },
-    {
-      id: 7,
-      image:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop",
-      name: "Americano",
-      price: "30.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL"],
-      method: "Dine In",
-      stock: 180,
-      status: "Waiting",
-    },
-    {
-      id: 8,
-      image:
-        "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=100&h=100&fit=crop",
-      name: "Cappuccino",
-      price: "38.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL"],
-      method: "Deliver, Dine In",
-      stock: 120,
-      status: "Waiting",
-    },
-    {
-      id: 9,
-      image:
-        "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=100&h=100&fit=crop",
-      name: "Mocha",
-      price: "42.000",
-      desc: "Cold brewing is a method of brewing that combines ground coffee and cool water and uses time instead of heat to extract the flavor.",
-      size: ["R", "L", "XL", "250gr"],
-      method: "Deliver",
-      stock: 90,
-      status: "Pending",
-    },
-  ]);
+  const token = useSelector((state) => state.account.token);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    desc: "",
-    size: [],
-    stock: "",
-    image: "",
-  });
+  const statusMapping = {
+    Done: 1,
+    Pending: 2,
+    "On Progress": 3,
+    Waiting: 4,
+  };
 
-  // Filter search
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const statusNameMapping = {
+    1: "Done",
+    2: "Pending",
+    3: "On Progress",
+    4: "Waiting",
+  };
 
-  // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const formatRupiah = (value) => {
+    return new Intl.NumberFormat("id-ID").format(value);
+  };
 
-  // nomor page
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage, statusFilter]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      let url = `/admin/orders?page=${currentPage}&limit=${itemsPerPage}`;
+
+      if (statusFilter) {
+        url += `&status=${statusFilter}`;
+      }
+
+      const res = await api(url, "GET", null, token);
+      const result = await res.json();
+
+      if (result.success) {
+        setOrders(Array.isArray(result.data) ? result.data : []);
+        setPagination(result.pagination);
+      } else {
+        console.error("Failed to fetch orders:", result.message);
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredOrders =
+    orders?.filter((order) => order.id.toString().includes(searchQuery)) || [];
+
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
+    const totalPages = pagination?.total_page || 1;
 
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
@@ -181,79 +142,6 @@ const OrderDashboard = () => {
     return pages;
   };
 
-  const handleAddProduct = () => {
-    setFormData({
-      name: "",
-      price: "",
-      desc: "",
-      size: [],
-      stock: "",
-      image: "",
-    });
-    setShowAddModal(true);
-  };
-
-  const handleEditProduct = (product) => {
-    setSelectedProduct(product);
-    setFormData({
-      name: product.name,
-      price: product.price,
-      desc: product.desc,
-      size: product.size,
-      stock: product.stock.toString(),
-      image: product.image,
-    });
-    setShowEditModal(true);
-  };
-
-  const handleSaveProduct = () => {
-    const newProduct = {
-      id: products.length + 1,
-      name: formData.name,
-      price: formData.price,
-      desc: formData.desc,
-      size: formData.size,
-      method: "Deliver, Dine In",
-      stock: parseInt(formData.stock),
-      image: formData.image || "foto product",
-    };
-    setProducts([...products, newProduct]);
-    setShowAddModal(false);
-  };
-
-  const handleUpdateProduct = () => {
-    const updatedProducts = products.map((p) =>
-      p.id === selectedProduct.id
-        ? {
-            ...p,
-            name: formData.name,
-            price: formData.price,
-            desc: formData.desc,
-            size: formData.size,
-            stock: parseInt(formData.stock),
-            image: formData.image,
-          }
-        : p
-    );
-    setProducts(updatedProducts);
-    setShowEditModal(false);
-  };
-
-  const handleDeleteClick = (product) => {
-    setProductToDelete(product);
-    setShowDeleteConfirm(true);
-  };
-
-  const handleConfirmDelete = () => {
-    setProducts(products.filter((p) => p.id !== productToDelete.id));
-    setShowDeleteConfirm(false);
-    setProductToDelete(null);
-    // Reset
-    if (currentProducts.length === 1 && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   const handlePageChange = (page) => {
     if (page !== "...") {
       setCurrentPage(page);
@@ -262,7 +150,11 @@ const OrderDashboard = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (e) => {
+    setStatusFilter(e.target.value);
+    setCurrentPage(1); 
   };
 
   const getStatusColor = (status) => {
@@ -271,38 +163,97 @@ const OrderDashboard = () => {
         return "bg-[#FFF4E6] text-[#FF8906]";
       case "Sending Goods":
         return "bg-blue-50 text-blue-600";
-      case "Finish Order":
+      case "Done":
         return "bg-green-50 text-green-600";
       case "Pending":
         return "bg-red-200 text-red-500";
+      case "Waiting":
+        return "bg-gray-100 text-gray-600";
       default:
         return "bg-gray-100 text-gray-600";
     }
   };
 
-  const handleDetailProduct = (product) => {
-    product = { id: "12354–09893", name: "Order Detail" };
-    setSelectedDetail(product);
+  const handleDetailProduct = (order) => {
+    setSelectedDetail({ id: order.id, name: "Order Detail" });
     setShowDetailModal(true);
+  };
+
+  const handleDeleteClick = (order) => {
+    setProductToDelete(order);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleEditStatus = (order) => {
+    setOrderToUpdate(order);
+    setNewStatus(order.status);
+    setShowStatusModal(true);
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!orderToUpdate || !newStatus) return;
+
+    try {
+      const statusId = statusMapping[newStatus];
+
+      const res = await api(
+        `/admin/orders/${orderToUpdate.id}/status`,
+        "PUT",
+        { status: statusId },
+        token
+      );
+      const result = await res.json();
+
+      if (result.success) {
+        setShowStatusModal(false);
+        setOrderToUpdate(null);
+        setNewStatus("");
+        showAlert("success", "update status order success")
+
+        await fetchOrders();
+      } else {
+        showAlert("failed" , "Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      showAlert("error","Error updating status");
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const res = await api(
+        `/admin/orders/${productToDelete.id}`,
+        "DELETE",
+        null,
+        token
+      );
+      const result = await res.json();
+
+      if (result.success) {
+        setShowDeleteConfirm(false);
+        setProductToDelete(null);
+
+        await fetchOrders();
+      } else {
+        showAlert("failed","Failed to delete order");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      showAlert("error","Error deleting order");
+    }
   };
 
   return (
     <>
       <div className="flex mt-[76px]">
         <SideBar />
-        <div className="flex-1  px-8 py-6">
+        <div className="flex-1 px-8 py-6">
           <div className="flex justify-between items-center mb-8">
             <div className="flex flex-col items-center gap-6">
               <h1 className="text-[#4F5665] text-2xl font-semibold">
-                Product List
+                Order List
               </h1>
-              <button
-                onClick={handleAddProduct}
-                className="bg-[#FF8906] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors"
-              >
-                <Plus size={18} />
-                Add Product
-              </button>
             </div>
 
             <div className="flex items-center gap-4">
@@ -315,17 +266,16 @@ const OrderDashboard = () => {
                   <select
                     name="status"
                     id="status"
-                    placeholder="all"
+                    value={statusFilter}
+                    onChange={handleStatusChange}
                     className="border border-[#E8E8E8] rounded-md p-3 px-5 text-sm font-medium text-[#4F5665]"
                   >
-                    <option value="" disabled hidden>
-                      All
-                    </option>
-                    <option value="On-Progress">On progress</option>
+                    <option value="">All</option>
+                    <option value="On Progress">On Progress</option>
                     <option value="Pending">Pending</option>
                     <option value="Waiting">Waiting</option>
                     <option value="Done">Done</option>
-                    <option value="Finish-Order">Finish Order</option>
+                    <option value="Sending Goods">Sending Goods</option>
                   </select>
                 </label>
               </div>
@@ -347,206 +297,235 @@ const OrderDashboard = () => {
                   />
                 </div>
               </div>
-
-              <button className="mt-6 bg-[#FF8906] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#E67A05] transition-colors">
-                <Filter size={18} />
-                Filter
-              </button>
             </div>
           </div>
 
-          {/*  Table */}
+          {/* Table */}
           <div className="bg-white rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-4 px-5 w-12">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300"
-                    />
-                  </th>
-
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    No Order
-                  </th>
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    Date
-                  </th>
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    Order
-                  </th>
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    Status
-                  </th>
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    Total
-                  </th>
-
-                  <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentProducts.length > 0 ? (
-                  currentProducts.map((product, index) => (
-                    <tr
-                      key={product.id}
-                      className={index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"}
-                    >
-                      <td className="py-4 px-5">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300"
-                        />
-                      </td>
-
-                      <td className="py-4 px-4 text-[#4F5665] text-sm">
-                        12354-09893
-                      </td>
-                      <td className="py-4 px-4 text-[#4F5665] text-sm">
-                        26 Januari 2023
-                      </td>
-                      <td className="py-4 px-4 text-[#4F5665] text-sm max-w-[150px]">
-                        <ul className="list-disc pl-4">
-                          <li>Hazelnut Latte R 1x</li>
-                          <li>Caramel Machiato L 1x</li>
-                        </ul>
-                      </td>
-                      {/* status */}
-                      <td
-                        className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
-                          product.status
-                        )}`}
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="text-[#9CA3AF]">Loading orders...</div>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-4 px-5 w-12">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                    </th>
+                    <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
+                      No Order
+                    </th>
+                    <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
+                      Date
+                    </th>
+                    <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
+                      Status
+                    </th>
+                    <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
+                      Total
+                    </th>
+                    <th className="text-left py-4 px-4 text-[#9CA3AF] font-medium text-xs">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.length > 0 ? (
+                    filteredOrders.map((order, index) => (
+                      <tr
+                        key={order.id}
+                        className={
+                          index % 2 === 0 ? "bg-white" : "bg-[#FAFAFA]"
+                        }
                       >
-                        {product.status}
-                      </td>
-                      {/* total */}
-                      <td className="py-4 px-4 text-[#4F5665] text-sm">
-                        IDR 40.000
-                      </td>
-
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            className="text-[#FF8906]"
-                            onClick={() => handleDetailProduct(product)}
+                        <td className="py-4 px-5">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 rounded border-gray-300"
+                          />
+                        </td>
+                        <td className="py-4 px-4 text-[#4F5665] text-sm">
+                          #{order.invoice}
+                        </td>
+                        <td className="py-4 px-4 text-[#4F5665] text-sm">
+                          {formatDate(order.date)}
+                        </td>
+                        <td className="py-4 px-4">
+                          <span
+                            className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
+                              order.status
+                            )}`}
                           >
-                            <Group size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleEditProduct(product)}
-                            className="text-[#FF8906]"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(product)}
-                            className="text-[#FF3B30] "
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-[#4F5665] text-sm">
+                          IDR {formatRupiah(order.total)}
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            {/* <button
+                              className="text-[#FF8906] hover:text-[#E67A05]"
+                              onClick={() => handleDetailProduct(order)}
+                              title="View Details"
+                            >
+                              <Group size={18} />
+                            </button> */}
+                            <button
+                              onClick={() => handleEditStatus(order)}
+                              className="text-gray-400 hover:text-gray-600"
+                              title="Edit Status"
+                            >
+                              <Edit2 size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(order)}
+                              className="text-[#FF3B30] hover:text-[#E62E24]"
+                              title="Delete Order"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="py-8 text-center text-[#9CA3AF] text-sm"
+                      >
+                        No orders found
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="9"
-                      className="py-8 text-center text-[#9CA3AF] text-sm"
-                    >
-                      No products found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-6">
-            <p className="text-[#9CA3AF] text-sm">
-              Show {currentProducts.length} product of {filteredProducts.length}{" "}
-              product
-            </p>
+          {pagination && (
+            <div className="flex justify-between items-center mt-6">
+              <p className="text-[#9CA3AF] text-sm">
+                Show {filteredOrders.length} order of {pagination.total_items}{" "}
+                orders
+              </p>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#FF8906] transition-colors disabled:cursor-not-allowed"
-              >
-                Prev
-              </button>
-
-              {getPageNumbers().map((page, index) => (
+              <div className="flex items-center gap-2">
                 <button
-                  key={index}
-                  onClick={() => handlePageChange(page)}
-                  disabled={page === "..."}
-                  className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                    currentPage === page
-                      ? "bg-[#FF8906] text-white"
-                      : page === "..."
-                      ? "text-[#9CA3AF] cursor-default"
-                      : "text-[#4F5665] hover:bg-gray-100"
-                  }`}
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-gray-400 transition-colors disabled:cursor-not-allowed"
                 >
-                  {page}
+                  Prev
                 </button>
-              ))}
 
-              <button
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#FF8906] transition-colors disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
+                {getPageNumbers().map((page, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(page)}
+                    disabled={page === "..."}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                      currentPage === page
+                        ? "bg-blue-600 text-white"
+                        : page === "..."
+                        ? "text-[#9CA3AF] cursor-default"
+                        : "text-[#4F5665] hover:bg-gray-100"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage(
+                      Math.min(pagination.total_page, currentPage + 1)
+                    )
+                  }
+                  disabled={currentPage === pagination.total_page}
+                  className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-gray-400 transition-colors disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* modals */}
-      {/* add modal */}
-      <ProductFormModal
-        isOpen={showAddModal}
-        isEdit={false}
-        onClose={() => setShowAddModal(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSave={handleSaveProduct}
-      />
-      {/* edit modal */}
-      <ProductFormModal
-        isOpen={showEditModal}
-        isEdit={true}
-        onClose={() => setShowEditModal(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSave={handleUpdateProduct}
-      />
-      {/* detail modal */}
+      {/* Modals */}
       <DetailOrderModal
         isOpen={showDetailModal}
         product={selectedDetail}
         onClose={() => setShowDetailModal(false)}
       />
 
-      {/* Delete konfirmasi Modal */}
+      {/* Update Status Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black/40 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 w-[400px]">
+            <h3 className="text-xl font-semibold text-[#4F5665] mb-4">
+              Update Order Status
+            </h3>
+            <p className="text-[#9CA3AF] mb-2 text-sm">
+              Order #{orderToUpdate?.invoice}
+            </p>
+
+            <div className="mb-6">
+              <label className="block text-[#4F5665] text-sm font-medium mb-2">
+                Select New Status
+              </label>
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-[#4F5665] focus:outline-none focus:border-[#FF8906]"
+              >
+                <option value="">Select Status</option>
+                <option value="Done">Done</option>
+                <option value="Pending">Pending</option>
+                <option value="On Progress">On Progress</option>
+                <option value="Waiting">Waiting</option>
+              </select>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowStatusModal(false);
+                  setOrderToUpdate(null);
+                  setNewStatus("");
+                }}
+                className="px-5 py-2.5 border border-gray-200 rounded-lg text-[#4F5665] text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateStatus}
+                disabled={!newStatus}
+                className="px-5 py-2.5 bg-[#FF8906] text-white rounded-lg text-sm font-medium hover:bg-[#E67A05] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Update Status
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 w-[400px]">
             <h3 className="text-xl font-semibold text-[#4F5665] mb-3">
-              Delete Product
+              Delete Order
             </h3>
             <p className="text-[#9CA3AF] mb-6">
-              Are you sure you want to delete "{productToDelete?.name}"? This
+              Are you sure you want to delete order #{productToDelete?.id}? This
               action cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
@@ -564,6 +543,25 @@ const OrderDashboard = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {showAlertBox && (
+        <div
+          className={`
+      fixed top-6 right-6 px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50
+      ${
+        alertType === "success"
+          ? "bg-green-100 text-green-700 border border-green-300"
+          : ""
+      }
+      ${
+        alertType === "error"
+          ? "bg-red-100 text-red-700 border border-red-300"
+          : ""
+      }
+    `}
+        >
+          {alertMessage}
         </div>
       )}
     </>

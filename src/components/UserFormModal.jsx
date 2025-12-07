@@ -40,6 +40,20 @@ const UserFormModal = ({
     }));
   };
 
+  const handleSubmit = () => {
+    if (!formData.username || !formData.email || !formData.phone) {
+      console.log("fill required");
+      return;
+    }
+
+    if (!isEdit && !formData.password) {
+      console.log("Password is required for new user");
+      return;
+    }
+
+    onSave();
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex">
       <div className="flex-1" onClick={onClose}></div>
@@ -47,7 +61,7 @@ const UserFormModal = ({
       <div className="w-[480px] bg-white h-full overflow-y-auto shadow-2xl">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-800">
-            {isEdit ? formData.name : "Insert User"}
+            {isEdit ? `Edit ${formData.username}` : "Insert User"}
           </h2>
           <button
             onClick={onClose}
@@ -74,17 +88,17 @@ const UserFormModal = ({
                   <Upload className="text-gray-400" size={24} />
                 </div>
               )}
-              <label className="bg-[#FF8906] hover:bg-[#E67A05] text-white px-6 py-2 rounded-md cursor-pointer transition-colors text-sm font-medium">
+              <label className="bg-blue-600 hover:bg-blue-950 text-white px-6 py-2 rounded-md cursor-pointer transition-colors text-sm font-medium">
                 Upload
                 <input type="file" className="hidden" />
               </label>
             </div>
           </div>
 
-          {/* Full Name */}
+          {/* Username */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
-              Full Name
+              Username <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <User
@@ -93,10 +107,10 @@ const UserFormModal = ({
               />
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="username"
+                value={formData.username}
                 onChange={handleInputChange}
-                placeholder="Enter Full Name"
+                placeholder="Enter Username"
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-[#FF8906] focus:border-[#FF8906] outline-none"
               />
             </div>
@@ -105,7 +119,7 @@ const UserFormModal = ({
           {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Mail
@@ -126,7 +140,7 @@ const UserFormModal = ({
           {/* Phone */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
-              Phone
+              Phone <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Phone
@@ -148,12 +162,12 @@ const UserFormModal = ({
           <div>
             <div className="flex justify-between items-center mb-3">
               <label className="block text-sm font-semibold text-gray-800">
-                Password
+                Password {!isEdit && <span className="text-red-500">*</span>}
               </label>
               {isEdit && (
-                <button className="text-[#FF8906] text-sm hover:underline font-medium">
-                  Set New Password
-                </button>
+                <span className="text-gray-500 text-xs">
+                  Leave empty to keep current password
+                </span>
               )}
             </div>
             <div className="relative">
@@ -166,7 +180,11 @@ const UserFormModal = ({
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Enter Your Password"
+                placeholder={
+                  isEdit
+                    ? "Enter new password (optional)"
+                    : "Enter Your Password"
+                }
                 className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-[#FF8906] focus:border-[#FF8906] outline-none"
               />
               <button
@@ -182,7 +200,7 @@ const UserFormModal = ({
           {/* Address */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
-              Address
+              Address <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <MapPin
@@ -200,10 +218,10 @@ const UserFormModal = ({
             </div>
           </div>
 
-          {!isEdit && (
+          {isEdit && (
             <div>
               <label className="block text-sm font-semibold text-gray-800 mb-3">
-                Type of User
+                Role
               </label>
               <div className="flex gap-3">
                 <button
@@ -211,11 +229,11 @@ const UserFormModal = ({
                   onClick={() =>
                     setFormData((prev) => ({
                       ...prev,
-                      userType: "Normal User",
+                      role: "user",
                     }))
                   }
                   className={`flex-1 py-2.5 px-4 rounded-md border transition-colors text-sm font-medium ${
-                    formData.userType === "Normal User"
+                    formData.role === "user"
                       ? "border-[#FF8906] bg-orange-50 text-[#FF8906]"
                       : "border-gray-300 text-gray-700 hover:border-gray-400"
                   }`}
@@ -225,10 +243,10 @@ const UserFormModal = ({
                 <button
                   type="button"
                   onClick={() =>
-                    setFormData((prev) => ({ ...prev, userType: "Admin" }))
+                    setFormData((prev) => ({ ...prev, role: "admin" }))
                   }
                   className={`flex-1 py-2.5 px-4 rounded-md border transition-colors text-sm font-medium ${
-                    formData.userType === "Admin"
+                    formData.role === "admin"
                       ? "border-[#FF8906] bg-orange-50 text-[#FF8906]"
                       : "border-gray-300 text-gray-700 hover:border-gray-400"
                   }`}
@@ -240,10 +258,10 @@ const UserFormModal = ({
           )}
 
           <button
-            onClick={onSave}
-            className="w-full bg-[#FF8906] hover:bg-[#E67A05] text-white py-3 rounded-md font-medium transition-colors mt-6"
+            onClick={handleSubmit}
+            className="w-full bg-blue-600 hover:bg-blue-950 text-white py-3 rounded-md font-medium transition-colors mt-6"
           >
-            {isEdit ? "Update" : "Add User"}
+            {isEdit ? "Update User" : "Add User"}
           </button>
         </div>
       </div>

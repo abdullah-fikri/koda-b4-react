@@ -118,7 +118,7 @@ export const ProductFormModal = ({
               )}
             </div>
 
-            <label className="bg-[#1D4ED8] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#E67A05] cursor-pointer inline-block">
+            <label className="bg-[#1D4ED8] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 cursor-pointer inline-block">
               {formData.imageFile || formData.currentImage
                 ? "Change Image"
                 : "Upload Image"}
@@ -287,7 +287,7 @@ export const ProductFormModal = ({
           {/* sv btn */}
           <button
             onClick={onSave}
-            className="w-full bg-[#FF8906] text-white py-3 rounded-lg font-medium hover:bg-[#E67A05] transition-colors"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
           >
             {isEdit ? "Update Product" : "Save Product"}
           </button>

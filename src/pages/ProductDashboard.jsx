@@ -492,7 +492,7 @@ const ProductDashboard = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEditProduct(product)}
-                            className="text-[#FF8906] hover:text-[#E67A05] transition-colors"
+                            className="text-gray-400 hover:text-gray-600  transition-colors"
                           >
                             <Edit2 size={18} />
                           </button>
@@ -530,7 +530,7 @@ const ProductDashboard = () => {
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#1D4ED8] transition-colors disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-gray-400 transition-colors disabled:cursor-not-allowed"
               >
                 Prev
               </button>
@@ -542,7 +542,7 @@ const ProductDashboard = () => {
                   disabled={page === "..."}
                   className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
                     currentPage === page
-                      ? "bg-[#FF8906] text-white"
+                      ? "bg-blue-600 text-white"
                       : page === "..."
                       ? "text-[#9CA3AF] cursor-default"
                       : "text-[#4F5665] hover:bg-gray-100"
@@ -557,7 +557,7 @@ const ProductDashboard = () => {
                   setCurrentPage(Math.min(totalPages, currentPage + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-[#1D4ED8] transition-colors disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-[#4F5665] text-sm disabled:text-[#9CA3AF] hover:text-gray-400 transition-colors disabled:cursor-not-allowed"
               >
                 Next
               </button>

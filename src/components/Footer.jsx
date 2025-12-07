@@ -12,10 +12,10 @@ export const Footer = () => {
       <div className="max-w-[1200px] mx-auto">
         <div className="flex flex-col gap-4 mb-10">
           <div className="flex items-center gap-2">
-            <img src="/Frame 12.png" alt="Coffee Shop" />
+            {/* <img src="/Frame 12.png" alt="Coffee Shop" /> */}
           </div>
           <p className="text-[#4F5665] text-sm md:text-base max-w-[320px] leading-relaxed">
-            Coffee Shop is a store that sells some good meals, and especially
+            D`COFFEE is a store that sells some good meals, and especially
             coffee. We provide high quality beans
           </p>
         </div>

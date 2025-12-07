@@ -18,6 +18,11 @@ export const CardProduct = () => {
     navigate(`/detailproduct/${id}`);
   };
 
+  const formatCurrency = (value) =>
+    `IDR ${value.toLocaleString("id-ID", {
+      minimumFractionDigits: 0,
+    })}`;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 w-full">
       {product.map((item) => (
@@ -52,7 +57,7 @@ export const CardProduct = () => {
             </div>
 
             <p className="text-lg sm:text-xl font-medium text-[#1D4ED8] mb-4">
-              IDR {item.min_price}
+              {formatCurrency(item.min_price)}
             </p>
 
             <div className="flex flex-col lg:flex-row items-center gap-2">

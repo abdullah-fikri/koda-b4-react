@@ -286,14 +286,14 @@ const DetailProduct = () => {
             {/* buy or cart */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <button
-                className="flex-1 bg-[#1D4ED8] text-white font-medium py-3 md:py-4 rounded-xl text-base md:text-[18px] hover:bg-orange-600 transition-colors cursor-pointer"
+                className="flex-1 bg-[#1D4ED8] text-white font-medium py-3 md:py-4 rounded-xl text-base md:text-[18px] hover:bg-blue-600 transition-colors cursor-pointer"
                 onClick={handleBuy}
               >
                 Buy
               </button>
 
               <button
-                className="flex items-center justify-center gap-3 bg-white border border-[#1D4ED8] hover:text-white hover:bg-[#1D4ED8] text-black font-semibold text-sm md:text-[16px] py-3 md:py-3.5 px-5 md:px-6 rounded-lg transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-3 bg-white border border-[#1D4ED8] hover:text-white hover:bg-blue-600 text-black font-semibold text-sm md:text-[16px] py-3 md:py-3.5 px-5 md:px-6 rounded-lg transition-colors cursor-pointer"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5" />

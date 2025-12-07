@@ -25,10 +25,10 @@ const parsePrice = (value) => {
   return isNaN(num) ? 0 : num;
 };
 
-// const formatCurrency = (value) =>
-//   `IDR ${value.toLocaleString("id-ID", {
-//     minimumFractionDigits: 0,
-//   })}`;
+const formatCurrency = (value) =>
+  `IDR ${value.toLocaleString("id-ID", {
+    minimumFractionDigits: 0,
+  })}`;
 
 export const DetailOrder = () => {
   const { orderNumber } = useParams();
@@ -83,7 +83,7 @@ export const DetailOrder = () => {
         <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
           <button
             onClick={() => navigate("/HistoryOrder")}
-            className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#E8E8E8] hover:bg-[#FF8906] hover:text-white transition-colors flex items-center justify-center flex-shrink-0"
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#E8E8E8] hover:bg-gray-300 hover:text-black transition-colors flex items-center justify-center flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
           </button>
@@ -236,7 +236,7 @@ export const DetailOrder = () => {
                       Total Transaksi
                     </p>
                     <p className="font-medium text-[#FF8906] text-lg md:text-xl">
-                      {history.total}
+                      {formatCurrency(history.total)}
                     </p>
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export const DetailOrder = () => {
                             </div>
                           </div>
                           <span className="text-[#FF8906] text-lg md:text-xl font-medium">
-                            {totalOriginalPrice}
+                            {formatCurrency(totalOriginalPrice)}
                           </span>
                         </div>
                       </div>
